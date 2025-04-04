@@ -70,7 +70,12 @@ bool arquivo_criar(char* nomeArquivo){
         return false;
     }
 
+    // TODO: finish writing header
     fwrite(&(headerTemp->status), sizeof(char), 1, pontArq);
+    fwrite(&(headerTemp->topo), sizeof(long int), 1, pontArq);
+    fwrite(&(headerTemp->proxByteOffset), sizeof(long int), 1, pontArq);
+    fwrite(&(headerTemp->nroRegArq), sizeof(int), 1, pontArq);
+    fwrite(&(headerTemp->nroRegArq), sizeof(int), 1, pontArq);
 
     //char* string = (char *) malloc(67 * sizeof(char)); // Alocando dinâmicamente uma string de tamanho máximo de 67 caracteres
     //strcpy(string, "0");
