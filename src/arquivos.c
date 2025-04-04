@@ -15,7 +15,13 @@ struct arquivo_{
     int nroRegRem; // Quantidade de registros removidos
 };
 
-/*Cria um arquivo binário vazio, cujo nome será a string passada pelo ponteiro nomeArquovo, e retorna um ponteiro para ele*/
+/*
+Cria um arquivo binário vazio
+Parâmetros: ponteiro para uma string (nome do arquivo a ser criado)
+Retorna:
+    Caso bem-sucedido: ponteiro para o arquivo criado
+    Caso contrário: NULL
+*/
 FILE* arquivo_criar(char* nomeArquivo){
     FILE* pontArq; // Ponteiro para o arquivo
     
