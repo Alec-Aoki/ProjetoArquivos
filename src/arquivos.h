@@ -7,6 +7,6 @@
 
 #endif //ARQUIVOS_H
 
-typedef struct arquivo_ ARQUIVO;
+typedef struct header_ HEADER;
 
-FILE* arquivo_criar(char* nomeArquivo);
+bool arquivo_criar(char* nomeArquivo);
