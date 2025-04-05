@@ -116,6 +116,11 @@ bool arquivo_criar(char* nomeArquivo){
     strcpy(stringTemp, "ESTRATEGIA DE DEFESA CIBERNETICA EMPREGADA PARA RESOLVER O PROBLEMA");
     fwrite(stringTemp, sizeof(char), 67, pontArq);
 
+    // Alterando o status do arquivo
+    strcpy(stringTemp, "1");
+    fseek(pontArq, 0, SEEK_SET); // Posicionando pontArq no início do arquivo (campo de status)
+    fwrite(stringTemp, sizeof(char), 1, pontArq); // Mudando o status de 0 (incosistente) para 1 (consistente)
+
     free(stringTemp); // Desalocando a string temporária
     free(headerTemp); // Desalocando struct HEADER criada
     fclose(pontArq); // Fechando o arquivo
