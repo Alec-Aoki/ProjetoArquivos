@@ -14,6 +14,16 @@ struct header_{
     int nroRegRem; // Quantidade de registros removidos
 };
 
+/*Armazena os campos de um registro de dados*/
+struct dados_ {
+    char removido; // Indica se o registro está logicamente removido. 1 = removido, 0 = não removido
+    int tamanhoRegistro; // Tamanho do registro em bytes
+    long int prox; // Byteoffset do próximo registro logicamente removido. Inicializado com -1
+    int idAttack; // Código identificador do ataque
+    int year; // Ano em que o ataque ocorreu
+    float financialLoss; // Prejuízo causado pelo ataque
+};
+
 /*FUNÇÕES AUXILIARES*/
 /* header_criar():
 Cria uma struct do tipo HEADER e a inicializa
