@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+
 #include "arquivos.h"
 
 /*Armazena os campos do header que sofrem alterações*/
@@ -18,7 +19,7 @@ struct header_{
 };
 
 /*FUNÇÕES AUXILIARES*/
-/*
+/* header_criar():
 Cria uma struct do tipo HEADER e a inicializa
 Parâmetros: void
 Retorna: ponteiro para a struct do tipo HEADER
@@ -38,10 +39,10 @@ HEADER* header_criar(void){
     novoHeader->nroRegArq = 0;
     novoHeader->nroRegRem = 0;
 
-    return novoHeader;
+    return novoHeader; // Retornando ponteiro para HEADER
 }
 
-/*
+/* arquivo_criar():
 Cria um arquivo binário e o inicializa com o header
 Parâmetros: ponteiro para uma string (nome do arquivo a ser criado)
 Retorna:
