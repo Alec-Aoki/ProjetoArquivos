@@ -1,7 +1,3 @@
-//
-// Created by alecc on 4/4/25.
-//
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -70,16 +66,56 @@ bool arquivo_criar(char* nomeArquivo){
         return false;
     }
 
-    // TODO: finish writing header
+    // Escrevendo struct header no arquivo campo a campo
     fwrite(&(headerTemp->status), sizeof(char), 1, pontArq);
     fwrite(&(headerTemp->topo), sizeof(long int), 1, pontArq);
     fwrite(&(headerTemp->proxByteOffset), sizeof(long int), 1, pontArq);
     fwrite(&(headerTemp->nroRegArq), sizeof(int), 1, pontArq);
     fwrite(&(headerTemp->nroRegRem), sizeof(int), 1, pontArq);
 
-    //char* string = (char *) malloc(67 * sizeof(char)); // Alocando dinâmicamente uma string de tamanho máximo de 67 caracteres
-    //strcpy(string, "0");
-    //fwrite(string, sizeof(char), 1, pontArq);
+    char* stringTemp = (char *) malloc(68 * sizeof(char)); // Alocando dinâmicamente uma string de tamanho máximo de 68 caracteres
+    // Essa string será usada para escrever os campos restantes do header (semânticos)
+    
+    // descreveIdentificador: descrição do campo idAttack
+    strcpy(stringTemp, "IDENTIFICADOR DO ATAQUE");
+    fwrite(stringTemp, sizeof(char), 23, pontArq);
+
+    // descreveYear: descrição do campo year
+    strcpy(stringTemp, "ANO EM QUE O ATAQUE OCORREU");
+    fwrite(stringTemp, sizeof(char), 27, pontArq);
+
+    // descreveFinancialLoss: descrição do campo financialLoss
+    strcpy(stringTemp, "PREJUIZO CAUSADO PELO ATAQUE");
+    fwrite(stringTemp, sizeof(char), 28, pontArq);
+
+    // codDescreveCountry: código da keyword que representa o campo country
+    strcpy(stringTemp, "1");
+    fwrite(stringTemp, sizeof(char), 1, pontArq);
+
+    // codDescreveType: código da keyword que representa o campo type
+    strcpy(stringTemp, "2");
+    fwrite(stringTemp, sizeof(char), 1, pontArq);
+
+    // descreveType: descrição do campo type
+    strcpy(stringTemp, "TIPO DE AMEACA A SEGURANCA CIBERNETICA");
+    fwrite(stringTemp, sizeof(char), 38, pontArq);
+
+    // codDescreveTargetIndustry: código da keyword que representa o campo targetIndustry
+    strcpy(stringTemp, "3");
+    fwrite(stringTemp, sizeof(char), 1, pontArq);
+
+    // descreveTargetIndustry: descrição do campo targetIndustry
+    strcpy(stringTemp, "SETOR DA INDUSTRIA QUE SOFREU O ATAQUE");
+    fwrite(stringTemp, sizeof(char), 38, pontArq);
+
+    // codDescreveDefense: código da keyword que representa o campo defenseMechanism
+    strcpy(stringTemp, "4");
+    fwrite(stringTemp, sizeof(char), 1, pontArq);
+
+    // descreveDefense: descrição do campo defenseMechanism
+    strcpy(stringTemp, "ESTRATEGIA DE DEFESA CIBERNETICA EMPREGADA PARA RESOLVER O PROBLEMA");
+    fwrite(stringTemp, sizeof(char), 67, pontArq);
+
 
     free(headerTemp); // Desalocando struct HEADER criada
     fclose(pontArq); // Fechando o arquivo
