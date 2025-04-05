@@ -3,7 +3,7 @@
 #include <string.h>
 #include <stdbool.h>
 
-#include "arquivos.h"
+#include "registros.h"
 
 /*Armazena os campos do header que sofrem alterações*/
 struct header_{
@@ -25,6 +25,7 @@ struct dados_ {
 };
 
 /*FUNÇÕES AUXILIARES*/
+
 /* header_criar():
 Cria uma struct do tipo HEADER e a inicializa
 Parâmetros: void
@@ -137,3 +138,4 @@ bool arquivo_criar(char* nomeArquivo){
 
     return true;
 }
+
