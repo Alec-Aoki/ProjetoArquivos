@@ -12,4 +12,6 @@ int main(void){
     scanf("%s", nomeArquivo);
 
     arquivo_criar(nomeArquivo);
+
+    return 0;
 }

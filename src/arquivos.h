@@ -10,5 +10,3 @@
 typedef struct header_ HEADER;
 
 bool arquivo_criar(char* nomeArquivo);
-
-void binarioNaTela(char *nomeArquivoBinario);
