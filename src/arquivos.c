@@ -116,7 +116,7 @@ bool arquivo_criar(char* nomeArquivo){
     strcpy(stringTemp, "ESTRATEGIA DE DEFESA CIBERNETICA EMPREGADA PARA RESOLVER O PROBLEMA");
     fwrite(stringTemp, sizeof(char), 67, pontArq);
 
-
+    free(stringTemp); // Desalocando a string temporária
     free(headerTemp); // Desalocando struct HEADER criada
     fclose(pontArq); // Fechando o arquivo
 
