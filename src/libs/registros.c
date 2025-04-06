@@ -5,6 +5,25 @@
 
 #include "registros.h"
 
+/*Armazena os campos do header que sofrem alterações*/
+struct header_{
+    char status; // Consistência do arquivo de dados. 0 = inconsistente, 1 = consistente
+    long int topo; // Byteoffset do primeiro registro logicamente removido. -1 = nenhum registro removido
+    long int proxByteOffset; // Valor do próximo byteoffset disponível
+    int nroRegArq; // Quantidade de registros não removidos
+    int nroRegRem; // Quantidade de registros removidos
+};
+
+/*Armazena os campos de um registro de dados*/
+struct dados_ {
+    char removido; // Indica se o registro está logicamente removido. 1 = removido, 0 = não removido
+    int tamanhoRegistro; // Tamanho do registro em bytes
+    long int prox; // Byteoffset do próximo registro logicamente removido. Inicializado com -1
+    int idAttack; // Código identificador do ataque
+    int year; // Ano em que o ataque ocorreu
+    float financialLoss; // Prejuízo causado pelo ataque
+};
+
 /* header_criar():
 Cria uma struct do tipo HEADER e a inicializa
 Parâmetros: void
@@ -41,8 +60,8 @@ void header_apagar(HEADER** header){
 }
 
 /* header_escrever():
-Cria um arquivo binário e o inicializa com o header
-Parâmetros: ponteiro para uma string (nome do arquivo a ser criado), ponteiro para um header
+Escreve um header passado no arquivo binário
+Parâmetros: ponteiro para um arquivo, ponteiro para um header
 Retorna:
     Caso bem-sucedido: true
     Caso contrário: false
