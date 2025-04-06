@@ -7,11 +7,13 @@
 
 
 int main(void){
-    char nomeArquivo[100];
+    char nomeArquivoBin[100];
+    char nomeArquivoCSV[100];
 
-    scanf("%s", nomeArquivo);
+    scanf("%s", nomeArquivoBin);
+    scanf("%s", nomeArquivoCSV);
 
-    arquivo_criar(nomeArquivo, NULL);
+    arquivo_criar(nomeArquivoBin, nomeArquivoCSV);
 
     return 0;
 }

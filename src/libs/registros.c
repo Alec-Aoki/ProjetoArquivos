@@ -100,6 +100,7 @@ bool header_escrever(FILE* pontArq, HEADER* headerArq, bool semantico){
     fwrite(&(headerArq->nroRegArq), sizeof(int), 1, pontArq);
     fwrite(&(headerArq->nroRegRem), sizeof(int), 1, pontArq);
 
+    // Escrevendo a parte semântica somente se necessário
     if(semantico){
         char* stringTemp = (char *) malloc(68 * sizeof(char)); // Alocando dinâmicamente uma string de tamanho máximo de 68 caracteres
         // Essa string será usada para escrever os campos restantes do header (semânticos)
