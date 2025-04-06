@@ -22,6 +22,10 @@ struct dados_ {
     int idAttack; // Código identificador do ataque
     int year; // Ano em que o ataque ocorreu
     float financialLoss; // Prejuízo causado pelo ataque
+    char* country; // País onde ocorreu o ataque
+    char* attackType; // Tipo de ameaça à segurança cibernética
+    char* targetIndustry; // Setor da indústria que sofreu o ataque
+    char* defenseMechanism; // Estratégia de defesa usada para resolver o problema
 };
 
 /* header_criar():
@@ -59,6 +63,21 @@ void header_apagar(HEADER** header){
     return;
 }
 
+/* header_set_status():
+Define o campo de status de um header pré-existente
+Parâmetros: ponteiro para o header, status a ser definido
+Retorna: true se bem sucedido, false senão
+*/
+bool header_set_status(HEADER* header, char status){
+    if(header == NULL){
+        printf("Erro ao acessar header\n");
+        return false;
+    }
+
+    header->status = status; // Definindo o novo status
+    return true;
+}
+
 /* header_escrever():
 Escreve um header passado no arquivo binário
 Parâmetros: ponteiro para um arquivo, ponteiro para um header
@@ -67,6 +86,8 @@ Retorna:
     Caso contrário: false
 */
 bool header_escrever(FILE* pontArq, HEADER* headerArq){
+    fseek(pontArq, 0, SEEK_SET); // Posicionando pontArq no início do arquivo
+
     if(pontArq == NULL){
         printf("Erro com o ponteiro para o arquivo\n");
         return false;
@@ -121,11 +142,6 @@ bool header_escrever(FILE* pontArq, HEADER* headerArq){
     // descreveDefense: descrição do campo defenseMechanism
     strcpy(stringTemp, "ESTRATEGIA DE DEFESA CIBERNETICA EMPREGADA PARA RESOLVER O PROBLEMA");
     fwrite(stringTemp, sizeof(char), 67, pontArq);
-
-    // Alterando o status do arquivo
-    strcpy(stringTemp, "1");
-    fseek(pontArq, 0, SEEK_SET); // Posicionando pontArq no início do arquivo (campo de status)
-    fwrite(stringTemp, sizeof(char), 1, pontArq); // Mudando o status de 0 (incosistente) para 1 (consistente)
 
     free(stringTemp); // Desalocando a string temporária
 

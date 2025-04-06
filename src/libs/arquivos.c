@@ -8,6 +8,7 @@
 
 // EM CONSTRUÇÃO
 bool arquivo_criar(char* nomeArqBin, char* nomeArqCSV){
+    /*TRATAMENTO DE ERROS E ABERTURA DO ARQUIVO*/
     if(nomeArqBin == NULL){
         printf("Erro com o ponteiro para o nome do arquivo\n");
         return false;
@@ -25,9 +26,22 @@ bool arquivo_criar(char* nomeArqBin, char* nomeArqCSV){
         return false;
     }
 
+    /*HEADER INICIAL*/
     header_escrever(pontArq, headerArq); // Escreve o header criado no arquivo
 
-    header_apagar(&headerArq);
+    /*DADOS DO ARQUIVOS*/
+    // ...
+
+    /*ATUALIZANDO CAMPOS DO HEADER*/
+    // Alterando o status do arquivo antes de fechá-lo
+    header_set_status(headerArq, '1');
+    // ... (outros campos a serem atualizados)
+
+    /*ESCREVENDO HEADER ATUALIZADO NO ARQUIVO*/
+    header_escrever(pontArq, headerArq);
+
+    /*DESALOCANDO MEMÓRIA E FECHANDO O ARQUIVO*/
+    header_apagar(&headerArq); // Desalocando struct header
     fclose(pontArq); // Fechando o arquivo
 
     return true;
