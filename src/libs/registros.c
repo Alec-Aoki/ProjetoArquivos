@@ -151,3 +151,8 @@ bool header_escrever(FILE* pontArq, HEADER* headerArq, bool semantico){
     return true;
 }
 
+// TODO
+/*
+DADO* dado_criar(char removido, int tamReg, long int prox, int idAttack, int year, float finLoss, char* country, char* attackType, char* targetInd, char* defMec){
+
+}*/
