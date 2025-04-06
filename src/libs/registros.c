@@ -80,12 +80,12 @@ bool header_set_status(HEADER* header, char status){
 
 /* header_escrever():
 Escreve um header passado no arquivo binário
-Parâmetros: ponteiro para um arquivo, ponteiro para um header
+Parâmetros: ponteiro para um arquivo, ponteiro para um header e valor booleano (true = escrever string semanticas, false = escrever somente struct)
 Retorna:
     Caso bem-sucedido: true
     Caso contrário: false
 */
-bool header_escrever(FILE* pontArq, HEADER* headerArq){
+bool header_escrever(FILE* pontArq, HEADER* headerArq, bool semantico){
     fseek(pontArq, 0, SEEK_SET); // Posicionando pontArq no início do arquivo
 
     if(pontArq == NULL){
@@ -100,50 +100,52 @@ bool header_escrever(FILE* pontArq, HEADER* headerArq){
     fwrite(&(headerArq->nroRegArq), sizeof(int), 1, pontArq);
     fwrite(&(headerArq->nroRegRem), sizeof(int), 1, pontArq);
 
-    char* stringTemp = (char *) malloc(68 * sizeof(char)); // Alocando dinâmicamente uma string de tamanho máximo de 68 caracteres
-    // Essa string será usada para escrever os campos restantes do header (semânticos)
-    
-    // descreveIdentificador: descrição do campo idAttack
-    strcpy(stringTemp, "IDENTIFICADOR DO ATAQUE");
-    fwrite(stringTemp, sizeof(char), 23, pontArq);
+    if(semantico){
+        char* stringTemp = (char *) malloc(68 * sizeof(char)); // Alocando dinâmicamente uma string de tamanho máximo de 68 caracteres
+        // Essa string será usada para escrever os campos restantes do header (semânticos)
+        
+        // descreveIdentificador: descrição do campo idAttack
+        strcpy(stringTemp, "IDENTIFICADOR DO ATAQUE");
+        fwrite(stringTemp, sizeof(char), 23, pontArq);
 
-    // descreveYear: descrição do campo year
-    strcpy(stringTemp, "ANO EM QUE O ATAQUE OCORREU");
-    fwrite(stringTemp, sizeof(char), 27, pontArq);
+        // descreveYear: descrição do campo year
+        strcpy(stringTemp, "ANO EM QUE O ATAQUE OCORREU");
+        fwrite(stringTemp, sizeof(char), 27, pontArq);
 
-    // descreveFinancialLoss: descrição do campo financialLoss
-    strcpy(stringTemp, "PREJUIZO CAUSADO PELO ATAQUE");
-    fwrite(stringTemp, sizeof(char), 28, pontArq);
+        // descreveFinancialLoss: descrição do campo financialLoss
+        strcpy(stringTemp, "PREJUIZO CAUSADO PELO ATAQUE");
+        fwrite(stringTemp, sizeof(char), 28, pontArq);
 
-    // codDescreveCountry: código da keyword que representa o campo country
-    strcpy(stringTemp, "1");
-    fwrite(stringTemp, sizeof(char), 1, pontArq);
+        // codDescreveCountry: código da keyword que representa o campo country
+        strcpy(stringTemp, "1");
+        fwrite(stringTemp, sizeof(char), 1, pontArq);
 
-    // codDescreveType: código da keyword que representa o campo type
-    strcpy(stringTemp, "2");
-    fwrite(stringTemp, sizeof(char), 1, pontArq);
+        // codDescreveType: código da keyword que representa o campo type
+        strcpy(stringTemp, "2");
+        fwrite(stringTemp, sizeof(char), 1, pontArq);
 
-    // descreveType: descrição do campo type
-    strcpy(stringTemp, "TIPO DE AMEACA A SEGURANCA CIBERNETICA");
-    fwrite(stringTemp, sizeof(char), 38, pontArq);
+        // descreveType: descrição do campo type
+        strcpy(stringTemp, "TIPO DE AMEACA A SEGURANCA CIBERNETICA");
+        fwrite(stringTemp, sizeof(char), 38, pontArq);
 
-    // codDescreveTargetIndustry: código da keyword que representa o campo targetIndustry
-    strcpy(stringTemp, "3");
-    fwrite(stringTemp, sizeof(char), 1, pontArq);
+        // codDescreveTargetIndustry: código da keyword que representa o campo targetIndustry
+        strcpy(stringTemp, "3");
+        fwrite(stringTemp, sizeof(char), 1, pontArq);
 
-    // descreveTargetIndustry: descrição do campo targetIndustry
-    strcpy(stringTemp, "SETOR DA INDUSTRIA QUE SOFREU O ATAQUE");
-    fwrite(stringTemp, sizeof(char), 38, pontArq);
+        // descreveTargetIndustry: descrição do campo targetIndustry
+        strcpy(stringTemp, "SETOR DA INDUSTRIA QUE SOFREU O ATAQUE");
+        fwrite(stringTemp, sizeof(char), 38, pontArq);
 
-    // codDescreveDefense: código da keyword que representa o campo defenseMechanism
-    strcpy(stringTemp, "4");
-    fwrite(stringTemp, sizeof(char), 1, pontArq);
+        // codDescreveDefense: código da keyword que representa o campo defenseMechanism
+        strcpy(stringTemp, "4");
+        fwrite(stringTemp, sizeof(char), 1, pontArq);
 
-    // descreveDefense: descrição do campo defenseMechanism
-    strcpy(stringTemp, "ESTRATEGIA DE DEFESA CIBERNETICA EMPREGADA PARA RESOLVER O PROBLEMA");
-    fwrite(stringTemp, sizeof(char), 67, pontArq);
+        // descreveDefense: descrição do campo defenseMechanism
+        strcpy(stringTemp, "ESTRATEGIA DE DEFESA CIBERNETICA EMPREGADA PARA RESOLVER O PROBLEMA");
+        fwrite(stringTemp, sizeof(char), 67, pontArq);
 
-    free(stringTemp); // Desalocando a string temporária
+        free(stringTemp); // Desalocando a string temporária
+    }
 
     return true;
 }

@@ -14,6 +14,6 @@
     bool header_set_status(HEADER* header, char status);
 
     // Escreve o header passado no arquivo binário
-    bool header_escrever(FILE* pontArq, HEADER* header);
+    bool header_escrever(FILE* pontArq, HEADER* header, bool semantico);
 
 #endif
