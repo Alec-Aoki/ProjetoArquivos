@@ -32,10 +32,10 @@
     // Escreve o header passado no arquivo binário
     bool header_escrever(char* nomeArquivo, HEADER* header);
 
-    // Aloca espaço na heap para um dado e o inicializa
+    // TODO Aloca espaço na heap para um dado e o inicializa
     DADO* dado_criar(void);
 
-    // Escreve o dado passado no arquivo binário
+    // TODO Escreve o dado passado no arquivo binário
     bool dado_escrever(char* nomeArquivo, DADO* dado);
 
 #endif

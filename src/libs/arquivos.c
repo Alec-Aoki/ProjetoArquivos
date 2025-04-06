@@ -6,6 +6,7 @@
 #include "registros.h"
 #include "arquivos.h"
 
+// EM CONSTRUÇÃO
 bool arquivo_criar(char* nomeArquivo){
     if(nomeArquivo == NULL){
         printf("Erro com o ponteiro para o nome do arquivo\n");
