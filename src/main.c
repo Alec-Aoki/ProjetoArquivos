@@ -11,7 +11,7 @@ int main(void){
 
     scanf("%s", nomeArquivo);
 
-    arquivo_criar(nomeArquivo);
+    arquivo_criar(nomeArquivo, NULL);
 
     return 0;
 }

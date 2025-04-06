@@ -7,9 +7,15 @@
 #include "arquivos.h"
 
 // EM CONSTRUÇÃO
-bool arquivo_criar(char* nomeArquivo){
-    if(nomeArquivo == NULL){
+bool arquivo_criar(char* nomeArqBin, char* nomeArqCSV){
+    if(nomeArqBin == NULL){
         printf("Erro com o ponteiro para o nome do arquivo\n");
+        return false;
+    }
+
+    FILE* pontArq = fopen(nomeArqBin, "wb"); // Cria um arquivo binário para gravação. Caso já exista, sobrescreve
+    if(pontArq == NULL){
+        printf("Erro ao criar arquivo\n");
         return false;
     }
 
@@ -19,8 +25,10 @@ bool arquivo_criar(char* nomeArquivo){
         return false;
     }
 
-    header_escrever(nomeArquivo, headerArq); // Escreve o header criado no arquivo
+    header_escrever(pontArq, headerArq); // Escreve o header criado no arquivo
 
     header_apagar(&headerArq);
+    fclose(pontArq); // Fechando o arquivo
+
     return true;
 }

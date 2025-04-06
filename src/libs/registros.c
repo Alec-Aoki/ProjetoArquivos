@@ -47,17 +47,9 @@ Retorna:
     Caso bem-sucedido: true
     Caso contrário: false
 */
-bool header_escrever(char* nomeArquivo, HEADER* headerArq){
-    if(nomeArquivo == NULL){
-        printf("Erro com o ponteiro para o nome do arquivo\n");
-
-        return false;
-    }
-
-    FILE* pontArq = fopen(nomeArquivo, "wb"); // Cria um arquivo binário para gravação. Caso já exista, sobrescreve
+bool header_escrever(FILE* pontArq, HEADER* headerArq){
     if(pontArq == NULL){
-        printf("Erro ao criar arquivo\n");
-
+        printf("Erro com o ponteiro para o arquivo\n");
         return false;
     }
 
@@ -117,7 +109,6 @@ bool header_escrever(char* nomeArquivo, HEADER* headerArq){
     fwrite(stringTemp, sizeof(char), 1, pontArq); // Mudando o status de 0 (incosistente) para 1 (consistente)
 
     free(stringTemp); // Desalocando a string temporária
-    fclose(pontArq); // Fechando o arquivo
 
     return true;
 }

@@ -30,12 +30,6 @@
     void header_apagar(HEADER** header);
 
     // Escreve o header passado no arquivo binário
-    bool header_escrever(char* nomeArquivo, HEADER* header);
-
-    // TODO Aloca espaço na heap para um dado e o inicializa
-    DADO* dado_criar(void);
-
-    // TODO Escreve o dado passado no arquivo binário
-    bool dado_escrever(char* nomeArquivo, DADO* dado);
+    bool header_escrever(FILE* pontArq, HEADER* header);
 
 #endif
