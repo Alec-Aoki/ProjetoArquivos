@@ -21,12 +21,21 @@
     };
 
     typedef struct header_ HEADER;
-    typedef struct dados_ DADOS;
+    typedef struct dados_ DADO;
 
-    // Cria um header dinâmicamente e o inicializa
+    // Aloca espaço na heap para um header e o inicializa
     HEADER* header_criar(void);
 
+    // Desaloca a memória do header passado e aponta seu ponteiro para NULL
+    void header_apagar(HEADER** header);
+
+    // Escreve o header passado no arquivo binário
     bool header_escrever(char* nomeArquivo, HEADER* header);
 
+    // Aloca espaço na heap para um dado e o inicializa
+    DADO* dado_criar(void);
+
+    // Escreve o dado passado no arquivo binário
+    bool dado_escrever(char* nomeArquivo, DADO* dado);
 
 #endif

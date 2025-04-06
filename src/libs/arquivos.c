@@ -18,5 +18,8 @@ bool arquivo_criar(char* nomeArquivo){
         return false;
     }
 
-    return header_escrever(nomeArquivo, headerArq);
+    header_escrever(nomeArquivo, headerArq); // Escreve o header criado no arquivo
+
+    header_apagar(&headerArq);
+    return true;
 }

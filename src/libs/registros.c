@@ -28,9 +28,21 @@ HEADER* header_criar(void){
     return novoHeader; // Retornando ponteiro para HEADER
 }
 
-/* arquivo_criar():
+/* header_apagar():
+Desaloca uma struct do tipo header e define seu ponteiro para NULL
+Parâmetros: ponteiro de ponteiro para a struct a ser desalocada
+Retorna: void
+*/
+void header_apagar(HEADER** header){
+    free(*header); // Desalocando memória
+    *header = NULL; // Definindo o ponteiro para NULL
+
+    return;
+}
+
+/* header_escrever():
 Cria um arquivo binário e o inicializa com o header
-Parâmetros: ponteiro para uma string (nome do arquivo a ser criado)
+Parâmetros: ponteiro para uma string (nome do arquivo a ser criado), ponteiro para um header
 Retorna:
     Caso bem-sucedido: true
     Caso contrário: false
