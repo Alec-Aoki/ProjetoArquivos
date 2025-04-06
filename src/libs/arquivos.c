@@ -30,7 +30,11 @@ bool arquivo_criar(char* nomeArqBin, char* nomeArqCSV){
     header_escrever(pontArq, headerArq); // Escreve o header criado no arquivo
 
     /*DADOS DO ARQUIVOS*/
-    // ...
+    // 1. Criar struct registro dado (TAD ARQUIVOS e TAD REGISTRO)
+    // 2. Ler campos do csv (TAD ARQUIVOS)
+    // 3. Escrever esses campos na struct (TAD arquivos)
+    // 4. Escrever essa struct no arquivo (TAD registros)
+    // 5. Repetir a partir do passo 2 até o fim do arquivo csv
 
     /*ATUALIZANDO CAMPOS DO HEADER*/
     // Alterando o status do arquivo antes de fechá-lo
