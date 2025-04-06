@@ -5,27 +5,6 @@
 
 #include "registros.h"
 
-/*Armazena os campos do header que sofrem alterações*/
-struct header_{
-    char status; // Consistência do arquivo de dados. 0 = inconsistente, 1 = consistente
-    long int topo; // Byteoffset do primeiro registro logicamente removido. -1 = nenhum registro removido
-    long int proxByteOffset; // Valor do próximo byteoffset disponível
-    int nroRegArq; // Quantidade de registros não removidos
-    int nroRegRem; // Quantidade de registros removidos
-};
-
-/*Armazena os campos de um registro de dados*/
-struct dados_ {
-    char removido; // Indica se o registro está logicamente removido. 1 = removido, 0 = não removido
-    int tamanhoRegistro; // Tamanho do registro em bytes
-    long int prox; // Byteoffset do próximo registro logicamente removido. Inicializado com -1
-    int idAttack; // Código identificador do ataque
-    int year; // Ano em que o ataque ocorreu
-    float financialLoss; // Prejuízo causado pelo ataque
-};
-
-/*FUNÇÕES AUXILIARES*/
-
 /* header_criar():
 Cria uma struct do tipo HEADER e a inicializa
 Parâmetros: void
@@ -56,7 +35,7 @@ Retorna:
     Caso bem-sucedido: true
     Caso contrário: false
 */
-bool arquivo_criar(char* nomeArquivo){
+bool header_escrever(char* nomeArquivo, HEADER* headerArq){
     if(nomeArquivo == NULL){
         printf("Erro com o ponteiro para o nome do arquivo\n");
 
@@ -70,19 +49,12 @@ bool arquivo_criar(char* nomeArquivo){
         return false;
     }
 
-    HEADER* headerTemp = header_criar();
-    if(headerTemp == NULL){
-        printf("Erro ao criar struct\n");
-
-        return false;
-    }
-
     // Escrevendo struct header no arquivo campo a campo
-    fwrite(&(headerTemp->status), sizeof(char), 1, pontArq);
-    fwrite(&(headerTemp->topo), sizeof(long int), 1, pontArq);
-    fwrite(&(headerTemp->proxByteOffset), sizeof(long int), 1, pontArq);
-    fwrite(&(headerTemp->nroRegArq), sizeof(int), 1, pontArq);
-    fwrite(&(headerTemp->nroRegRem), sizeof(int), 1, pontArq);
+    fwrite(&(headerArq->status), sizeof(char), 1, pontArq);
+    fwrite(&(headerArq->topo), sizeof(long int), 1, pontArq);
+    fwrite(&(headerArq->proxByteOffset), sizeof(long int), 1, pontArq);
+    fwrite(&(headerArq->nroRegArq), sizeof(int), 1, pontArq);
+    fwrite(&(headerArq->nroRegRem), sizeof(int), 1, pontArq);
 
     char* stringTemp = (char *) malloc(68 * sizeof(char)); // Alocando dinâmicamente uma string de tamanho máximo de 68 caracteres
     // Essa string será usada para escrever os campos restantes do header (semânticos)
@@ -133,7 +105,6 @@ bool arquivo_criar(char* nomeArquivo){
     fwrite(stringTemp, sizeof(char), 1, pontArq); // Mudando o status de 0 (incosistente) para 1 (consistente)
 
     free(stringTemp); // Desalocando a string temporária
-    free(headerTemp); // Desalocando struct HEADER criada
     fclose(pontArq); // Fechando o arquivo
 
     return true;

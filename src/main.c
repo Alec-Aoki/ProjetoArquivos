@@ -3,7 +3,7 @@
 #include <string.h>
 #include <stdbool.h>
 
-#include "./libs/registros.h"
+#include "./libs/arquivos.h"
 
 
 int main(void){

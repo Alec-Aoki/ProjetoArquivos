@@ -1,0 +1,22 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+
+#include "registros.h"
+#include "arquivos.h"
+
+bool arquivo_criar(char* nomeArquivo){
+    if(nomeArquivo == NULL){
+        printf("Erro com o ponteiro para o nome do arquivo\n");
+        return false;
+    }
+
+    HEADER* headerArq = header_criar();
+    if(headerArq == NULL){
+        printf("Erro ao criar header\n");
+        return false;
+    }
+
+    return header_escrever(nomeArquivo, headerArq);
+}
