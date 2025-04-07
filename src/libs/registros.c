@@ -152,7 +152,75 @@ bool header_escrever(FILE* pontArq, HEADER* headerArq, bool semantico){
 }
 
 // TODO
-/*
-DADO* dado_criar(char removido, int tamReg, long int prox, int idAttack, int year, float finLoss, char* country, char* attackType, char* targetInd, char* defMec){
 
-}*/
+DADO* dado_criar(char removido, int tamReg, long int prox, int idAttack, int year, float finLoss, char* country, char* attackType, char* targetInd, char* defMec){
+        DADO *novoRegistro = (DADO *) malloc(sizeof(DADO));
+        if (novoRegistro == NULL) {
+            printf("Erro ao criar struct\n");
+
+            return NULL;
+        }
+
+        // Inicializando struct
+
+        // Campos de tamanho fixo
+        novoRegistro->removido = removido;
+        novoRegistro->tamanhoRegistro = tamReg;
+        novoRegistro->prox = prox;
+        novoRegistro->idAttack = idAttack;
+        novoRegistro->year = year;
+        novoRegistro->financialLoss = finLoss;
+
+
+        // Campos de tamanho variável com delimitadores
+        novoRegistro->country = formata_string_registro(country);
+        novoRegistro->attackType = formata_string_registro(attackType);
+        novoRegistro->targetIndustry = formata_string_registro(targetInd);
+        novoRegistro->defenseMechanism = formata_string_registro(defMec);
+
+        return novoRegistro;    // Retorna ponteiro para struct DADO
+}
+
+/* formata_string_registro():
+Aloca dinamicamente memória para uma string e adiciona delimitadores no inicio e final
+Parâmetros: string a ser formatada
+Retorna: uma string formatada  
+*/
+char *formata_string_registro (char *string){
+    char *strTemp = (char *) malloc(sizeof(char)*(strlen(string)+3));
+    if (strTemp == NULL) {
+        prinf("ERRO : alocação mal sucedida");
+
+        return NULL;
+    }
+    strTemp[0] = "|";
+    strcat(strTemp, string);
+    strTemp[strlen(string)+1] = "\0";
+    strTemp[strlen(string)+2] = "|";
+
+    return strTemp;
+}
+
+bool set_dado_reg_tam (DADO *registro){
+    if(registro == NULL){
+        printf("Erro ao acessar registro\n");
+        return false;
+    }
+
+    int contadorBytes = 25; // Inicializa o contador com o tamanho dos campos fixos
+    
+    contadorBytes += strlen(registro->country);
+    contadorBytes += strlen(registro->attackType);
+    contadorBytes += strlen(registro->targetIndustry);
+    contadorBytes += strlen(registro->defenseMechanism);
+    
+    registro->tamanhoRegistro = contadorBytes;
+
+    return true;
+}
+/*
+bool set_prox_Byteoffset ();
+calcula o numero de bytes para o proximo byte offset
+
+retorna : tamanho registro + byteoffset atual
+*/
