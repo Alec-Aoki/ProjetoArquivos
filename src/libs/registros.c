@@ -187,20 +187,31 @@ Parâmetros: string a ser formatada
 Retorna: uma string formatada  
 */
 char *formata_string_registro (char *string){
+    if (string == NULL) {
+        return NULL;
+    }
+
+    // Aloca memória para a string com o tamanho extra para os delimitadores
     char *strTemp = (char *) malloc(sizeof(char)*(strlen(string)+3));
     if (strTemp == NULL) {
-        prinf("ERRO : alocação mal sucedida");
+        printf("ERRO : alocação mal sucedida");
 
         return NULL;
     }
-    strTemp[0] = "|";
+    
+    // Formatação da string com os delimitadores
+    strcat(strTemp, "|");
     strcat(strTemp, string);
-    strTemp[strlen(string)+1] = "\0";
-    strTemp[strlen(string)+2] = "|";
+    strcat(strTemp, "|");
 
-    return strTemp;
+    return strTemp; // Retorna a string formatada
 }
 
+/*  set_dado_reg_tam():
+Calcula o número de bytes do registro e atualiza na struct
+Parâmetros: Ponteiro para struct
+Retorna: booleano indicando status da operação
+*/
 bool set_dado_reg_tam (DADO *registro){
     if(registro == NULL){
         printf("Erro ao acessar registro\n");
@@ -209,6 +220,7 @@ bool set_dado_reg_tam (DADO *registro){
 
     int contadorBytes = 25; // Inicializa o contador com o tamanho dos campos fixos
     
+    // Adiciona ao contador o tamanho dos campos variáveis
     contadorBytes += strlen(registro->country);
     contadorBytes += strlen(registro->attackType);
     contadorBytes += strlen(registro->targetIndustry);
@@ -216,7 +228,7 @@ bool set_dado_reg_tam (DADO *registro){
     
     registro->tamanhoRegistro = contadorBytes;
 
-    return true;
+    return true;    
 }
 /*
 bool set_prox_Byteoffset ();
