@@ -173,10 +173,10 @@ DADO* dado_criar(char removido, int tamReg, long int prox, int idAttack, int yea
 
 
         // Campos de tamanho variável com delimitadores
-        novoRegistro->country = formata_string_registro(country);
-        novoRegistro->attackType = formata_string_registro(attackType);
-        novoRegistro->targetIndustry = formata_string_registro(targetInd);
-        novoRegistro->defenseMechanism = formata_string_registro(defMec);
+        novoRegistro->country = formata_string_registro(country, "1");
+        novoRegistro->attackType = formata_string_registro(attackType, "2");
+        novoRegistro->targetIndustry = formata_string_registro(targetInd, "3");
+        novoRegistro->defenseMechanism = formata_string_registro(defMec, "4");
 
         return novoRegistro;    // Retorna ponteiro para struct DADO
 }
@@ -186,7 +186,7 @@ Aloca dinamicamente memória para uma string e adiciona delimitadores no inicio 
 Parâmetros: string a ser formatada
 Retorna: uma string formatada  
 */
-char *formata_string_registro (char *string){
+char *formata_string_registro (char *string, char id){
     if (string == NULL) {
         return NULL;
     }
@@ -200,7 +200,7 @@ char *formata_string_registro (char *string){
     }
     
     // Formatação da string com os delimitadores
-    strcat(strTemp, "|");
+    strcat(strTemp, id);
     strcat(strTemp, string);
     strcat(strTemp, "|");
 

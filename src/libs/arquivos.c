@@ -64,6 +64,8 @@ bool arquivo_criar(char* nomeArqBin, char* nomeArqCSV){
 
     /*DESALOCANDO MEMÓRIA E FECHANDO O ARQUIVO*/
     header_apagar(&headerArq); // Desalocando struct header
+
+
     fclose(pontArqBin); // Fechando o arquivo
 
     return true;
