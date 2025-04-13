@@ -243,6 +243,40 @@ retorna : tamanho registro + byteoffset atual
 */
 
 
+/*gurda_arqBin():
+Escreve os dados da struct DADO no arquivo binário
+Parâmetros: Ponteiro para arquivo, ponteiro para struct
+Retorna: booleano indicando status da operação
+*/
+bool guarda_arqBin (FILE *pontArqBin, DADO *reg){
+    // Verifiva a corretude dos ponteiros
+    if (pontArqBin == NULL) {
+        printf("Erro com o ponteiro para o nome do arquivo\n");
+        return false;
+    }
+
+    if (reg == NULL) {
+        printf("Erro de struct nula\n");
+        return false;
+    }
+
+    // Escreve os dados no arquivo binário
+    fwrite(&(reg->removido), sizeof(int), 1, pontArqBin);
+    fwrite(&(reg->tamanhoRegistro), sizeof(int), 1, pontArqBin);
+    fwrite(&(reg->prox), sizeof(long int), 1, pontArqBin);
+    fwrite(&(reg->idAttack), sizeof(int), 1, pontArqBin);
+    fwrite(&(reg->year), sizeof(int), 1, pontArqBin);
+    fwrite(&(reg->financialLoss), sizeof(float), 1, pontArqBin);
+    fwrite(&(reg->country), sizeof(char), strlen(reg->country), pontArqBin);
+    fwrite(&(reg->attackType), sizeof(char), strlen(reg->attackType), pontArqBin);
+    fwrite(&(reg->targetIndustry), sizeof(char), strlen(reg->targetIndustry), pontArqBin);
+    fwrite(&(reg->defenseMechanism), sizeof(char), strlen(reg->defenseMechanism), pontArqBin);
+
+    // Retorna o status da operação
+    return true;
+}
+
+
 void imprime (DADO *reg) {
     printf("Removido: %d\n", reg->removido);
     printf("Tamanho do Registro : %d\n", reg->tamanhoRegistro);

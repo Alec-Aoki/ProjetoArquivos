@@ -17,4 +17,7 @@
     bool header_escrever(FILE* pontArq, HEADER* header, bool semantico);
     void imprime (DADO *reg);
     DADO* dado_criar(char removido, int tamReg, long int prox, int idAttack, int year, float finLoss, char* country, char* attackType, char* targetInd, char* defMec);
+    bool set_dado_reg_tam (DADO *registro);
+    bool guarda_arqBin (FILE *pontArqBin, DADO *reg);
+
 #endif

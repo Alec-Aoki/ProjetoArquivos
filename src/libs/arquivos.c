@@ -44,22 +44,25 @@ bool arquivo_criar(char* nomeArqBin, char* nomeArqCSV) {
     fseek(pontArqCSV, 0, SEEK_SET);
     // Pega a primeira linha do arquivo
     fgets(buffer, sizeof(buffer), pontArqCSV);
-    printf("%s\n", buffer);
     while (fgets(buffer, sizeof(buffer), pontArqCSV) != NULL){
-        // Pega a primeira string antes da virgula
+        // Identifica o fim da linha lida e substitui o "\n" por um '\0'
         int fimDaLinha = strcspn(buffer, "\n");
         buffer[fimDaLinha] = '\0';
 
+        // Pega a primeira string antes da virgula
         char *tok = strtok(buffer, ",");
         int i = 0;
         while (tok != NULL && i < 7) {
+            // Guarda a string num vetor de strings e pega o proxima após a vírgula
             campos[i] = tok;
             tok = strtok(NULL, ",");
             i++;
         }
+        // Guarda os dados lidos na struct DADO
         DADO *RegTemp = dado_criar(0, 0, -1, atoi(campos[0]), atoi(campos[1]), atof(campos[2]), campos[3], campos[4], campos[5], campos[6]);
-        imprime(RegTemp);
-
+        set_dado_reg_tam(RegTemp);
+        // Guarda os registros no arquivo binario
+        guarda_arqBin(pontArqBin, RegTemp);
     }
 
 
