@@ -7,66 +7,71 @@
 #include "arquivos.h"
 
 // EM CONSTRUÇÃO
-bool arquivo_criar(char* nomeArqBin, char* nomeArqCSV){
-    /*TRATAMENTO DE ERROS E ABERTURA DO ARQUIVO*/
-    if(nomeArqBin == NULL){
+bool arquivo_criar(char* nomeArqBin, char* nomeArqCSV) {
+    /* TRATAMENTO DE ERROS E ABERTURA DO ARQUIVO */
+    if(nomeArqBin == NULL || nomeArqCSV == NULL) {
         printf("Erro com o ponteiro para o nome do arquivo\n");
         return false;
     }
 
-    FILE* pontArqBin = fopen(nomeArqBin, "wb"); // Cria um arquivo binário para gravação. Caso já exista, sobrescreve
-    if(pontArqBin == NULL){
-        printf("Erro ao criar arquivo\n");
+    FILE* pontArqBin = fopen(nomeArqBin, "wb");
+    if(pontArqBin == NULL) {
+        printf("Erro ao criar arquivo binário\n");
         return false;
     }
 
-
-    FILE* pontArqCSV = fopen(nomeArqCSV, "r"); // Abre o arquivo .csv para leitura
-    if(pontArqCSV == NULL){
+    FILE* pontArqCSV = fopen(nomeArqCSV, "r");
+    if(pontArqCSV == NULL) {
         printf("Erro ao abrir arquivo .csv\n");
+        fclose(pontArqBin);
         return false;
     }
 
     HEADER* headerArq = header_criar();
-    if(headerArq == NULL){
+    if(headerArq == NULL) {
         printf("Erro ao criar header\n");
+        fclose(pontArqBin);
+        fclose(pontArqCSV);
         return false;
     }
 
-    /*HEADER INICIAL*/
-    header_escrever(pontArqBin, headerArq, true); // Escreve o header criado no arquivo
+    /* ESCREVE HEADER INICIAL */
+    header_escrever(pontArqBin, headerArq, true);
 
-    /*DADOS DO ARQUIVOS*/
-    // 1. Ler campos do csv (TAD ARQUIVOS)
-    // 2. Criar struct registro dado (TAD ARQUIVOS e TAD REGISTRO)
-    // 3. Escrever esses campos na struct (TAD arquivos)
-    // 4. Escrever essa struct no arquivo (TAD registros)
-    // 5. Repetir a partir do passo 2 até o fim do arquivo csv
+    char *campos[7];
+    char buffer[256] = "";
+    // Posiciona o ponteiro no inicio do arquivo
+    fseek(pontArqCSV, 0, SEEK_SET);
+    // Pega a primeira linha do arquivo
+    fgets(buffer, sizeof(buffer), pontArqCSV);
+    printf("%s\n", buffer);
+    while (fgets(buffer, sizeof(buffer), pontArqCSV) != NULL){
+        // Pega a primeira string antes da virgula
+        int fimDaLinha = strcspn(buffer, "\n");
+        buffer[fimDaLinha] = '\0';
 
-    /*
-    char stringTemp[256];
-    fread(stringTemp, sizeof(char), 253, pontArqCSV);
-    stringTemp[253] = '\0';
-    printf("%s\n", stringTemp);
+        char *tok = strtok(buffer, ",");
+        int i = 0;
+        while (tok != NULL && i < 7) {
+            campos[i] = tok;
+            tok = strtok(NULL, ",");
+            i++;
+        }
+        DADO *RegTemp = dado_criar(0, 0, -1, atoi(campos[0]), atoi(campos[1]), atof(campos[2]), campos[3], campos[4], campos[5], campos[6]);
+        imprime(RegTemp);
 
-    fread(stringTemp, sizeof(char), 41, pontArqCSV);
-    stringTemp[41] = '\0';
-    printf("%s\n", stringTemp);
-    */
+    }
 
-    /*ATUALIZANDO CAMPOS DO HEADER*/
-    // Alterando o status do arquivo antes de fechá-lo
+
+
+    /* ATUALIZAR HEADER */
     header_set_status(headerArq, '1');
-    // ... (outros campos a serem atualizados)
-
-    /*ESCREVENDO HEADER ATUALIZADO NO ARQUIVO*/
     header_escrever(pontArqBin, headerArq, false);
 
-    /*DESALOCANDO MEMÓRIA E FECHANDO O ARQUIVO*/
-    header_apagar(&headerArq); // Desalocando struct header
-
-
-    fclose(pontArqBin); // Fechando o arquivo
+    /* LIMPEZA */
+    header_apagar(&headerArq);
+    fclose(pontArqBin);
+    fclose(pontArqCSV);
 
     return true;
 }

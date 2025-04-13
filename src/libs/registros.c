@@ -28,6 +28,10 @@ struct dados_ {
     char* defenseMechanism; // Estratégia de defesa usada para resolver o problema
 };
 
+
+char *formata_string_registro (char *string, char* id);
+
+
 /* header_criar():
 Cria uma struct do tipo HEADER e a inicializa
 Parâmetros: void
@@ -186,20 +190,21 @@ Aloca dinamicamente memória para uma string e adiciona delimitadores no inicio 
 Parâmetros: string a ser formatada
 Retorna: uma string formatada  
 */
-char *formata_string_registro (char *string, char id){
+char *formata_string_registro (char *string, char *id){
     if (string == NULL) {
         return NULL;
     }
 
     // Aloca memória para a string com o tamanho extra para os delimitadores
-    char *strTemp = (char *) malloc(sizeof(char)*(strlen(string)+3));
+    char *strTemp = (char *) malloc(sizeof(char)*(strlen(string)+strlen(id)+2));
     if (strTemp == NULL) {
         printf("ERRO : alocação mal sucedida");
 
         return NULL;
     }
     
-    // Formatação da string com os delimitadores
+    // Construção segura da string
+    strTemp[0] = '\0'; // Inicializa o buffer
     strcat(strTemp, id);
     strcat(strTemp, string);
     strcat(strTemp, "|");
@@ -236,3 +241,17 @@ calcula o numero de bytes para o proximo byte offset
 
 retorna : tamanho registro + byteoffset atual
 */
+
+
+void imprime (DADO *reg) {
+    printf("Removido: %d\n", reg->removido);
+    printf("Tamanho do Registro : %d\n", reg->tamanhoRegistro);
+    printf("idAttack: %d\n", reg->idAttack);
+    printf("Year: %d\n", reg->year);
+    printf("finantialLoss: %f\n", reg->financialLoss);
+    printf("Country: %s\n", reg->country);
+    printf("attackType: %s\n", reg->attackType);
+    printf("targetIndustry: %s\n", reg->targetIndustry);
+    printf("defenseMechanism: %s\n", reg->defenseMechanism);
+    printf("--------------------\n\n");
+}

@@ -15,5 +15,6 @@
 
     // Escreve o header passado no arquivo binário
     bool header_escrever(FILE* pontArq, HEADER* header, bool semantico);
-
+    void imprime (DADO *reg);
+    DADO* dado_criar(char removido, int tamReg, long int prox, int idAttack, int year, float finLoss, char* country, char* attackType, char* targetInd, char* defMec);
 #endif
