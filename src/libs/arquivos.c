@@ -13,33 +13,7 @@ bool arquivo_criar(char* nomeArqBin, char* nomeArqCSV){
         printf("Erro ao abrir arquivo .csv\n");
         return false;
     }
-    
-    char *campos[7]; // Vetor de ponteiros de strings para guardar os campos do header e dos dados
-    char buffer[256] = ""; // Buffer para leitura do header e dos campos do .csv
 
-    /* LEITURA DOS CAMPOS DO HEADER */
-    fseek(pontArqCSV, 0, SEEK_SET); // Posiciona o ponteiro no inicio do arquivo
-    
-    fread(buffer, 253, 1, pontArqCSV); // Lê a primeira linha do .csv (descrições semânticas do header)
-    buffer[253] = '\0'; // Substituindo '\n' por '\0' no buffer, por segurança
-
-    // Vamos utilizar o strtok para separar a string no buffer nas ',' e evitar alocar espaço para as strings do header
-    char *tokHeader = strtok(buffer, ",");
-    // Guarda cada parte da string em um dos campos do vetor campos
-    int i = 0;
-    while(tokHeader != NULL && i < 7){
-        campos[i] = tokHeader;
-        tokHeader = strtok(NULL, ",");
-        i++;
-    }
-
-    // Criando struct header com os campos semânticos do header do .csv
-    HEADER *headerArq = header_criar(campos[0], campos[1], campos[2], campos[3], campos[4], campos[5], campos[6]);
-    if(headerArq == NULL){
-        printf("Erro ao criar header\n");
-        return false;
-    }
-    
     if(nomeArqBin == NULL){
         printf("Erro com o ponteiro para o nome do arquivo\n");
         return false;
@@ -51,9 +25,65 @@ bool arquivo_criar(char* nomeArqBin, char* nomeArqCSV){
         printf("Erro ao criar arquivo\n");
         return false;
     }
+    
+    char *campos[7]; // Vetor de ponteiros de strings para guardar os campos do header e dos dados
+    char buffer[256] = ""; // Buffer para leitura do header e dos campos do .csv
 
-    /* HEADER INICIAL */
-    header_escrever(pontArqBin, headerArq, true); // Escreve o header criado no arquivo
+    /* LEITURA DOS CAMPOS DO HEADER */
+    fseek(pontArqCSV, 0, SEEK_SET); // Posiciona o ponteiro no inicio do arquivo
+    
+    fread(buffer, 253, 1, pontArqCSV); // Lê a primeira linha do .csv (descrições semânticas do header)
+    buffer[253] = '\0'; // Substituindo '\n' por '\0' no buffer, por segurança
+
+    // Vamos utilizar o strtok para separar a string no buffer nas ',' e evitar alocar espaço para as strings do header
+    char *tok = strtok(buffer, ",");
+    // Guarda cada parte da string em um dos campos do vetor campos
+    int i = 0;
+    while(tok != NULL && i < 7){
+        campos[i] = tok;
+        tok = strtok(NULL, ",");
+        i++;
+    }
+
+    // Criando struct header com os campos semânticos do header do .csv
+    HEADER *headerArq = header_criar(campos[0], campos[1], campos[2], campos[3], campos[4], campos[5], campos[6]);
+    if(headerArq == NULL){
+        printf("Erro ao criar header\n");
+        return false;
+    }
+
+    // Escrevendo header no arquivo binário
+    header_escrever(pontArqBin, headerArq, true); 
+
+    /* LEITURA DOS DADOS */
+
+    // Posiciona o ponteiro no inicio do arquivo
+    fseek(pontArqCSV, 0, SEEK_SET);
+
+    // Pega a primeira linha do arquivo e ignora
+    fgets(buffer, sizeof(buffer), pontArqCSV);
+
+    while (fgets(buffer, sizeof(buffer), pontArqCSV) != NULL){
+        // Identifica o fim da linha lida e substitui o "\n" por um '\0'
+        int fimDaLinha = strcspn(buffer, "\n");
+        buffer[fimDaLinha] = '\0';
+
+        // Pega a primeira string antes da virgula
+        char *tok = strtok(buffer, ",");
+
+        int i = 0;
+        while (tok != NULL && i < 7) {
+            // Guarda a string num vetor de strings e pega o proxima após a vírgula
+            campos[i] = tok;
+            tok = strtok(NULL, ",");
+            i++;
+        }
+        // Guarda os dados lidos na struct DADO
+        DADO *RegTemp = dado_criar(0, 0, -1, atoi(campos[0]), atoi(campos[1]), atof(campos[2]), campos[3], campos[4], campos[5], campos[6]);
+
+        // Escreve os registros no arquivo binario
+        dado_escrever(pontArqBin, RegTemp);
+    }
 
     /* ATUALIZANDO CAMPOS DO HEADER */
     // Alterando o status do arquivo antes de fechá-lo

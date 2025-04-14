@@ -163,3 +163,116 @@ bool header_escrever(FILE* pontArq, HEADER* headerArq, bool semantico){
 
     return true;
 }
+// Funções auxiliares, explicadas mais adiante
+bool dado_set_tamReg (DADO *registro);
+char *formata_string_registro (char *string, char *id);
+
+DADO* dado_criar(char removido, int tamReg, long int prox, int idAttack, int year, float finLoss, char* country, char* attackType, char* targetInd, char* defMec){
+    DADO *novoRegistro = (DADO *) malloc(sizeof(DADO));
+    if (novoRegistro == NULL) {
+        printf("Erro ao criar struct\n");
+        return NULL;
+    }
+
+    /* INICIALIZANDO A STRUCT */
+
+    // Campos de tamanho fixo
+    novoRegistro->removido = removido;
+    novoRegistro->tamanhoRegistro = tamReg;
+    novoRegistro->prox = prox;
+    novoRegistro->idAttack = idAttack;
+    novoRegistro->year = year;
+    novoRegistro->financialLoss = finLoss;
+
+
+    // Campos de tamanho variável com delimitadores
+    novoRegistro->country = formata_string_registro(country, "1");
+    novoRegistro->attackType = formata_string_registro(attackType, "2");
+    novoRegistro->targetIndustry = formata_string_registro(targetInd, "3");
+    novoRegistro->defenseMechanism = formata_string_registro(defMec, "4");
+
+    dado_set_tamReg(novoRegistro);
+
+    return novoRegistro; // Retorna ponteiro para struct DADO
+}
+
+bool dado_escrever (FILE *pontArqBin, DADO *dado){
+        // Verifiva a corretude dos ponteiros
+        if (pontArqBin == NULL) {
+            printf("Erro com o ponteiro para o nome do arquivo\n");
+            return false;
+        }
+    
+        if (dado == NULL) {
+            printf("Erro de struct nula\n");
+            return false;
+        }
+    
+        // Escreve os dados no arquivo binário
+        fwrite(&(dado->removido), sizeof(int), 1, pontArqBin);
+        fwrite(&(dado->tamanhoRegistro), sizeof(int), 1, pontArqBin);
+        fwrite(&(dado->prox), sizeof(long int), 1, pontArqBin);
+        fwrite(&(dado->idAttack), sizeof(int), 1, pontArqBin);
+        fwrite(&(dado->year), sizeof(int), 1, pontArqBin);
+        fwrite(&(dado->financialLoss), sizeof(float), 1, pontArqBin);
+        fwrite(dado->country, sizeof(char), strlen(dado->country), pontArqBin);
+        fwrite(dado->attackType, sizeof(char), strlen(dado->attackType), pontArqBin);
+        fwrite(dado->targetIndustry, sizeof(char), strlen(dado->targetIndustry), pontArqBin);
+        fwrite(dado->defenseMechanism, sizeof(char), strlen(dado->defenseMechanism), pontArqBin);
+    
+        // Retorna o status da operação
+        return true;
+}
+
+void dado_apagar(DADO** dado);
+
+/* dado_set_tamReg():
+Calcula o número de bytes do registro e atualiza na struct
+Parâmetros: Ponteiro para struct
+Retorna: booleano indicando status da operação
+*/
+bool dado_set_tamReg (DADO *registro){
+    if(registro == NULL){
+        printf("Erro ao acessar registro\n");
+        return false;
+    }
+
+    int contadorBytes = 25; // Inicializa o contador com o tamanho dos campos fixos
+    
+    // Adiciona ao contador o tamanho dos campos variáveis
+    contadorBytes += strlen(registro->country);
+    contadorBytes += strlen(registro->attackType);
+    contadorBytes += strlen(registro->targetIndustry);
+    contadorBytes += strlen(registro->defenseMechanism);
+    
+    registro->tamanhoRegistro = contadorBytes;
+
+    return true;  
+}
+
+/* formata_string_registro():
+Aloca dinamicamente memória para uma string e adiciona delimitadores no inicio e final
+Parâmetros: string a ser formatada
+Retorna: uma string formatada  
+*/
+char *formata_string_registro (char *string, char *id){
+    if (string == NULL) {
+        return NULL;
+    }
+
+    // Aloca memória para a string com o tamanho extra para os delimitadores
+    char *strTemp = (char *) malloc(sizeof(char)*(strlen(string)+strlen(id)+2));
+    if (strTemp == NULL) {
+        printf("ERRO : alocação mal sucedida");
+
+        return NULL;
+    }
+    
+    // Construção segura da string
+    strTemp[0] = '\0'; // Inicializa o buffer
+    strcat(strTemp, id);
+    strcat(strTemp, string);
+    strcat(strTemp, "|");
+
+    return strTemp; // Retorna a string formatada
+}

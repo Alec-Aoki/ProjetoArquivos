@@ -25,4 +25,12 @@
     // Escreve o header passado no arquivo binário
     bool header_escrever(FILE* pontArq, HEADER* header, bool semantico);
 
+    // Aloca espaço na heap para um dado e o inicializa com os valores passados
+    DADO* dado_criar(char removido, int tamReg, long int prox, int idAttack, int year, float finLoss, char* country, char* attackType, char* targetInd, char* defMec);
+
+    // Escrve o dado passado no arquivo binário
+    bool dado_escrever (FILE *pontArqBin, DADO *dado);
+
+    // Desaloca a memória do dado passado e aponta seu ponteiro para NULL
+    void dado_apagar(DADO** dado);
 #endif
