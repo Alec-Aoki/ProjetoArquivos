@@ -12,3 +12,4 @@ run:
 
 clean:
 	rm -f main
+	rm -f *.bin

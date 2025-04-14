@@ -12,17 +12,17 @@ struct header_{
     long int proxByteOffset; // Valor do próximo byteoffset disponível
     int nroRegArq; // Quantidade de registros não removidos
     int nroRegRem; // Quantidade de registros removidos
-    char descreveIdentificador[23]; // Descrição do campo idAttack
-    char descreveYear[27]; // Descrição do campo year
-    char descreveFinancialLoss[28]; // Descrição do campo financialLoss
+    char descreveIdentificador[TAM_DESC_ID]; // Descrição do campo idAttack
+    char descreveYear[TAM_DESC_YEAR]; // Descrição do campo year
+    char descreveFinancialLoss[TAM_DESC_FIN_LOSS]; // Descrição do campo financialLoss
     char codDescreveCountry; // Código da keyword que representa o campo country
-    char descreveCountry[26]; // Descrição do campo country
+    char descreveCountry[TAM_DESC_COUNTRY]; // Descrição do campo country
     char codDescreveType; // Código da keyword que representa o campo attackType
-    char descreveType[38]; // Descrição do campo attackType
+    char descreveType[TAM_DESC_TYPE]; // Descrição do campo attackType
     char codDescreveTargetIndustry; // Código da keyword que representa o campo targetIndustry
-    char descreveTargetIndustry[38]; // Descrição do campo targetIndustry
+    char descreveTargetIndustry[TAM_DESC_TGT_IND]; // Descrição do campo targetIndustry
     char codDescreveDefense; // Código da keyword que representa o campo defenseMechanism
-    char descreveDefense[67]; // Descrição do campo defenseMechanism
+    char descreveDefense[TAM_DESC_DEF]; // Descrição do campo defenseMechanism
 };
 
 /*Armazena os campos de um registro de dados*/
@@ -41,7 +41,7 @@ struct dados_ {
 
 /* header_criar():
 Cria uma struct do tipo HEADER e a inicializa
-Parâmetros: strings para as descrições do header
+Parâmetros: ponteiros para strings (descrições do header)
 Retorna: ponteiro para a struct do tipo HEADER
 */
 HEADER* header_criar(char* descIdent, char* descYear, char* descFinLoss, char* descCountry, char* descType, char* descTargInd, char* descDef){
@@ -65,13 +65,13 @@ HEADER* header_criar(char* descIdent, char* descYear, char* descFinLoss, char* d
     novoHeader->codDescreveType = '2';
     novoHeader->codDescreveTargetIndustry = '3';
     novoHeader->codDescreveDefense = '4';
-    strncpy(novoHeader->descreveIdentificador, descIdent, 23);
-    strncpy(novoHeader->descreveYear, descYear, 27);
-    strncpy(novoHeader->descreveFinancialLoss, descFinLoss, 28);
-    strncpy(novoHeader->descreveCountry, descCountry, 26);
-    strncpy(novoHeader->descreveType, descType, 38);
-    strncpy(novoHeader->descreveTargetIndustry, descTargInd, 38);
-    strncpy(novoHeader->descreveDefense, descDef, 67);
+    strncpy(novoHeader->descreveIdentificador, descIdent, TAM_DESC_ID);
+    strncpy(novoHeader->descreveYear, descYear, TAM_DESC_YEAR);
+    strncpy(novoHeader->descreveFinancialLoss, descFinLoss, TAM_DESC_FIN_LOSS);
+    strncpy(novoHeader->descreveCountry, descCountry, TAM_DESC_COUNTRY);
+    strncpy(novoHeader->descreveType, descType, TAM_DESC_TYPE);
+    strncpy(novoHeader->descreveTargetIndustry, descTargInd, TAM_DESC_TGT_IND);
+    strncpy(novoHeader->descreveDefense, descDef, TAM_DESC_DEF);
 
     return novoHeader; // Retornando ponteiro para HEADER
 }
@@ -118,7 +118,7 @@ bool header_escrever(FILE* pontArq, HEADER* headerArq, bool semantico){
         return false;
     }
 
-    // Escrevendo struct header no arquivo campo a campo
+    // Escrevendo os campos variáveis da struct header no arquivo
     fwrite(&(headerArq->status), sizeof(char), 1, pontArq);
     fwrite(&(headerArq->topo), sizeof(long int), 1, pontArq);
     fwrite(&(headerArq->proxByteOffset), sizeof(long int), 1, pontArq);
@@ -128,44 +128,38 @@ bool header_escrever(FILE* pontArq, HEADER* headerArq, bool semantico){
     // Escrevendo a parte semântica somente se necessário
     if(semantico){        
         // descreveIdentificador: descrição do campo idAttack
-        fwrite(headerArq->descreveIdentificador, sizeof(char), 23, pontArq);
+        fwrite(headerArq->descreveIdentificador, sizeof(char), TAM_DESC_ID, pontArq);
 
         // descreveYear: descrição do campo year
-        fwrite(headerArq->descreveYear, sizeof(char), 27, pontArq);
+        fwrite(headerArq->descreveYear, sizeof(char), TAM_DESC_YEAR, pontArq);
 
         // descreveFinancialLoss: descrição do campo financialLoss
-        fwrite(headerArq->descreveFinancialLoss, sizeof(char), 28, pontArq);
+        fwrite(headerArq->descreveFinancialLoss, sizeof(char), TAM_DESC_FIN_LOSS, pontArq);
 
         // codDescreveCountry: código da keyword que representa o campo country
         fwrite(&(headerArq->codDescreveCountry), sizeof(char), 1, pontArq);
 
         // descreveYear: descrição do campo country
-        fwrite(headerArq->descreveCountry, sizeof(char), 26, pontArq);
+        fwrite(headerArq->descreveCountry, sizeof(char), TAM_DESC_COUNTRY, pontArq);
 
         // codDescreveType: código da keyword que representa o campo type
         fwrite(&(headerArq->codDescreveType), sizeof(char), 1, pontArq);
 
         // descreveType: descrição do campo type
-        fwrite(headerArq->descreveType, sizeof(char), 38, pontArq);
+        fwrite(headerArq->descreveType, sizeof(char), TAM_DESC_TYPE, pontArq);
 
         // codDescreveTargetIndustry: código da keyword que representa o campo targetIndustry
         fwrite(&(headerArq->codDescreveTargetIndustry), sizeof(char), 1, pontArq);
 
         // descreveTargetIndustry: descrição do campo targetIndustry
-        fwrite(headerArq->descreveTargetIndustry, sizeof(char), 38, pontArq);
+        fwrite(headerArq->descreveTargetIndustry, sizeof(char), TAM_DESC_TGT_IND, pontArq);
 
         // codDescreveDefense: código da keyword que representa o campo defenseMechanism
         fwrite(&(headerArq->codDescreveDefense), sizeof(char), 1, pontArq);
 
         // descreveDefense: descrição do campo defenseMechanism
-        fwrite(headerArq->descreveDefense, sizeof(char), 67, pontArq);
+        fwrite(headerArq->descreveDefense, sizeof(char), TAM_DESC_DEF, pontArq);
     }
 
     return true;
 }
-
-// TODO
-/*
-DADO* dado_criar(char removido, int tamReg, long int prox, int idAttack, int year, float finLoss, char* country, char* attackType, char* targetInd, char* defMec){
-
-}*/

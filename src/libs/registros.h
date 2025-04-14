@@ -1,6 +1,15 @@
 #ifndef REGISTROS_H
     #define REGISTROS_H
 
+    // Tamanho das strings do header (em bytes)
+    #define TAM_DESC_ID 23
+    #define TAM_DESC_YEAR 27
+    #define TAM_DESC_FIN_LOSS 28
+    #define TAM_DESC_COUNTRY 26
+    #define TAM_DESC_TYPE 38
+    #define TAM_DESC_TGT_IND 38
+    #define TAM_DESC_DEF 67
+
     typedef struct header_ HEADER;
     typedef struct dados_ DADO;
 
