@@ -5,7 +5,7 @@
 
 #include "registros.h"
 
-/*Armazena os campos do header que sofrem alterações*/
+/*Armazena os campos de um registro de header*/
 struct header_{
     char status; // Consistência do arquivo de dados. 0 = inconsistente, 1 = consistente
     long int topo; // Byteoffset do primeiro registro logicamente removido. -1 = nenhum registro removido
@@ -41,7 +41,7 @@ struct dados_ {
 
 /* header_criar():
 Cria uma struct do tipo HEADER e a inicializa
-Parâmetros: strings para as descriçõs do header
+Parâmetros: strings para as descrições do header
 Retorna: ponteiro para a struct do tipo HEADER
 */
 HEADER* header_criar(char* descIdent, char* descYear, char* descFinLoss, char* descCountry, char* descType, char* descTargInd, char* descDef){
@@ -52,24 +52,26 @@ HEADER* header_criar(char* descIdent, char* descYear, char* descFinLoss, char* d
         return NULL;
     }
 
-    // Inicializando a struct
+    /* INICIALIZANDO O HEADER */
+    // Campos de valor variável
     novoHeader->status = '0';
     novoHeader->topo = -1;
     novoHeader->proxByteOffset = 0;
     novoHeader->nroRegArq = 0;
     novoHeader->nroRegRem = 0;
-    novoHeader->codDescreveCountry = 1;
-    novoHeader->codDescreveType = 2;
-    novoHeader->codDescreveTargetIndustry = 3;
-    novoHeader->codDescreveDefense = 4;
 
-    strcpy(novoHeader->descreveIdentificador, descIdent);
-    strcpy(novoHeader->descreveYear, descYear);
-    strcpy(novoHeader->descreveFinancialLoss, descFinLoss);
-    strcpy(novoHeader->descreveCountry, descCountry);
-    strcpy(novoHeader->descreveType, descType);
-    strcpy(novoHeader->descreveTargetIndustry, descTargInd);
-    strcpy(novoHeader->descreveDefense, descDef);
+    // Campos de valor fixo (semânticos)
+    novoHeader->codDescreveCountry = '1';
+    novoHeader->codDescreveType = '2';
+    novoHeader->codDescreveTargetIndustry = '3';
+    novoHeader->codDescreveDefense = '4';
+    strncpy(novoHeader->descreveIdentificador, descIdent, 23);
+    strncpy(novoHeader->descreveYear, descYear, 27);
+    strncpy(novoHeader->descreveFinancialLoss, descFinLoss, 28);
+    strncpy(novoHeader->descreveCountry, descCountry, 26);
+    strncpy(novoHeader->descreveType, descType, 38);
+    strncpy(novoHeader->descreveTargetIndustry, descTargInd, 38);
+    strncpy(novoHeader->descreveDefense, descDef, 67);
 
     return novoHeader; // Retornando ponteiro para HEADER
 }
@@ -129,13 +131,16 @@ bool header_escrever(FILE* pontArq, HEADER* headerArq, bool semantico){
         fwrite(headerArq->descreveIdentificador, sizeof(char), 23, pontArq);
 
         // descreveYear: descrição do campo year
-        fwrite(headerArq->descreveYear, sizeof(char), 28, pontArq);
+        fwrite(headerArq->descreveYear, sizeof(char), 27, pontArq);
 
         // descreveFinancialLoss: descrição do campo financialLoss
         fwrite(headerArq->descreveFinancialLoss, sizeof(char), 28, pontArq);
 
         // codDescreveCountry: código da keyword que representa o campo country
         fwrite(&(headerArq->codDescreveCountry), sizeof(char), 1, pontArq);
+
+        // descreveYear: descrição do campo country
+        fwrite(headerArq->descreveCountry, sizeof(char), 26, pontArq);
 
         // codDescreveType: código da keyword que representa o campo type
         fwrite(&(headerArq->codDescreveType), sizeof(char), 1, pontArq);
