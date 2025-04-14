@@ -14,27 +14,27 @@ bool arquivo_criar(char* nomeArqBin, char* nomeArqCSV){
         return false;
     }
     
+    char *campos[7]; // Vetor de ponteiros de strings para guardar os campos do header e dos dados
+    char buffer[256] = ""; // Buffer para leitura do header e dos campos do .csv
+
     /* LEITURA DOS CAMPOS DO HEADER */
-    char *camposHeader[7]; // Vetor de ponteiros de strings para guardar os campos do header
-    char bufferHeader[254] = ""; // Buffer para leitura do header do .csv
-    
     fseek(pontArqCSV, 0, SEEK_SET); // Posiciona o ponteiro no inicio do arquivo
     
-    fread(bufferHeader, 253, 1, pontArqCSV); // Lê a primeira linha do .csv (descrições semânticas do header)
-    bufferHeader[253] = '\0'; // Substituindo '\n' por '\0' no buffer, por segurança
+    fread(buffer, 253, 1, pontArqCSV); // Lê a primeira linha do .csv (descrições semânticas do header)
+    buffer[253] = '\0'; // Substituindo '\n' por '\0' no buffer, por segurança
 
     // Vamos utilizar o strtok para separar a string no buffer nas ',' e evitar alocar espaço para as strings do header
-    char *tokHeader = strtok(bufferHeader, ",");
-    // Guarda cada parte da string em um dos campos do vetor camposHeader
+    char *tokHeader = strtok(buffer, ",");
+    // Guarda cada parte da string em um dos campos do vetor campos
     int i = 0;
     while(tokHeader != NULL && i < 7){
-        camposHeader[i] = tokHeader;
+        campos[i] = tokHeader;
         tokHeader = strtok(NULL, ",");
         i++;
     }
 
     // Criando struct header com os campos semânticos do header do .csv
-    HEADER *headerArq = header_criar(camposHeader[0], camposHeader[1], camposHeader[2], camposHeader[3], camposHeader[4], camposHeader[5], camposHeader[6]);
+    HEADER *headerArq = header_criar(campos[0], campos[1], campos[2], campos[3], campos[4], campos[5], campos[6]);
     if(headerArq == NULL){
         printf("Erro ao criar header\n");
         return false;
