@@ -12,6 +12,17 @@ struct header_{
     long int proxByteOffset; // Valor do próximo byteoffset disponível
     int nroRegArq; // Quantidade de registros não removidos
     int nroRegRem; // Quantidade de registros removidos
+    char descreveIdentificador[23]; // Descrição do campo idAttack
+    char descreveYear[27]; // Descrição do campo year
+    char descreveFinancialLoss[28]; // Descrição do campo financialLoss
+    char codDescreveCountry; // Código da keyword que representa o campo country
+    char descreveCountry[26]; // Descrição do campo country
+    char codDescreveType; // Código da keyword que representa o campo attackType
+    char descreveType[38]; // Descrição do campo attackType
+    char codDescreveTargetIndustry; // Código da keyword que representa o campo targetIndustry
+    char descreveTargetIndustry[38]; // Descrição do campo targetIndustry
+    char codDescreveDefense; // Código da keyword que representa o campo defenseMechanism
+    char descreveDefense[67]; // Descrição do campo defenseMechanism
 };
 
 /*Armazena os campos de um registro de dados*/
@@ -30,10 +41,10 @@ struct dados_ {
 
 /* header_criar():
 Cria uma struct do tipo HEADER e a inicializa
-Parâmetros: void
+Parâmetros: strings para as descriçõs do header
 Retorna: ponteiro para a struct do tipo HEADER
 */
-HEADER* header_criar(void){
+HEADER* header_criar(char* descIdent, char* descYear, char* descFinLoss, char* descCountry, char* descType, char* descTargInd, char* descDef){
     HEADER* novoHeader = (HEADER *) malloc(sizeof(HEADER)); // Alocando dinâmicamente uma struct do tipo HEADER
     if(novoHeader == NULL){
         printf("Erro ao criar struct\n");
@@ -47,20 +58,20 @@ HEADER* header_criar(void){
     novoHeader->proxByteOffset = 0;
     novoHeader->nroRegArq = 0;
     novoHeader->nroRegRem = 0;
+    novoHeader->codDescreveCountry = 1;
+    novoHeader->codDescreveType = 2;
+    novoHeader->codDescreveTargetIndustry = 3;
+    novoHeader->codDescreveDefense = 4;
+
+    strcpy(novoHeader->descreveIdentificador, descIdent);
+    strcpy(novoHeader->descreveYear, descYear);
+    strcpy(novoHeader->descreveFinancialLoss, descFinLoss);
+    strcpy(novoHeader->descreveCountry, descCountry);
+    strcpy(novoHeader->descreveType, descType);
+    strcpy(novoHeader->descreveTargetIndustry, descTargInd);
+    strcpy(novoHeader->descreveDefense, descDef);
 
     return novoHeader; // Retornando ponteiro para HEADER
-}
-
-/* header_apagar():
-Desaloca uma struct do tipo header e define seu ponteiro para NULL
-Parâmetros: ponteiro de ponteiro para a struct a ser desalocada
-Retorna: void
-*/
-void header_apagar(HEADER** header){
-    free(*header); // Desalocando memória
-    *header = NULL; // Definindo o ponteiro para NULL
-
-    return;
 }
 
 /* header_set_status():
@@ -76,6 +87,18 @@ bool header_set_status(HEADER* header, char status){
 
     header->status = status; // Definindo o novo status
     return true;
+}
+
+/* header_apagar():
+Desaloca uma struct do tipo header e define seu ponteiro para NULL
+Parâmetros: ponteiro de ponteiro para a struct a ser desalocada
+Retorna: void
+*/
+void header_apagar(HEADER** header){
+    free(*header); // Desalocando memória
+    *header = NULL; // Definindo o ponteiro para NULL
+
+    return;
 }
 
 /* header_escrever():
@@ -101,51 +124,36 @@ bool header_escrever(FILE* pontArq, HEADER* headerArq, bool semantico){
     fwrite(&(headerArq->nroRegRem), sizeof(int), 1, pontArq);
 
     // Escrevendo a parte semântica somente se necessário
-    if(semantico){
-        char* stringTemp = (char *) malloc(68 * sizeof(char)); // Alocando dinâmicamente uma string de tamanho máximo de 68 caracteres
-        // Essa string será usada para escrever os campos restantes do header (semânticos)
-        
+    if(semantico){        
         // descreveIdentificador: descrição do campo idAttack
-        strcpy(stringTemp, "IDENTIFICADOR DO ATAQUE");
-        fwrite(stringTemp, sizeof(char), 23, pontArq);
+        fwrite(headerArq->descreveIdentificador, sizeof(char), 23, pontArq);
 
         // descreveYear: descrição do campo year
-        strcpy(stringTemp, "ANO EM QUE O ATAQUE OCORREU");
-        fwrite(stringTemp, sizeof(char), 27, pontArq);
+        fwrite(headerArq->descreveYear, sizeof(char), 28, pontArq);
 
         // descreveFinancialLoss: descrição do campo financialLoss
-        strcpy(stringTemp, "PREJUIZO CAUSADO PELO ATAQUE");
-        fwrite(stringTemp, sizeof(char), 28, pontArq);
+        fwrite(headerArq->descreveFinancialLoss, sizeof(char), 28, pontArq);
 
         // codDescreveCountry: código da keyword que representa o campo country
-        strcpy(stringTemp, "1");
-        fwrite(stringTemp, sizeof(char), 1, pontArq);
+        fwrite(&(headerArq->codDescreveCountry), sizeof(char), 1, pontArq);
 
         // codDescreveType: código da keyword que representa o campo type
-        strcpy(stringTemp, "2");
-        fwrite(stringTemp, sizeof(char), 1, pontArq);
+        fwrite(&(headerArq->codDescreveType), sizeof(char), 1, pontArq);
 
         // descreveType: descrição do campo type
-        strcpy(stringTemp, "TIPO DE AMEACA A SEGURANCA CIBERNETICA");
-        fwrite(stringTemp, sizeof(char), 38, pontArq);
+        fwrite(headerArq->descreveType, sizeof(char), 38, pontArq);
 
         // codDescreveTargetIndustry: código da keyword que representa o campo targetIndustry
-        strcpy(stringTemp, "3");
-        fwrite(stringTemp, sizeof(char), 1, pontArq);
+        fwrite(&(headerArq->codDescreveTargetIndustry), sizeof(char), 1, pontArq);
 
         // descreveTargetIndustry: descrição do campo targetIndustry
-        strcpy(stringTemp, "SETOR DA INDUSTRIA QUE SOFREU O ATAQUE");
-        fwrite(stringTemp, sizeof(char), 38, pontArq);
+        fwrite(headerArq->descreveTargetIndustry, sizeof(char), 38, pontArq);
 
         // codDescreveDefense: código da keyword que representa o campo defenseMechanism
-        strcpy(stringTemp, "4");
-        fwrite(stringTemp, sizeof(char), 1, pontArq);
+        fwrite(&(headerArq->codDescreveDefense), sizeof(char), 1, pontArq);
 
         // descreveDefense: descrição do campo defenseMechanism
-        strcpy(stringTemp, "ESTRATEGIA DE DEFESA CIBERNETICA EMPREGADA PARA RESOLVER O PROBLEMA");
-        fwrite(stringTemp, sizeof(char), 67, pontArq);
-
-        free(stringTemp); // Desalocando a string temporária
+        fwrite(headerArq->descreveDefense, sizeof(char), 67, pontArq);
     }
 
     return true;
