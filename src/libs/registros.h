@@ -1,11 +1,20 @@
 #ifndef REGISTROS_H
     #define REGISTROS_H
 
+    // Tamanho das strings do header (em bytes)
+    #define TAM_DESC_ID 23
+    #define TAM_DESC_YEAR 27
+    #define TAM_DESC_FIN_LOSS 28
+    #define TAM_DESC_COUNTRY 26
+    #define TAM_DESC_TYPE 38
+    #define TAM_DESC_TGT_IND 38
+    #define TAM_DESC_DEF 67
+
     typedef struct header_ HEADER;
     typedef struct dados_ DADO;
 
-    // Aloca espaço na heap para um header e o inicializa
-    HEADER* header_criar(void);
+    // Aloca espaço na heap para um header e o inicializa com as strings semânticas
+    HEADER* header_criar(char* descIdent, char* descYear, char* descFinLoss, char* descCountry, char* descType, char* descTargInd, char* descDef);
 
     // Desaloca a memória do header passado e aponta seu ponteiro para NULL
     void header_apagar(HEADER** header);

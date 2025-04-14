@@ -5,13 +5,24 @@
 
 #include "registros.h"
 
-/*Armazena os campos do header que sofrem alterações*/
+/*Armazena os campos de um registro de header*/
 struct header_{
     char status; // Consistência do arquivo de dados. 0 = inconsistente, 1 = consistente
     long int topo; // Byteoffset do primeiro registro logicamente removido. -1 = nenhum registro removido
     long int proxByteOffset; // Valor do próximo byteoffset disponível
     int nroRegArq; // Quantidade de registros não removidos
     int nroRegRem; // Quantidade de registros removidos
+    char descreveIdentificador[TAM_DESC_ID]; // Descrição do campo idAttack
+    char descreveYear[TAM_DESC_YEAR]; // Descrição do campo year
+    char descreveFinancialLoss[TAM_DESC_FIN_LOSS]; // Descrição do campo financialLoss
+    char codDescreveCountry; // Código da keyword que representa o campo country
+    char descreveCountry[TAM_DESC_COUNTRY]; // Descrição do campo country
+    char codDescreveType; // Código da keyword que representa o campo attackType
+    char descreveType[TAM_DESC_TYPE]; // Descrição do campo attackType
+    char codDescreveTargetIndustry; // Código da keyword que representa o campo targetIndustry
+    char descreveTargetIndustry[TAM_DESC_TGT_IND]; // Descrição do campo targetIndustry
+    char codDescreveDefense; // Código da keyword que representa o campo defenseMechanism
+    char descreveDefense[TAM_DESC_DEF]; // Descrição do campo defenseMechanism
 };
 
 /*Armazena os campos de um registro de dados*/
@@ -30,10 +41,10 @@ struct dados_ {
 
 /* header_criar():
 Cria uma struct do tipo HEADER e a inicializa
-Parâmetros: void
+Parâmetros: ponteiros para strings (descrições do header)
 Retorna: ponteiro para a struct do tipo HEADER
 */
-HEADER* header_criar(void){
+HEADER* header_criar(char* descIdent, char* descYear, char* descFinLoss, char* descCountry, char* descType, char* descTargInd, char* descDef){
     HEADER* novoHeader = (HEADER *) malloc(sizeof(HEADER)); // Alocando dinâmicamente uma struct do tipo HEADER
     if(novoHeader == NULL){
         printf("Erro ao criar struct\n");
@@ -41,26 +52,28 @@ HEADER* header_criar(void){
         return NULL;
     }
 
-    // Inicializando a struct
+    /* INICIALIZANDO O HEADER */
+    // Campos de valor variável
     novoHeader->status = '0';
     novoHeader->topo = -1;
     novoHeader->proxByteOffset = 0;
     novoHeader->nroRegArq = 0;
     novoHeader->nroRegRem = 0;
 
+    // Campos de valor fixo (semânticos)
+    novoHeader->codDescreveCountry = '1';
+    novoHeader->codDescreveType = '2';
+    novoHeader->codDescreveTargetIndustry = '3';
+    novoHeader->codDescreveDefense = '4';
+    strncpy(novoHeader->descreveIdentificador, descIdent, TAM_DESC_ID);
+    strncpy(novoHeader->descreveYear, descYear, TAM_DESC_YEAR);
+    strncpy(novoHeader->descreveFinancialLoss, descFinLoss, TAM_DESC_FIN_LOSS);
+    strncpy(novoHeader->descreveCountry, descCountry, TAM_DESC_COUNTRY);
+    strncpy(novoHeader->descreveType, descType, TAM_DESC_TYPE);
+    strncpy(novoHeader->descreveTargetIndustry, descTargInd, TAM_DESC_TGT_IND);
+    strncpy(novoHeader->descreveDefense, descDef, TAM_DESC_DEF);
+
     return novoHeader; // Retornando ponteiro para HEADER
-}
-
-/* header_apagar():
-Desaloca uma struct do tipo header e define seu ponteiro para NULL
-Parâmetros: ponteiro de ponteiro para a struct a ser desalocada
-Retorna: void
-*/
-void header_apagar(HEADER** header){
-    free(*header); // Desalocando memória
-    *header = NULL; // Definindo o ponteiro para NULL
-
-    return;
 }
 
 /* header_set_status():
@@ -78,6 +91,18 @@ bool header_set_status(HEADER* header, char status){
     return true;
 }
 
+/* header_apagar():
+Desaloca uma struct do tipo header e define seu ponteiro para NULL
+Parâmetros: ponteiro de ponteiro para a struct a ser desalocada
+Retorna: void
+*/
+void header_apagar(HEADER** header){
+    free(*header); // Desalocando memória
+    *header = NULL; // Definindo o ponteiro para NULL
+
+    return;
+}
+
 /* header_escrever():
 Escreve um header passado no arquivo binário
 Parâmetros: ponteiro para um arquivo, ponteiro para um header e valor booleano (true = escrever string semanticas, false = escrever somente struct)
@@ -93,7 +118,7 @@ bool header_escrever(FILE* pontArq, HEADER* headerArq, bool semantico){
         return false;
     }
 
-    // Escrevendo struct header no arquivo campo a campo
+    // Escrevendo os campos variáveis da struct header no arquivo
     fwrite(&(headerArq->status), sizeof(char), 1, pontArq);
     fwrite(&(headerArq->topo), sizeof(long int), 1, pontArq);
     fwrite(&(headerArq->proxByteOffset), sizeof(long int), 1, pontArq);
@@ -101,58 +126,40 @@ bool header_escrever(FILE* pontArq, HEADER* headerArq, bool semantico){
     fwrite(&(headerArq->nroRegRem), sizeof(int), 1, pontArq);
 
     // Escrevendo a parte semântica somente se necessário
-    if(semantico){
-        char* stringTemp = (char *) malloc(68 * sizeof(char)); // Alocando dinâmicamente uma string de tamanho máximo de 68 caracteres
-        // Essa string será usada para escrever os campos restantes do header (semânticos)
-        
+    if(semantico){        
         // descreveIdentificador: descrição do campo idAttack
-        strcpy(stringTemp, "IDENTIFICADOR DO ATAQUE");
-        fwrite(stringTemp, sizeof(char), 23, pontArq);
+        fwrite(headerArq->descreveIdentificador, sizeof(char), TAM_DESC_ID, pontArq);
 
         // descreveYear: descrição do campo year
-        strcpy(stringTemp, "ANO EM QUE O ATAQUE OCORREU");
-        fwrite(stringTemp, sizeof(char), 27, pontArq);
+        fwrite(headerArq->descreveYear, sizeof(char), TAM_DESC_YEAR, pontArq);
 
         // descreveFinancialLoss: descrição do campo financialLoss
-        strcpy(stringTemp, "PREJUIZO CAUSADO PELO ATAQUE");
-        fwrite(stringTemp, sizeof(char), 28, pontArq);
+        fwrite(headerArq->descreveFinancialLoss, sizeof(char), TAM_DESC_FIN_LOSS, pontArq);
 
         // codDescreveCountry: código da keyword que representa o campo country
-        strcpy(stringTemp, "1");
-        fwrite(stringTemp, sizeof(char), 1, pontArq);
+        fwrite(&(headerArq->codDescreveCountry), sizeof(char), 1, pontArq);
+
+        // descreveYear: descrição do campo country
+        fwrite(headerArq->descreveCountry, sizeof(char), TAM_DESC_COUNTRY, pontArq);
 
         // codDescreveType: código da keyword que representa o campo type
-        strcpy(stringTemp, "2");
-        fwrite(stringTemp, sizeof(char), 1, pontArq);
+        fwrite(&(headerArq->codDescreveType), sizeof(char), 1, pontArq);
 
         // descreveType: descrição do campo type
-        strcpy(stringTemp, "TIPO DE AMEACA A SEGURANCA CIBERNETICA");
-        fwrite(stringTemp, sizeof(char), 38, pontArq);
+        fwrite(headerArq->descreveType, sizeof(char), TAM_DESC_TYPE, pontArq);
 
         // codDescreveTargetIndustry: código da keyword que representa o campo targetIndustry
-        strcpy(stringTemp, "3");
-        fwrite(stringTemp, sizeof(char), 1, pontArq);
+        fwrite(&(headerArq->codDescreveTargetIndustry), sizeof(char), 1, pontArq);
 
         // descreveTargetIndustry: descrição do campo targetIndustry
-        strcpy(stringTemp, "SETOR DA INDUSTRIA QUE SOFREU O ATAQUE");
-        fwrite(stringTemp, sizeof(char), 38, pontArq);
+        fwrite(headerArq->descreveTargetIndustry, sizeof(char), TAM_DESC_TGT_IND, pontArq);
 
         // codDescreveDefense: código da keyword que representa o campo defenseMechanism
-        strcpy(stringTemp, "4");
-        fwrite(stringTemp, sizeof(char), 1, pontArq);
+        fwrite(&(headerArq->codDescreveDefense), sizeof(char), 1, pontArq);
 
         // descreveDefense: descrição do campo defenseMechanism
-        strcpy(stringTemp, "ESTRATEGIA DE DEFESA CIBERNETICA EMPREGADA PARA RESOLVER O PROBLEMA");
-        fwrite(stringTemp, sizeof(char), 67, pontArq);
-
-        free(stringTemp); // Desalocando a string temporária
+        fwrite(headerArq->descreveDefense, sizeof(char), TAM_DESC_DEF, pontArq);
     }
 
     return true;
 }
-
-// TODO
-/*
-DADO* dado_criar(char removido, int tamReg, long int prox, int idAttack, int year, float finLoss, char* country, char* attackType, char* targetInd, char* defMec){
-
-}*/
