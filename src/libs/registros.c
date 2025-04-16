@@ -29,7 +29,16 @@ struct dados_ {
 };
 
 
+// Protótipos das funções
+HEADER* header_criar(void);
+void header_apagar(HEADER** header);
+bool header_set_status(HEADER* header, char status);
+bool header_escrever(FILE* pontArq, HEADER* headerArq, bool semantico);
+DADO* dado_criar(char removido, int tamReg, long int prox, int idAttack, int year, float finLoss, char* country, char* attackType, char* targetInd, char* defMec);
 char *formata_string_registro (char *string, char* id);
+bool set_dado_reg_tam (DADO *registro);
+bool guarda_arqBin (FILE *pontArqBin, DADO *reg);
+
 
 
 /* header_criar():
