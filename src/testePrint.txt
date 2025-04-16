@@ -33,11 +33,11 @@ defenseMechanism: 4VPN|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 79
+Tamanho do Registro : 78
 idAttack: 4
 Year: 2024
 finantialLoss: 41.439999
-Country: 1|
+Country: |
 attackType: 2RANSOMWARE|
 targetIndustry: 3TELECOMMUNICATIONS|
 defenseMechanism: 4AI-BASED DETECTION|
@@ -77,13 +77,13 @@ defenseMechanism: 4VPN|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 61
+Tamanho do Registro : 60
 idAttack: 8
 Year: 2018
 finantialLoss: 59.230000
 Country: 1FRANCE|
 attackType: 2SQL INJECTION|
-targetIndustry: 3|
+targetIndustry: |
 defenseMechanism: 4ANTIVIRUS|
 --------------------
 
@@ -165,13 +165,13 @@ defenseMechanism: 4ENCRYPTION|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 60
+Tamanho do Registro : 59
 idAttack: 16
 Year: 2022
 finantialLoss: 64.309998
 Country: 1AUSTRALIA|
 attackType: 2PHISHING|
-targetIndustry: 3|
+targetIndustry: |
 defenseMechanism: 4ENCRYPTION|
 --------------------
 
@@ -187,14 +187,14 @@ defenseMechanism: 4AI-BASED DETECTION|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 44
+Tamanho do Registro : 43
 idAttack: 18
 Year: 2015
 finantialLoss: 93.139999
 Country: 1INDIA|
 attackType: 2DDOS|
 targetIndustry: 3IT|
-defenseMechanism: 4|
+defenseMechanism: |
 --------------------
 
 Removido: 0
@@ -275,12 +275,12 @@ defenseMechanism: 4VPN|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 62
+Tamanho do Registro : 61
 idAttack: 26
 Year: 2021
 finantialLoss: 51.060001
 Country: 1CHINA|
-attackType: 2|
+attackType: |
 targetIndustry: 3RETAIL|
 defenseMechanism: 4AI-BASED DETECTION|
 --------------------
@@ -319,13 +319,13 @@ defenseMechanism: 4ANTIVIRUS|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 56
+Tamanho do Registro : 55
 idAttack: 30
 Year: 2015
 finantialLoss: 82.699997
 Country: 1AUSTRALIA|
 attackType: 2DDOS|
-targetIndustry: 3|
+targetIndustry: |
 defenseMechanism: 4ENCRYPTION|
 --------------------
 
@@ -363,23 +363,23 @@ defenseMechanism: 4ENCRYPTION|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 53
+Tamanho do Registro : 52
 idAttack: 34
 Year: 2022
 finantialLoss: -1.000000
 Country: 1JAPAN|
 attackType: 2PHISHING|
 targetIndustry: 3BANKING|
-defenseMechanism: 4|
+defenseMechanism: |
 --------------------
 
 Removido: 0
-Tamanho do Registro : 52
+Tamanho do Registro : 51
 idAttack: 35
 Year: 2023
 finantialLoss: 14.510000
 Country: 1BRAZIL|
-attackType: 2|
+attackType: |
 targetIndustry: 3HEALTHCARE|
 defenseMechanism: 4VPN|
 --------------------
@@ -462,12 +462,12 @@ defenseMechanism: 4VPN|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 51
+Tamanho do Registro : 50
 idAttack: 43
 Year: -1
 finantialLoss: -1.000000
 Country: 1UK|
-attackType: 2|
+attackType: |
 targetIndustry: 3RETAIL|
 defenseMechanism: 4ENCRYPTION|
 --------------------
@@ -627,13 +627,13 @@ defenseMechanism: 4ANTIVIRUS|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 50
+Tamanho do Registro : 49
 idAttack: 58
 Year: -1
 finantialLoss: 76.430000
 Country: 1INDIA|
 attackType: 2DDOS|
-targetIndustry: 3|
+targetIndustry: |
 defenseMechanism: 4FIREWALL|
 --------------------
 
@@ -704,12 +704,12 @@ defenseMechanism: 4ANTIVIRUS|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 55
+Tamanho do Registro : 54
 idAttack: 65
 Year: 2024
 finantialLoss: 72.349998
 Country: 1CHINA|
-attackType: 2|
+attackType: |
 targetIndustry: 3EDUCATION|
 defenseMechanism: 4FIREWALL|
 --------------------
@@ -748,12 +748,12 @@ defenseMechanism: 4ANTIVIRUS|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 49
+Tamanho do Registro : 48
 idAttack: 69
 Year: 2016
 finantialLoss: 28.660000
 Country: 1FRANCE|
-attackType: 2|
+attackType: |
 targetIndustry: 3BANKING|
 defenseMechanism: 4VPN|
 --------------------
@@ -770,25 +770,25 @@ defenseMechanism: 4FIREWALL|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 57
+Tamanho do Registro : 56
 idAttack: 71
 Year: 2015
 finantialLoss: 43.509998
-Country: 1|
+Country: |
 attackType: 2DDOS|
 targetIndustry: 3IT|
 defenseMechanism: 4AI-BASED DETECTION|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 64
+Tamanho do Registro : 63
 idAttack: 72
 Year: 2015
 finantialLoss: 20.730000
 Country: 1USA|
 attackType: 2RANSOMWARE|
 targetIndustry: 3TELECOMMUNICATIONS|
-defenseMechanism: 4|
+defenseMechanism: |
 --------------------
 
 Removido: 0
@@ -836,14 +836,14 @@ defenseMechanism: 4AI-BASED DETECTION|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 47
+Tamanho do Registro : 45
 idAttack: 77
 Year: 2017
 finantialLoss: 17.879999
 Country: 1FRANCE|
 attackType: 2PHISHING|
-targetIndustry: 3|
-defenseMechanism: 4|
+targetIndustry: |
+defenseMechanism: |
 --------------------
 
 Removido: 0
@@ -869,12 +869,12 @@ defenseMechanism: 4FIREWALL|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 58
+Tamanho do Registro : 57
 idAttack: 80
 Year: 2018
 finantialLoss: 6.630000
 Country: 1BRAZIL|
-attackType: 2|
+attackType: |
 targetIndustry: 3EDUCATION|
 defenseMechanism: 4ENCRYPTION|
 --------------------
@@ -902,14 +902,14 @@ defenseMechanism: 4ENCRYPTION|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 59
+Tamanho do Registro : 58
 idAttack: 83
 Year: 2024
 finantialLoss: -1.000000
 Country: 1AUSTRALIA|
 attackType: 2MALWARE|
 targetIndustry: 3HEALTHCARE|
-defenseMechanism: 4|
+defenseMechanism: |
 --------------------
 
 Removido: 0
@@ -1430,11 +1430,11 @@ defenseMechanism: 4ENCRYPTION|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 61
+Tamanho do Registro : 60
 idAttack: 131
 Year: 2016
 finantialLoss: 27.200001
-Country: 1|
+Country: |
 attackType: 2PHISHING|
 targetIndustry: 3GOVERNMENT|
 defenseMechanism: 4ENCRYPTION|
@@ -1562,13 +1562,13 @@ defenseMechanism: 4ENCRYPTION|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 54
+Tamanho do Registro : 53
 idAttack: 143
 Year: 2015
 finantialLoss: 41.360001
 Country: 1USA|
 attackType: 2PHISHING|
-targetIndustry: 3|
+targetIndustry: |
 defenseMechanism: 4ENCRYPTION|
 --------------------
 
@@ -1672,14 +1672,14 @@ defenseMechanism: 4VPN|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 58
+Tamanho do Registro : 57
 idAttack: 153
 Year: 2023
 finantialLoss: 56.759998
 Country: 1BRAZIL|
 attackType: 2SQL INJECTION|
 targetIndustry: 3RETAIL|
-defenseMechanism: 4|
+defenseMechanism: |
 --------------------
 
 Removido: 0
@@ -1749,12 +1749,12 @@ defenseMechanism: 4AI-BASED DETECTION|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 69
+Tamanho do Registro : 68
 idAttack: 160
 Year: 2024
 finantialLoss: 85.860001
 Country: 1AUSTRALIA|
-attackType: 2|
+attackType: |
 targetIndustry: 3EDUCATION|
 defenseMechanism: 4AI-BASED DETECTION|
 --------------------
@@ -2024,13 +2024,13 @@ defenseMechanism: 4AI-BASED DETECTION|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 48
+Tamanho do Registro : 46
 idAttack: 185
 Year: 2021
 finantialLoss: 0.540000
 Country: 1RUSSIA|
-attackType: 2|
-targetIndustry: 3|
+attackType: |
+targetIndustry: |
 defenseMechanism: 4ANTIVIRUS|
 --------------------
 
@@ -2255,13 +2255,13 @@ defenseMechanism: 4ANTIVIRUS|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 51
+Tamanho do Registro : 50
 idAttack: 206
 Year: 2019
 finantialLoss: -1.000000
 Country: 1UK|
 attackType: 2PHISHING|
-targetIndustry: 3|
+targetIndustry: |
 defenseMechanism: 4FIREWALL|
 --------------------
 
@@ -2706,13 +2706,13 @@ defenseMechanism: 4ENCRYPTION|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 59
+Tamanho do Registro : 58
 idAttack: 247
 Year: 2017
 finantialLoss: 66.360001
 Country: 1FRANCE|
 attackType: 2RANSOMWARE|
-targetIndustry: 3|
+targetIndustry: |
 defenseMechanism: 4ENCRYPTION|
 --------------------
 
@@ -2816,23 +2816,23 @@ defenseMechanism: 4FIREWALL|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 52
+Tamanho do Registro : 51
 idAttack: 257
 Year: 2020
 finantialLoss: 15.730000
 Country: 1JAPAN|
 attackType: 2MALWARE|
 targetIndustry: 3BANKING|
-defenseMechanism: 4|
+defenseMechanism: |
 --------------------
 
 Removido: 0
-Tamanho do Registro : 47
+Tamanho do Registro : 46
 idAttack: 258
 Year: 2015
 finantialLoss: 30.260000
 Country: 1UK|
-attackType: 2|
+attackType: |
 targetIndustry: 3IT|
 defenseMechanism: 4ENCRYPTION|
 --------------------
@@ -3223,11 +3223,11 @@ defenseMechanism: 4AI-BASED DETECTION|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 58
+Tamanho do Registro : 57
 idAttack: 294
 Year: 2024
 finantialLoss: 80.110001
-Country: 1|
+Country: |
 attackType: 2RANSOMWARE|
 targetIndustry: 3BANKING|
 defenseMechanism: 4FIREWALL|
@@ -3718,13 +3718,13 @@ defenseMechanism: 4ANTIVIRUS|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 67
+Tamanho do Registro : 66
 idAttack: 339
 Year: 2021
 finantialLoss: 13.990000
 Country: 1AUSTRALIA|
 attackType: 2MALWARE|
-targetIndustry: 3|
+targetIndustry: |
 defenseMechanism: 4AI-BASED DETECTION|
 --------------------
 
@@ -3960,14 +3960,14 @@ defenseMechanism: 4AI-BASED DETECTION|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 46
+Tamanho do Registro : 44
 idAttack: 361
 Year: 2017
 finantialLoss: 9.590000
 Country: 1BRAZIL|
 attackType: 2MALWARE|
-targetIndustry: 3|
-defenseMechanism: 4|
+targetIndustry: |
+defenseMechanism: |
 --------------------
 
 Removido: 0
@@ -4268,13 +4268,13 @@ defenseMechanism: 4ENCRYPTION|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 43
+Tamanho do Registro : 41
 idAttack: 389
 Year: 2024
 finantialLoss: 7.160000
 Country: 1UK|
-attackType: 2|
-targetIndustry: 3|
+attackType: |
+targetIndustry: |
 defenseMechanism: 4FIREWALL|
 --------------------
 
@@ -4444,14 +4444,14 @@ defenseMechanism: 4ANTIVIRUS|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 48
+Tamanho do Registro : 47
 idAttack: 405
 Year: 2022
 finantialLoss: 64.379997
 Country: 1JAPAN|
 attackType: 2DDOS|
 targetIndustry: 3RETAIL|
-defenseMechanism: 4|
+defenseMechanism: |
 --------------------
 
 Removido: 0
@@ -4466,12 +4466,12 @@ defenseMechanism: 4AI-BASED DETECTION|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 67
+Tamanho do Registro : 66
 idAttack: 407
 Year: 2016
 finantialLoss: 1.730000
 Country: 1AUSTRALIA|
-attackType: 2|
+attackType: |
 targetIndustry: 3BANKING|
 defenseMechanism: 4AI-BASED DETECTION|
 --------------------
@@ -4488,11 +4488,11 @@ defenseMechanism: 4FIREWALL|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 70
+Tamanho do Registro : 69
 idAttack: 409
 Year: 2015
 finantialLoss: 70.879997
-Country: 1|
+Country: |
 attackType: 2SQL INJECTION|
 targetIndustry: 3RETAIL|
 defenseMechanism: 4AI-BASED DETECTION|
@@ -4807,13 +4807,13 @@ defenseMechanism: 4VPN|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 63
+Tamanho do Registro : 62
 idAttack: 438
 Year: 2017
 finantialLoss: 11.300000
 Country: 1JAPAN|
 attackType: 2MAN-IN-THE-MIDDLE|
-targetIndustry: 3|
+targetIndustry: |
 defenseMechanism: 4FIREWALL|
 --------------------
 
@@ -5016,12 +5016,12 @@ defenseMechanism: 4VPN|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 50
+Tamanho do Registro : 49
 idAttack: 457
 Year: 2021
 finantialLoss: 79.330002
 Country: 1UK|
-attackType: 2|
+attackType: |
 targetIndustry: 3BANKING|
 defenseMechanism: 4FIREWALL|
 --------------------
@@ -5049,11 +5049,11 @@ defenseMechanism: 4VPN|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 67
+Tamanho do Registro : 66
 idAttack: 460
 Year: 2018
 finantialLoss: 85.290001
-Country: 1|
+Country: |
 attackType: 2MAN-IN-THE-MIDDLE|
 targetIndustry: 3BANKING|
 defenseMechanism: 4ENCRYPTION|
@@ -5148,14 +5148,14 @@ defenseMechanism: 4ENCRYPTION|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 65
+Tamanho do Registro : 64
 idAttack: 469
 Year: 2015
 finantialLoss: 7.960000
 Country: 1JAPAN|
 attackType: 2MAN-IN-THE-MIDDLE|
 targetIndustry: 3HEALTHCARE|
-defenseMechanism: 4|
+defenseMechanism: |
 --------------------
 
 Removido: 0
@@ -5357,13 +5357,13 @@ defenseMechanism: 4ANTIVIRUS|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 47
+Tamanho do Registro : 45
 idAttack: 488
 Year: 2024
 finantialLoss: 56.900002
 Country: 1JAPAN|
-attackType: 2|
-targetIndustry: 3|
+attackType: |
+targetIndustry: |
 defenseMechanism: 4ANTIVIRUS|
 --------------------
 
@@ -5500,13 +5500,13 @@ defenseMechanism: 4ENCRYPTION|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 56
+Tamanho do Registro : 55
 idAttack: 501
 Year: 2023
 finantialLoss: -1.000000
 Country: 1USA|
 attackType: 2RANSOMWARE|
-targetIndustry: 3|
+targetIndustry: |
 defenseMechanism: 4ENCRYPTION|
 --------------------
 
@@ -5775,24 +5775,24 @@ defenseMechanism: 4ANTIVIRUS|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 73
+Tamanho do Registro : 72
 idAttack: 526
 Year: 2016
 finantialLoss: 48.770000
-Country: 1|
+Country: |
 attackType: 2SQL INJECTION|
 targetIndustry: 3TELECOMMUNICATIONS|
 defenseMechanism: 4ANTIVIRUS|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 61
+Tamanho do Registro : 60
 idAttack: 527
 Year: 2023
 finantialLoss: 92.349998
 Country: 1INDIA|
 attackType: 2SQL INJECTION|
-targetIndustry: 3|
+targetIndustry: |
 defenseMechanism: 4ENCRYPTION|
 --------------------
 
@@ -6127,14 +6127,14 @@ defenseMechanism: 4VPN|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 73
+Tamanho do Registro : 72
 idAttack: 558
 Year: 2021
 finantialLoss: 10.280000
 Country: 1AUSTRALIA|
 attackType: 2SQL INJECTION|
 targetIndustry: 3TELECOMMUNICATIONS|
-defenseMechanism: 4|
+defenseMechanism: |
 --------------------
 
 Removido: 0
@@ -6446,13 +6446,13 @@ defenseMechanism: 4VPN|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 53
+Tamanho do Registro : 52
 idAttack: 587
 Year: 2020
 finantialLoss: 84.769997
 Country: 1UK|
 attackType: 2PHISHING|
-targetIndustry: 3|
+targetIndustry: |
 defenseMechanism: 4ENCRYPTION|
 --------------------
 
@@ -6677,14 +6677,14 @@ defenseMechanism: 4FIREWALL|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 45
+Tamanho do Registro : 43
 idAttack: 608
 Year: 2015
 finantialLoss: 81.750000
 Country: 1UK|
-attackType: 2|
+attackType: |
 targetIndustry: 3HEALTHCARE|
-defenseMechanism: 4|
+defenseMechanism: |
 --------------------
 
 Removido: 0
@@ -6930,12 +6930,12 @@ defenseMechanism: 4AI-BASED DETECTION|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 61
+Tamanho do Registro : 60
 idAttack: 631
 Year: 2022
 finantialLoss: 80.050003
 Country: 1UK|
-attackType: 2|
+attackType: |
 targetIndustry: 3TELECOMMUNICATIONS|
 defenseMechanism: 4FIREWALL|
 --------------------
@@ -7018,14 +7018,14 @@ defenseMechanism: 4FIREWALL|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 59
+Tamanho do Registro : 58
 idAttack: 639
 Year: 2022
 finantialLoss: 22.730000
 Country: 1AUSTRALIA|
 attackType: 2PHISHING|
 targetIndustry: 3EDUCATION|
-defenseMechanism: 4|
+defenseMechanism: |
 --------------------
 
 Removido: 0
@@ -7117,11 +7117,11 @@ defenseMechanism: 4VPN|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 64
+Tamanho do Registro : 63
 idAttack: 648
 Year: 2023
 finantialLoss: 42.500000
-Country: 1|
+Country: |
 attackType: 2SQL INJECTION|
 targetIndustry: 3EDUCATION|
 defenseMechanism: 4ANTIVIRUS|
@@ -7348,14 +7348,14 @@ defenseMechanism: 4ANTIVIRUS|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 70
+Tamanho do Registro : 69
 idAttack: 669
 Year: 2015
 finantialLoss: 17.379999
 Country: 1AUSTRALIA|
 attackType: 2RANSOMWARE|
 targetIndustry: 3TELECOMMUNICATIONS|
-defenseMechanism: 4|
+defenseMechanism: |
 --------------------
 
 Removido: 0
@@ -7491,12 +7491,12 @@ defenseMechanism: 4AI-BASED DETECTION|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 49
+Tamanho do Registro : 48
 idAttack: 682
 Year: 2024
 finantialLoss: -1.000000
 Country: 1INDIA|
-attackType: 2|
+attackType: |
 targetIndustry: 3IT|
 defenseMechanism: 4ANTIVIRUS|
 --------------------
@@ -7623,13 +7623,13 @@ defenseMechanism: 4AI-BASED DETECTION|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 52
+Tamanho do Registro : 51
 idAttack: 694
 Year: 2018
 finantialLoss: 50.750000
 Country: 1FRANCE|
 attackType: 2DDOS|
-targetIndustry: 3|
+targetIndustry: |
 defenseMechanism: 4ANTIVIRUS|
 --------------------
 
@@ -7832,12 +7832,12 @@ defenseMechanism: 4FIREWALL|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 59
+Tamanho do Registro : 58
 idAttack: 713
 Year: 2017
 finantialLoss: 55.900002
 Country: 1FRANCE|
-attackType: 2|
+attackType: |
 targetIndustry: 3IT|
 defenseMechanism: 4AI-BASED DETECTION|
 --------------------
@@ -7865,14 +7865,14 @@ defenseMechanism: 4ENCRYPTION|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 49
+Tamanho do Registro : 47
 idAttack: 716
 Year: 2022
 finantialLoss: 81.919998
 Country: 1RUSSIA|
-attackType: 2|
+attackType: |
 targetIndustry: 3HEALTHCARE|
-defenseMechanism: 4|
+defenseMechanism: |
 --------------------
 
 Removido: 0
@@ -8129,11 +8129,11 @@ defenseMechanism: 4AI-BASED DETECTION|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 59
+Tamanho do Registro : 58
 idAttack: 740
 Year: 2023
 finantialLoss: 72.570000
-Country: 1|
+Country: |
 attackType: 2PHISHING|
 targetIndustry: 3GOVERNMENT|
 defenseMechanism: 4FIREWALL|
@@ -8206,13 +8206,13 @@ defenseMechanism: 4ANTIVIRUS|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 62
+Tamanho do Registro : 61
 idAttack: 747
 Year: 2016
 finantialLoss: 40.290001
 Country: 1BRAZIL|
 attackType: 2SQL INJECTION|
-targetIndustry: 3|
+targetIndustry: |
 defenseMechanism: 4ENCRYPTION|
 --------------------
 
@@ -8349,14 +8349,14 @@ defenseMechanism: 4ANTIVIRUS|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 71
+Tamanho do Registro : 70
 idAttack: 760
 Year: 2021
 finantialLoss: 42.290001
 Country: 1USA|
 attackType: 2MAN-IN-THE-MIDDLE|
 targetIndustry: 3TELECOMMUNICATIONS|
-defenseMechanism: 4|
+defenseMechanism: |
 --------------------
 
 Removido: 0
@@ -8547,13 +8547,13 @@ defenseMechanism: 4ENCRYPTION|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 63
+Tamanho do Registro : 62
 idAttack: 778
 Year: 2020
 finantialLoss: 43.959999
 Country: 1GERMANY|
 attackType: 2SQL INJECTION|
-targetIndustry: 3|
+targetIndustry: |
 defenseMechanism: 4ENCRYPTION|
 --------------------
 
@@ -8668,11 +8668,11 @@ defenseMechanism: 4AI-BASED DETECTION|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 71
+Tamanho do Registro : 70
 idAttack: 789
 Year: 2019
 finantialLoss: 89.809998
-Country: 1|
+Country: |
 attackType: 2RANSOMWARE|
 targetIndustry: 3HEALTHCARE|
 defenseMechanism: 4AI-BASED DETECTION|
@@ -8965,14 +8965,14 @@ defenseMechanism: 4ANTIVIRUS|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 59
+Tamanho do Registro : 58
 idAttack: 816
 Year: 2016
 finantialLoss: 56.570000
 Country: 1GERMANY|
 attackType: 2SQL INJECTION|
 targetIndustry: 3RETAIL|
-defenseMechanism: 4|
+defenseMechanism: |
 --------------------
 
 Removido: 0
@@ -9515,13 +9515,13 @@ defenseMechanism: 4FIREWALL|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 58
+Tamanho do Registro : 57
 idAttack: 866
 Year: 2017
 finantialLoss: 39.299999
 Country: 1AUSTRALIA|
 attackType: 2PHISHING|
-targetIndustry: 3|
+targetIndustry: |
 defenseMechanism: 4FIREWALL|
 --------------------
 
@@ -9779,11 +9779,11 @@ defenseMechanism: 4ENCRYPTION|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 58
+Tamanho do Registro : 57
 idAttack: 890
 Year: 2017
 finantialLoss: 5.050000
-Country: 1|
+Country: |
 attackType: 2SQL INJECTION|
 targetIndustry: 3IT|
 defenseMechanism: 4ENCRYPTION|
@@ -9911,14 +9911,14 @@ defenseMechanism: 4FIREWALL|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 52
+Tamanho do Registro : 51
 idAttack: 902
 Year: 2021
 finantialLoss: 35.459999
 Country: 1JAPAN|
 attackType: 2DDOS|
 targetIndustry: 3GOVERNMENT|
-defenseMechanism: 4|
+defenseMechanism: |
 --------------------
 
 Removido: 0
@@ -10219,11 +10219,11 @@ defenseMechanism: 4AI-BASED DETECTION|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 61
+Tamanho do Registro : 60
 idAttack: 930
 Year: 2017
 finantialLoss: 82.169998
-Country: 1|
+Country: |
 attackType: 2DDOS|
 targetIndustry: 3RETAIL|
 defenseMechanism: 4AI-BASED DETECTION|
@@ -11671,12 +11671,12 @@ defenseMechanism: 4VPN|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 55
+Tamanho do Registro : 54
 idAttack: 1062
 Year: 2019
 finantialLoss: -1.000000
 Country: 1UK|
-attackType: 2|
+attackType: |
 targetIndustry: 3HEALTHCARE|
 defenseMechanism: 4ENCRYPTION|
 --------------------
@@ -25553,14 +25553,14 @@ defenseMechanism: 4AI-BASED DETECTION|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 56
+Tamanho do Registro : 55
 idAttack: 2324
 Year: 2017
 finantialLoss: 25.760000
 Country: 1AUSTRALIA|
 attackType: 2MALWARE|
 targetIndustry: 3BANKING|
-defenseMechanism: 4|
+defenseMechanism: |
 --------------------
 
 Removido: 0
@@ -25685,11 +25685,11 @@ defenseMechanism: 4ENCRYPTION|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 58
+Tamanho do Registro : 57
 idAttack: 2336
 Year: 2016
 finantialLoss: 62.730000
-Country: 1|
+Country: |
 attackType: 2RANSOMWARE|
 targetIndustry: 3BANKING|
 defenseMechanism: 4FIREWALL|
@@ -26015,24 +26015,24 @@ defenseMechanism: 4FIREWALL|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 56
+Tamanho do Registro : 55
 idAttack: 2366
 Year: 2019
 finantialLoss: 15.210000
 Country: 1AUSTRALIA|
-attackType: 2|
+attackType: |
 targetIndustry: 3RETAIL|
 defenseMechanism: 4FIREWALL|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 70
+Tamanho do Registro : 69
 idAttack: 2367
 Year: 2022
 finantialLoss: 66.250000
 Country: 1UK|
 attackType: 2MAN-IN-THE-MIDDLE|
-targetIndustry: 3|
+targetIndustry: |
 defenseMechanism: 4AI-BASED DETECTION|
 --------------------
 
@@ -26312,14 +26312,14 @@ defenseMechanism: 4AI-BASED DETECTION|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 39
+Tamanho do Registro : 36
 idAttack: 2393
 Year: 2017
 finantialLoss: 34.790001
 Country: 1BRAZIL|
-attackType: 2|
-targetIndustry: 3|
-defenseMechanism: 4|
+attackType: |
+targetIndustry: |
+defenseMechanism: |
 --------------------
 
 Removido: 0
@@ -26686,13 +26686,13 @@ defenseMechanism: 4ANTIVIRUS|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 61
+Tamanho do Registro : 60
 idAttack: 2427
 Year: 2022
 finantialLoss: -1.000000
 Country: 1RUSSIA|
 attackType: 2SQL INJECTION|
-targetIndustry: 3|
+targetIndustry: |
 defenseMechanism: 4ANTIVIRUS|
 --------------------
 
@@ -26741,14 +26741,14 @@ defenseMechanism: 4FIREWALL|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 58
+Tamanho do Registro : 57
 idAttack: 2432
 Year: 2019
 finantialLoss: 65.470001
 Country: 1UK|
 attackType: 2SQL INJECTION|
 targetIndustry: 3HEALTHCARE|
-defenseMechanism: 4|
+defenseMechanism: |
 --------------------
 
 Removido: 0
@@ -27170,12 +27170,12 @@ defenseMechanism: 4VPN|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 63
+Tamanho do Registro : 62
 idAttack: 2471
 Year: 2017
 finantialLoss: 47.520000
 Country: 1CHINA|
-attackType: 2|
+attackType: |
 targetIndustry: 3BANKING|
 defenseMechanism: 4AI-BASED DETECTION|
 --------------------
@@ -27511,13 +27511,13 @@ defenseMechanism: 4ANTIVIRUS|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 58
+Tamanho do Registro : 57
 idAttack: 2502
 Year: 2017
 finantialLoss: 58.180000
 Country: 1BRAZIL|
 attackType: 2RANSOMWARE|
-targetIndustry: 3|
+targetIndustry: |
 defenseMechanism: 4ANTIVIRUS|
 --------------------
 
@@ -27654,11 +27654,11 @@ defenseMechanism: 4VPN|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 82
+Tamanho do Registro : 81
 idAttack: 2515
 Year: 2019
 finantialLoss: 57.400002
-Country: 1|
+Country: |
 attackType: 2SQL INJECTION|
 targetIndustry: 3TELECOMMUNICATIONS|
 defenseMechanism: 4AI-BASED DETECTION|
@@ -28149,14 +28149,14 @@ defenseMechanism: 4FIREWALL|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 49
+Tamanho do Registro : 48
 idAttack: 2560
 Year: 2015
 finantialLoss: 84.699997
 Country: 1USA|
 attackType: 2MALWARE|
 targetIndustry: 3RETAIL|
-defenseMechanism: 4|
+defenseMechanism: |
 --------------------
 
 Removido: 0
@@ -28347,11 +28347,11 @@ defenseMechanism: 4VPN|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 61
+Tamanho do Registro : 60
 idAttack: 2578
 Year: 2024
 finantialLoss: 72.330002
-Country: 1|
+Country: |
 attackType: 2PHISHING|
 targetIndustry: 3IT|
 defenseMechanism: 4AI-BASED DETECTION|
@@ -28633,13 +28633,13 @@ defenseMechanism: 4ENCRYPTION|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 51
+Tamanho do Registro : 50
 idAttack: 2604
 Year: 2022
 finantialLoss: 85.720001
 Country: 1CHINA|
 attackType: 2RANSOMWARE|
-targetIndustry: 3|
+targetIndustry: |
 defenseMechanism: 4VPN|
 --------------------
 
@@ -29128,14 +29128,14 @@ defenseMechanism: 4ENCRYPTION|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 52
+Tamanho do Registro : 51
 idAttack: 2649
 Year: 2024
 finantialLoss: 33.439999
 Country: 1GERMANY|
 attackType: 2RANSOMWARE|
 targetIndustry: 3IT|
-defenseMechanism: 4|
+defenseMechanism: |
 --------------------
 
 Removido: 0
@@ -29403,11 +29403,11 @@ defenseMechanism: 4ENCRYPTION|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 66
+Tamanho do Registro : 65
 idAttack: 2674
 Year: 2015
 finantialLoss: 56.070000
-Country: 1|
+Country: |
 attackType: 2SQL INJECTION|
 targetIndustry: 3IT|
 defenseMechanism: 4AI-BASED DETECTION|
@@ -29700,13 +29700,13 @@ defenseMechanism: 4VPN|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 53
+Tamanho do Registro : 52
 idAttack: 2701
 Year: 2024
 finantialLoss: 0.710000
 Country: 1USA|
 attackType: 2MALWARE|
-targetIndustry: 3|
+targetIndustry: |
 defenseMechanism: 4ENCRYPTION|
 --------------------
 
@@ -30030,11 +30030,11 @@ defenseMechanism: 4FIREWALL|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 71
+Tamanho do Registro : 70
 idAttack: 2731
 Year: 2019
 finantialLoss: 92.430000
-Country: 1|
+Country: |
 attackType: 2RANSOMWARE|
 targetIndustry: 3HEALTHCARE|
 defenseMechanism: 4AI-BASED DETECTION|
@@ -30162,14 +30162,14 @@ defenseMechanism: 4AI-BASED DETECTION|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 68
+Tamanho do Registro : 67
 idAttack: 2743
 Year: 2024
 finantialLoss: 42.279999
 Country: 1AUSTRALIA|
 attackType: 2PHISHING|
 targetIndustry: 3TELECOMMUNICATIONS|
-defenseMechanism: 4|
+defenseMechanism: |
 --------------------
 
 Removido: 0
@@ -30426,11 +30426,11 @@ defenseMechanism: 4ENCRYPTION|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 53
+Tamanho do Registro : 52
 idAttack: 2767
 Year: 2022
 finantialLoss: 71.540001
-Country: 1|
+Country: |
 attackType: 2MALWARE|
 targetIndustry: 3GOVERNMENT|
 defenseMechanism: 4VPN|
@@ -30921,13 +30921,13 @@ defenseMechanism: 4VPN|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 51
+Tamanho do Registro : 50
 idAttack: 2812
 Year: 2023
 finantialLoss: 34.660000
 Country: 1UK|
 attackType: 2MALWARE|
-targetIndustry: 3|
+targetIndustry: |
 defenseMechanism: 4ANTIVIRUS|
 --------------------
 
@@ -31614,13 +31614,13 @@ defenseMechanism: 4FIREWALL|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 54
+Tamanho do Registro : 53
 idAttack: 2875
 Year: 2023
 finantialLoss: 6.180000
 Country: 1USA|
 attackType: 2PHISHING|
-targetIndustry: 3|
+targetIndustry: |
 defenseMechanism: 4ENCRYPTION|
 --------------------
 
@@ -32241,11 +32241,11 @@ defenseMechanism: 4FIREWALL|
 --------------------
 
 Removido: 0
-Tamanho do Registro : 53
+Tamanho do Registro : 52
 idAttack: 2932
 Year: 2022
 finantialLoss: 34.580002
-Country: 1|
+Country: |
 attackType: 2RANSOMWARE|
 targetIndustry: 3BANKING|
 defenseMechanism: 4VPN|

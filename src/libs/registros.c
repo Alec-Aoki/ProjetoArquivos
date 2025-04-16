@@ -200,8 +200,8 @@ Parâmetros: string a ser formatada
 Retorna: uma string formatada  
 */
 char *formata_string_registro (char *string, char *id){
-    if (string == NULL) {
-        return NULL;
+    if (string == NULL || strcmp(string, "") == 0) {
+        return "|";
     }
 
     // Aloca memória para a string com o tamanho extra para os delimitadores
@@ -232,13 +232,25 @@ bool set_dado_reg_tam (DADO *registro){
         return false;
     }
 
-    int contadorBytes = 25; // Inicializa o contador com o tamanho dos campos fixos
+    int contadorBytes = 0;
+
+    // Adiciona ao contador o tamanho dos campos fixos
+    contadorBytes += sizeof(registro->removido);
+    contadorBytes += sizeof(registro->tamanhoRegistro);
+    contadorBytes += sizeof(registro->prox);
+    contadorBytes += sizeof(registro->idAttack);
+    contadorBytes += sizeof(registro->year);
+    contadorBytes += sizeof(registro->financialLoss);
     
     // Adiciona ao contador o tamanho dos campos variáveis
-    contadorBytes += strlen(registro->country);
-    contadorBytes += strlen(registro->attackType);
-    contadorBytes += strlen(registro->targetIndustry);
-    contadorBytes += strlen(registro->defenseMechanism);
+    if (registro->country != NULL)
+        contadorBytes += strlen(registro->country);
+    if (registro->attackType != NULL)
+        contadorBytes += strlen(registro->attackType);
+    if (registro->targetIndustry != NULL)
+        contadorBytes += strlen(registro->targetIndustry);
+    if (registro->defenseMechanism != NULL)
+        contadorBytes += strlen(registro->defenseMechanism);
     
     registro->tamanhoRegistro = contadorBytes;
 
@@ -276,10 +288,15 @@ bool guarda_arqBin (FILE *pontArqBin, DADO *reg){
     fwrite(&(reg->idAttack), sizeof(int), 1, pontArqBin);
     fwrite(&(reg->year), sizeof(int), 1, pontArqBin);
     fwrite(&(reg->financialLoss), sizeof(float), 1, pontArqBin);
-    fwrite(&(reg->country), sizeof(char), strlen(reg->country), pontArqBin);
-    fwrite(&(reg->attackType), sizeof(char), strlen(reg->attackType), pontArqBin);
-    fwrite(&(reg->targetIndustry), sizeof(char), strlen(reg->targetIndustry), pontArqBin);
-    fwrite(&(reg->defenseMechanism), sizeof(char), strlen(reg->defenseMechanism), pontArqBin);
+
+    if (reg->country != NULL)
+        fwrite(&(reg->country), sizeof(char), strlen(reg->country), pontArqBin);
+    if (reg->attackType != NULL)
+        fwrite(&(reg->attackType), sizeof(char), strlen(reg->attackType), pontArqBin);
+    if (reg->targetIndustry != NULL)
+        fwrite(&(reg->targetIndustry), sizeof(char), strlen(reg->targetIndustry), pontArqBin);
+    if (reg->defenseMechanism != NULL)
+        fwrite(&(reg->defenseMechanism), sizeof(char), strlen(reg->defenseMechanism), pontArqBin);
 
     // Retorna o status da operação
     return true;
