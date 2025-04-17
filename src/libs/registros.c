@@ -212,6 +212,30 @@ DADO* dado_criar(char removido, int tamReg, long int prox, int idAttack, int yea
     return novoRegistro; // Retorna ponteiro para struct DADO
 }
 
+/* dado_apagar():
+Desaloca memória da struct e dos campos de tamanho variável
+Parâmetro: ponteiro para ponteiro da struct
+Retorno: void
+*/
+void dado_apagar(DADO **registro){
+    // Desaloca a memória das strings de tamanhos variáveis
+    if (*registro != NULL){
+        if ((*registro)->country != NULL)
+            free((*registro)->country);
+        if ((*registro)->attackType != NULL)
+            free((*registro)->attackType);
+        if ((*registro)->targetIndustry != NULL)
+            free((*registro)->targetIndustry);
+        if ((*registro)->defenseMechanism != NULL)
+            free((*registro)->defenseMechanism);    
+    }
+
+    // Desaloca memória da estrututa DADO e define ponteiro para NULL
+    free(*registro);
+    *registro = NULL; 
+}
+
+
 /* dado_get_tamanho()
 Retorna o tamanho em bytes de um registro de dado
 Parâmetros: ponteiro para struct dado
@@ -238,7 +262,7 @@ bool dado_escrever (FILE *pontArqBin, DADO *dado){
         fwrite(&(dado->financialLoss), sizeof(float), 1, pontArqBin);
 
         if(dado->country != NULL) fwrite(dado->country, sizeof(char), strlen(dado->country), pontArqBin);
-        if(dado->attackType != NULL)fwrite(dado->attackType, sizeof(char), strlen(dado->attackType), pontArqBin);
+        if(dado->attackType != NULL) fwrite(dado->attackType, sizeof(char), strlen(dado->attackType), pontArqBin);
         if(dado->targetIndustry != NULL) fwrite(dado->targetIndustry, sizeof(char), strlen(dado->targetIndustry), pontArqBin);
         if(dado->defenseMechanism != NULL) fwrite(dado->defenseMechanism, sizeof(char), strlen(dado->defenseMechanism), pontArqBin);
     

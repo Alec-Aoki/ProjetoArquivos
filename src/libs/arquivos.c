@@ -98,6 +98,7 @@ bool arquivo_criar(char* nomeArqBin, char* nomeArqCSV){
 
         // Escreve os registros no arquivo binario
         dado_escrever(pontArqBin, RegTemp);
+        dado_apagar(&RegTemp);
     }
 
     /* ATUALIZANDO CAMPOS DO HEADER */
