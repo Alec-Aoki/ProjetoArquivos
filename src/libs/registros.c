@@ -12,6 +12,7 @@ struct header_{
     long int proxByteOffset; // Valor do próximo byteoffset disponível
     int nroRegArq; // Quantidade de registros não removidos
     int nroRegRem; // Quantidade de registros removidos
+
     char descreveIdentificador[TAM_DESC_ID]; // Descrição do campo idAttack
     char descreveYear[TAM_DESC_YEAR]; // Descrição do campo year
     char descreveFinancialLoss[TAM_DESC_FIN_LOSS]; // Descrição do campo financialLoss
@@ -33,6 +34,7 @@ struct dados_ {
     int idAttack; // Código identificador do ataque
     int year; // Ano em que o ataque ocorreu
     float financialLoss; // Prejuízo causado pelo ataque
+
     char* country; // País onde ocorreu o ataque
     char* attackType; // Tipo de ameaça à segurança cibernética
     char* targetIndustry; // Setor da indústria que sofreu o ataque
@@ -65,6 +67,7 @@ HEADER* header_criar(char* descIdent, char* descYear, char* descFinLoss, char* d
     novoHeader->codDescreveType = '2';
     novoHeader->codDescreveTargetIndustry = '3';
     novoHeader->codDescreveDefense = '4';
+    
     strncpy(novoHeader->descreveIdentificador, descIdent, TAM_DESC_ID);
     strncpy(novoHeader->descreveYear, descYear, TAM_DESC_YEAR);
     strncpy(novoHeader->descreveFinancialLoss, descFinLoss, TAM_DESC_FIN_LOSS);

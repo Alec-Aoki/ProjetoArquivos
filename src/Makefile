@@ -1,8 +1,9 @@
 all: compile
-	gcc registros.o arquivos.o main.o -o main -std=c99 -Wall
+	gcc auxiliar.o registros.o arquivos.o main.o -o main -std=c99 -Wall
 	rm *.o
 
 compile:
+	gcc -c ./libs/auxiliar.c -o auxiliar.o
 	gcc -c ./libs/registros.c -o registros.o
 	gcc -c ./libs/arquivos.c -o arquivos.o
 	gcc -c main.c -o main.o
