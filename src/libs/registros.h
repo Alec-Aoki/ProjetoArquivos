@@ -22,6 +22,9 @@
     // Define o status de um header pré existente
     bool header_set_status(HEADER* header, char status);
 
+    // Define o campo próximo byteOffset de um header
+    bool header_set_proxByteOffset(HEADER* header, long int proxByOff);
+
     // Escreve o header passado no arquivo binário
     bool header_escrever(FILE* pontArq, HEADER* header, bool semantico);
 

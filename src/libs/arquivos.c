@@ -6,6 +6,38 @@
 #include "registros.h"
 #include "arquivos.h"
 
+//  Funções auxiliares:
+    
+/* str_to_int():
+A função converte uma string numérica para um intero, caso nula -1
+Parâmetros: uma string
+Retorno : o inteiro correspondente, ou -1 
+*/
+int str_to_int (char *str) {
+    if (str == NULL)
+        return -1;
+    
+    if (strcmp(str, "") == 0)
+        return -1;
+
+    return atoi(str);
+}
+    
+/* str_to_float():
+A função converte uma string numérica para um float, caso nula -1
+Parâmetros: uma string
+Retorno : o float correspondente, ou -1 
+*/
+float str_to_float (char *str) {
+    if (str == NULL)
+        return -1;
+    
+    if (strcmp(str, "") == 0)
+        return -1;
+
+    return atof(str);    
+}
+
 bool arquivo_criar(char* nomeArqBin, char* nomeArqCSV){
     // Abre o arquivo .csv para leitura
     FILE* pontArqCSV = fopen(nomeArqCSV, "r");
@@ -68,18 +100,26 @@ bool arquivo_criar(char* nomeArqBin, char* nomeArqCSV){
         int fimDaLinha = strcspn(buffer, "\n");
         buffer[fimDaLinha] = '\0';
 
-        // Pega a primeira string antes da virgula
-        char *tok = strtok(buffer, ",");
-
-        int i = 0;
-        while (tok != NULL && i < 7) {
-            // Guarda a string num vetor de strings e pega o proxima após a vírgula
-            campos[i] = tok;
-            tok = strtok(NULL, ",");
-            i++;
+        for (int j = 0; j < 7; j++) {
+            campos[j] = "";
         }
+
+        // Variáveis necessárias para a leitura do arquivo
+        char *ptr = buffer;     // Ponteiro de char que aponta para o início da string armazenada do buffer
+        char *campo;            // Ponteiro de char que receberá as strings entre as vírgulas do csv
+        int i = 0;              // Contador do loop para acessar os campos do array
+
+        // Loop que separa os campos da linha lida
+        while ((campo = strsep(&ptr, ",")) != NULL) {
+            // Guarda a string num vetor de strings se essa não é nula
+            if (campo != 0) {
+                campos[i] = campo;
+                i++;
+            }
+        }
+
         // Guarda os dados lidos na struct DADO
-        DADO *RegTemp = dado_criar(0, 0, -1, atoi(campos[0]), atoi(campos[1]), atof(campos[2]), campos[3], campos[4], campos[5], campos[6]);
+        DADO *RegTemp = dado_criar(0, 0, -1, str_to_int(campos[0]), str_to_int(campos[1]), str_to_float(campos[2]), campos[3], campos[4], campos[5], campos[6]);
 
         // Escreve os registros no arquivo binario
         dado_escrever(pontArqBin, RegTemp);

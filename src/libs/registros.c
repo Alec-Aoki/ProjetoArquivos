@@ -215,16 +215,15 @@ bool dado_escrever (FILE *pontArqBin, DADO *dado){
         fwrite(&(dado->idAttack), sizeof(int), 1, pontArqBin);
         fwrite(&(dado->year), sizeof(int), 1, pontArqBin);
         fwrite(&(dado->financialLoss), sizeof(float), 1, pontArqBin);
-        fwrite(dado->country, sizeof(char), strlen(dado->country), pontArqBin);
-        fwrite(dado->attackType, sizeof(char), strlen(dado->attackType), pontArqBin);
-        fwrite(dado->targetIndustry, sizeof(char), strlen(dado->targetIndustry), pontArqBin);
-        fwrite(dado->defenseMechanism, sizeof(char), strlen(dado->defenseMechanism), pontArqBin);
+
+        if(dado->country != NULL) fwrite(dado->country, sizeof(char), strlen(dado->country), pontArqBin);
+        if(dado->attackType != NULL)fwrite(dado->attackType, sizeof(char), strlen(dado->attackType), pontArqBin);
+        if(dado->targetIndustry != NULL) fwrite(dado->targetIndustry, sizeof(char), strlen(dado->targetIndustry), pontArqBin);
+        if(dado->defenseMechanism != NULL) fwrite(dado->defenseMechanism, sizeof(char), strlen(dado->defenseMechanism), pontArqBin);
     
         // Retorna o status da operação
         return true;
 }
-
-void dado_apagar(DADO** dado);
 
 /* dado_set_tamReg():
 Calcula o número de bytes do registro e atualiza na struct
@@ -237,13 +236,21 @@ bool dado_set_tamReg (DADO *registro){
         return false;
     }
 
-    int contadorBytes = 25; // Inicializa o contador com o tamanho dos campos fixos
+    int contadorBytes = 0; // Inicializa o contador com o tamanho dos campos fixos
+    
+    // Adiciona ao contador o tamanho dos campos fixos
+    contadorBytes += sizeof(registro->removido);
+    contadorBytes += sizeof(registro->tamanhoRegistro);
+    contadorBytes += sizeof(registro->prox);
+    contadorBytes += sizeof(registro->idAttack);
+    contadorBytes += sizeof(registro->year);
+    contadorBytes += sizeof(registro->financialLoss);
     
     // Adiciona ao contador o tamanho dos campos variáveis
-    contadorBytes += strlen(registro->country);
-    contadorBytes += strlen(registro->attackType);
-    contadorBytes += strlen(registro->targetIndustry);
-    contadorBytes += strlen(registro->defenseMechanism);
+    if (registro->country != NULL) contadorBytes += strlen(registro->country);
+    if (registro->attackType != NULL) contadorBytes += strlen(registro->attackType);
+    if (registro->targetIndustry != NULL) contadorBytes += strlen(registro->targetIndustry);
+    if (registro->defenseMechanism != NULL) contadorBytes += strlen(registro->defenseMechanism);
     
     registro->tamanhoRegistro = contadorBytes;
 
@@ -256,8 +263,8 @@ Parâmetros: string a ser formatada
 Retorna: uma string formatada  
 */
 char *formata_string_registro (char *string, char *id){
-    if (string == NULL) {
-        return NULL;
+    if (string == NULL || strcmp(string, "") == 0) {
+        return "|";
     }
 
     // Aloca memória para a string com o tamanho extra para os delimitadores

@@ -13,3 +13,4 @@ run:
 clean:
 	rm -f main
 	rm -f *.bin
+	rm -f *.txt
