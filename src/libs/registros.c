@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stdbool.h>
 
+#include "auxiliar.h"
 #include "registros.h"
 
 /*Armazena os campos de um registro de header*/
@@ -48,11 +49,7 @@ Retorna: ponteiro para a struct do tipo HEADER
 */
 HEADER* header_criar(char* descIdent, char* descYear, char* descFinLoss, char* descCountry, char* descType, char* descTargInd, char* descDef){
     HEADER* novoHeader = (HEADER *) malloc(sizeof(HEADER)); // Alocando dinâmicamente uma struct do tipo HEADER
-    if(novoHeader == NULL){
-        printf("Erro ao criar struct\n");
-
-        return NULL;
-    }
+    if(novoHeader == NULL) return NULL;
 
     /* INICIALIZANDO O HEADER */
     // Campos de valor variável
@@ -67,7 +64,7 @@ HEADER* header_criar(char* descIdent, char* descYear, char* descFinLoss, char* d
     novoHeader->codDescreveType = '2';
     novoHeader->codDescreveTargetIndustry = '3';
     novoHeader->codDescreveDefense = '4';
-    
+
     strncpy(novoHeader->descreveIdentificador, descIdent, TAM_DESC_ID);
     strncpy(novoHeader->descreveYear, descYear, TAM_DESC_YEAR);
     strncpy(novoHeader->descreveFinancialLoss, descFinLoss, TAM_DESC_FIN_LOSS);
@@ -85,25 +82,34 @@ Parâmetros: ponteiro para o header, status a ser definido
 Retorna: true se bem sucedido, false senão
 */
 bool header_set_status(HEADER* header, char status){
-    if(header == NULL){
-        printf("Erro ao acessar header\n");
-        return false;
-    }
+    if(header == NULL) return false;
 
     header->status = status; // Definindo o novo status
     return true;
 }
 
-/* header_apagar():
-Desaloca uma struct do tipo header e define seu ponteiro para NULL
-Parâmetros: ponteiro de ponteiro para a struct a ser desalocada
-Retorna: void
+/* header_set_proxByteOffset()
+Define o campo proxByteOffset de um header
+Parâmetros: ponteiro para header, valor do próximo byte offset livre
+Retorno: false se header nulo, true caso contrário
 */
-void header_apagar(HEADER** header){
-    free(*header); // Desalocando memória
-    *header = NULL; // Definindo o ponteiro para NULL
+bool header_set_proxByteOffset(HEADER* header, long int proxByOff){
+    if(header == NULL) return false;
 
-    return;
+    header->proxByteOffset = proxByOff;
+    return true;
+}
+
+/* header_set_nroRegArq()
+Define o campo nroRegArq de um header
+Parâmetros: ponteiro para header, quantidade de registros no arquivos
+Retorno: false se header nulo, true caso contrário
+*/
+bool header_set_nroRegArq(HEADER* header, int nroRegAq){
+    if(header == NULL) return false;
+
+    header->nroRegArq = nroRegAq;
+    return true;
 }
 
 /* header_escrever():
@@ -116,10 +122,7 @@ Retorna:
 bool header_escrever(FILE* pontArq, HEADER* headerArq, bool semantico){
     fseek(pontArq, 0, SEEK_SET); // Posicionando pontArq no início do arquivo
 
-    if(pontArq == NULL){
-        printf("Erro com o ponteiro para o arquivo\n");
-        return false;
-    }
+    if(pontArq == NULL) return false;
 
     // Escrevendo os campos variáveis da struct header no arquivo
     fwrite(&(headerArq->status), sizeof(char), 1, pontArq);
@@ -166,16 +169,26 @@ bool header_escrever(FILE* pontArq, HEADER* headerArq, bool semantico){
 
     return true;
 }
+
+/* header_apagar():
+Desaloca uma struct do tipo header e define seu ponteiro para NULL
+Parâmetros: ponteiro de ponteiro para a struct a ser desalocada
+Retorna: void
+*/
+void header_apagar(HEADER** header){
+    free(*header); // Desalocando memória
+    *header = NULL; // Definindo o ponteiro para NULL
+
+    return;
+}
+
 // Funções auxiliares, explicadas mais adiante
 bool dado_set_tamReg (DADO *registro);
-char *formata_string_registro (char *string, char *id);
 
 DADO* dado_criar(char removido, int tamReg, long int prox, int idAttack, int year, float finLoss, char* country, char* attackType, char* targetInd, char* defMec){
+    
     DADO *novoRegistro = (DADO *) malloc(sizeof(DADO));
-    if (novoRegistro == NULL) {
-        printf("Erro ao criar struct\n");
-        return NULL;
-    }
+    if (novoRegistro == NULL) return NULL;
 
     /* INICIALIZANDO A STRUCT */
 
@@ -199,17 +212,22 @@ DADO* dado_criar(char removido, int tamReg, long int prox, int idAttack, int yea
     return novoRegistro; // Retorna ponteiro para struct DADO
 }
 
+/* dado_get_tamanho()
+Retorna o tamanho em bytes de um registro de dado
+Parâmetros: ponteiro para struct dado
+Retorno: -1 caso a struct seja nula, caso contrário o valor guardado no campo tamanhoRegistro
+*/
+int dado_get_tamanho(DADO* dado){
+    if(dado == NULL) return -1;
+
+    return dado->tamanhoRegistro;
+}
+
 bool dado_escrever (FILE *pontArqBin, DADO *dado){
         // Verifiva a corretude dos ponteiros
-        if (pontArqBin == NULL) {
-            printf("Erro com o ponteiro para o nome do arquivo\n");
-            return false;
-        }
+        if (pontArqBin == NULL) return false;
     
-        if (dado == NULL) {
-            printf("Erro de struct nula\n");
-            return false;
-        }
+        if (dado == NULL) return false;
     
         // Escreve os dados no arquivo binário
         fwrite(&(dado->removido), sizeof(int), 1, pontArqBin);
@@ -234,10 +252,7 @@ Parâmetros: Ponteiro para struct
 Retorna: booleano indicando status da operação
 */
 bool dado_set_tamReg (DADO *registro){
-    if(registro == NULL){
-        printf("Erro ao acessar registro\n");
-        return false;
-    }
+    if(registro == NULL) return false;
 
     int contadorBytes = 0; // Inicializa o contador com o tamanho dos campos fixos
     
@@ -260,29 +275,4 @@ bool dado_set_tamReg (DADO *registro){
     return true;  
 }
 
-/* formata_string_registro():
-Aloca dinamicamente memória para uma string e adiciona delimitadores no inicio e final
-Parâmetros: string a ser formatada
-Retorna: uma string formatada  
-*/
-char *formata_string_registro (char *string, char *id){
-    if (string == NULL || strcmp(string, "") == 0) {
-        return "|";
-    }
 
-    // Aloca memória para a string com o tamanho extra para os delimitadores
-    char *strTemp = (char *) malloc(sizeof(char)*(strlen(string)+strlen(id)+2));
-    if (strTemp == NULL) {
-        printf("ERRO : alocação mal sucedida");
-
-        return NULL;
-    }
-    
-    // Construção segura da string
-    strTemp[0] = '\0'; // Inicializa o buffer
-    strcat(strTemp, id);
-    strcat(strTemp, string);
-    strcat(strTemp, "|");
-
-    return strTemp; // Retorna a string formatada
-}

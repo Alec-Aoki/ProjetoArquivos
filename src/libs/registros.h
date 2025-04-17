@@ -26,11 +26,18 @@
     // Define o campo próximo byteOffset de um header
     bool header_set_proxByteOffset(HEADER* header, long int proxByOff);
 
+    /*TODO*/
+    // Define o campo nroRegArq de um header
+    bool header_set_nroRegArq(HEADER* header, int nroRegAq);
+
     // Escreve o header passado no arquivo binário
     bool header_escrever(FILE* pontArq, HEADER* header, bool semantico);
 
     // Aloca espaço na heap para um dado e o inicializa com os valores passados
     DADO* dado_criar(char removido, int tamReg, long int prox, int idAttack, int year, float finLoss, char* country, char* attackType, char* targetInd, char* defMec);
+
+    // Retorna o valor do campo tamanhoRegistro de um dado
+    int dado_get_tamanho(DADO* dado);
 
     // Escrve o dado passado no arquivo binário
     bool dado_escrever (FILE *pontArqBin, DADO *dado);

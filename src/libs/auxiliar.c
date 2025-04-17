@@ -2,6 +2,8 @@
 #include <string.h>
 #include <stdlib.h>
 
+#include "auxiliar.h"
+
 //  Funções auxiliares
     
 /* str_to_int():
@@ -32,4 +34,25 @@ float str_to_float (char *str) {
         return -1;
 
     return atof(str);    
+}
+
+/* formata_string_registro():
+Aloca dinamicamente memória para uma string e adiciona delimitadores no inicio e final
+Parâmetros: string a ser formatada
+Retorna: uma string formatada  
+*/
+char *formata_string_registro (char *string, char *id){
+    if (string == NULL || strcmp(string, "") == 0) return "|";
+
+    // Aloca memória para a string com o tamanho extra para os delimitadores
+    char *strTemp = (char *) malloc(sizeof(char)*(strlen(string)+strlen(id)+2));
+    if (strTemp == NULL) return NULL;
+    
+    // Construção segura da string
+    strTemp[0] = '\0'; // Inicializa o buffer
+    strcat(strTemp, id);
+    strcat(strTemp, string);
+    strcat(strTemp, "|");
+
+    return strTemp; // Retorna a string formatada
 }

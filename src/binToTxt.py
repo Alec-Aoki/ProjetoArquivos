@@ -1,5 +1,3 @@
-# Made by Claude AI
-
 #!/usr/bin/env python3
 import struct
 import sys
@@ -46,6 +44,9 @@ class Record:
         self.defenseMechanism = ""
 
 def read_header(bin_file):
+    # Save the starting position
+    start_pos = bin_file.tell()
+    
     header = Header()
     
     # Read variable fields
@@ -72,7 +73,10 @@ def read_header(bin_file):
     header.codDescreveDefense = bin_file.read(1).decode('utf-8')
     header.descreveDefense = bin_file.read(TAM_DESC_DEF).decode('utf-8').rstrip('\0')
     
-    return header
+    # Calculate the header size
+    header_size = bin_file.tell() - start_pos
+    
+    return header, header_size
 
 def read_variable_string(bin_file):
     """Read variable length string field that may be empty or have content with identifier and delimiter."""
@@ -121,16 +125,17 @@ def read_record(bin_file):
 
 def bin_to_text(bin_filename, text_filename):
     with open(bin_filename, 'rb') as bin_file, open(text_filename, 'w') as text_file:
-        # Read header
-        header = read_header(bin_file)
+        # Read header and get its size
+        header, header_size = read_header(bin_file)
         
         # Write header information to text file
         text_file.write("==== HEADER INFORMATION ====\n")
         text_file.write(f"Status: {header.status}\n")
         text_file.write(f"Top offset of removed records: {header.topo}\n")
-        text_file.write(f"Next byte offset available: {header.proxByteOffset}\n")
+        text_file.write(f"Next byte offset from header: {header.proxByteOffset}\n")
         text_file.write(f"Number of records in file: {header.nroRegArq}\n")
         text_file.write(f"Number of removed records: {header.nroRegRem}\n")
+        text_file.write(f"Header size: {header_size} bytes\n")
         text_file.write("\n==== SEMANTIC DESCRIPTIONS ====\n")
         text_file.write(f"ID Attack: {header.descreveIdentificador}\n")
         text_file.write(f"Year: {header.descreveYear}\n")
@@ -143,14 +148,24 @@ def bin_to_text(bin_filename, text_filename):
         # Write records
         text_file.write("\n==== RECORDS ====\n")
         record_num = 1
-        record_offset = bin_file.tell()  # Get current position which should be the first record
+        
+        # First record starts after the header
+        first_record_offset = header_size
+        current_offset = first_record_offset
+        
+        record_positions = []  # To store record positions for later calculation
         
         while True:
+            record_start = bin_file.tell()
             record = read_record(bin_file)
             if record is None:
                 break
+            
+            record_end = bin_file.tell()
+            record_size = record_end - record_start
+            record_positions.append((record_start, record_size))
                 
-            text_file.write(f"\n--- Record #{record_num} (Offset: {record_offset}) ---\n")
+            text_file.write(f"\n--- Record #{record_num} (Offset: {record_start}) ---\n")
             text_file.write(f"Removed: {'Yes' if record.removido else 'No'}\n")
             text_file.write(f"Record size: {record.tamanhoRegistro} bytes\n")
             text_file.write(f"Next removed record: {record.prox}\n")
@@ -163,7 +178,23 @@ def bin_to_text(bin_filename, text_filename):
             text_file.write(f"Defense Mechanism: {record.defenseMechanism if record.defenseMechanism else '[Empty]'}\n")
             
             record_num += 1
-            record_offset = bin_file.tell()  # Update offset for the next record
+        
+        # Calculate the next free byte offset
+        if record_positions:
+            last_record_offset, last_record_size = record_positions[-1]
+            calculated_next_offset = last_record_offset + last_record_size
+        else:
+            calculated_next_offset = header_size
+        
+        # Add a summary section
+        text_file.write("\n==== SUMMARY ====\n")
+        text_file.write(f"Next byte offset from header: {header.proxByteOffset}\n")
+        text_file.write(f"Calculated next free byte offset: {calculated_next_offset}\n")
+        text_file.write(f"Total records read: {record_num - 1}\n")
+        
+        # Check if there's a discrepancy
+        if header.proxByteOffset != calculated_next_offset:
+            text_file.write(f"WARNING: Discrepancy detected between header byte offset and calculated next free offset!\n")
             
     print(f"Successfully converted {bin_filename} to {text_filename}")
 
