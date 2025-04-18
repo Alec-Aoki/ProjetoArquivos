@@ -105,6 +105,14 @@ void arquivo_criar(char* nomeArqBin, char* nomeArqCSV){
     return;
 }
 
+/*TODO*/
 void arquivo_imprimir(char* nomeArqBin){
-    if(nomeArqBin == NULL) return;
+    if(nomeArqBin == NULL) return; // Erro com nome do arquivo binário a ser aberto
+
+    FILE* pontArqBin = fopen(nomeArqBin, "rb"); // Abrindo arquivo binário no modo de leitura
+    if(pontArqBin == NULL) return; // Erro com a abertura do arquivo
+
+    fseek(pontArqBin, 0, SEEK_SET); // Posiciona o ponteiro no início do arquivo
+
+
 }

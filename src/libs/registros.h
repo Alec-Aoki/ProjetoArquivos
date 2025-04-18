@@ -16,6 +16,13 @@
     // Aloca espaço na heap para um header e o inicializa com as strings semânticas
     HEADER* header_criar(char* descIdent, char* descYear, char* descFinLoss, char* descCountry, char* descType, char* descTargInd, char* descDef);
 
+    // Escreve o header passado no arquivo binário
+    void header_escrever(FILE* pontArq, HEADER* header, bool semantico);
+
+    /*TODO*/
+    // Lê o header de um arquivo binário
+    HEADER* header_ler(FILE* pontArq);
+
     // Desaloca a memória do header passado e aponta seu ponteiro para NULL
     void header_apagar(HEADER** header);
 
@@ -28,18 +35,19 @@
     // Define o campo nroRegArq de um header
     void header_set_nroRegArq(HEADER* header, int nroRegAq);
 
-    // Escreve o header passado no arquivo binário
-    void header_escrever(FILE* pontArq, HEADER* header, bool semantico);
-
     // Aloca espaço na heap para um dado e o inicializa com os valores passados
     DADO* dado_criar(char removido, int tamReg, long int prox, int idAttack, int year, float finLoss, char* country, char* attackType, char* targetInd, char* defMec);
 
-    // Retorna o valor do campo tamanhoRegistro de um dado
-    int dado_get_tamanho(DADO* dado);
-
-    // Escrve o dado passado no arquivo binário
+    // Escerve o dado passado no arquivo binário
     void dado_escrever (FILE *pontArqBin, DADO *dado);
+
+    /*TODO*/
+    // Lê um dado de um arquivo binário
+    DADO* dado_ler(FILE* pontArq);
 
     // Desaloca a memória do dado passado e aponta seu ponteiro para NULL
     void dado_apagar(DADO **registro);
+
+    // Retorna o valor do campo tamanhoRegistro de um dado
+    int dado_get_tamanho(DADO* dado);
 #endif

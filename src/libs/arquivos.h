@@ -2,6 +2,8 @@
     #define ARQUIVOS_H
 
     void arquivo_criar(char* nomeArqBin, char* nomeArqCSV);
+
+    /*TODO*/
     void arquivo_imprimir(char* nomeArqBin);
 
 #endif
