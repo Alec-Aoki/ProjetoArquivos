@@ -22,11 +22,9 @@
     // Define o status de um header pré existente
     bool header_set_status(HEADER* header, char status);
 
-    /*TODO*/
     // Define o campo próximo byteOffset de um header
     bool header_set_proxByteOffset(HEADER* header, long int proxByOff);
 
-    /*TODO*/
     // Define o campo nroRegArq de um header
     bool header_set_nroRegArq(HEADER* header, int nroRegAq);
 
@@ -42,7 +40,6 @@
     // Escrve o dado passado no arquivo binário
     bool dado_escrever (FILE *pontArqBin, DADO *dado);
 
-    /*TODO*/
     // Desaloca a memória do dado passado e aponta seu ponteiro para NULL
-    void dado_apagar(DADO** dado);
+    void dado_apagar(DADO **registro);
 #endif
