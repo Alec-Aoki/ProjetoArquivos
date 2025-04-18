@@ -79,25 +79,25 @@ HEADER* header_criar(char* descIdent, char* descYear, char* descFinLoss, char* d
 /* header_set_status():
 Define o campo de status de um header pré-existente
 Parâmetros: ponteiro para o header, status a ser definido
-Retorna: true se bem sucedido, false senão
+Retorna: 
 */
-bool header_set_status(HEADER* header, char status){
-    if(header == NULL) return false;
+void header_set_status(HEADER* header, char status){
+    if(header == NULL) return;
 
     header->status = status; // Definindo o novo status
-    return true;
+    return;
 }
 
 /* header_set_proxByteOffset()
 Define o campo proxByteOffset de um header
 Parâmetros: ponteiro para header, valor do próximo byte offset livre
-Retorno: false se header nulo, true caso contrário
+Retorno: 
 */
-bool header_set_proxByteOffset(HEADER* header, long int proxByOff){
-    if(header == NULL) return false;
+void header_set_proxByteOffset(HEADER* header, long int proxByOff){
+    if(header == NULL) return;
 
     header->proxByteOffset = proxByOff;
-    return true;
+    return;
 }
 
 /* header_set_nroRegArq()
@@ -105,24 +105,22 @@ Define o campo nroRegArq de um header
 Parâmetros: ponteiro para header, quantidade de registros no arquivos
 Retorno: false se header nulo, true caso contrário
 */
-bool header_set_nroRegArq(HEADER* header, int nroRegAq){
-    if(header == NULL) return false;
+void header_set_nroRegArq(HEADER* header, int nroRegAq){
+    if(header == NULL) return;
 
     header->nroRegArq = nroRegAq;
-    return true;
+    return;
 }
 
 /* header_escrever():
 Escreve um header passado no arquivo binário
 Parâmetros: ponteiro para um arquivo, ponteiro para um header e valor booleano (true = escrever string semanticas, false = escrever somente struct)
 Retorna:
-    Caso bem-sucedido: true
-    Caso contrário: false
 */
-bool header_escrever(FILE* pontArq, HEADER* headerArq, bool semantico){
+void header_escrever(FILE* pontArq, HEADER* headerArq, bool semantico){
     fseek(pontArq, 0, SEEK_SET); // Posicionando pontArq no início do arquivo
 
-    if(pontArq == NULL) return false;
+    if(pontArq == NULL) return;
 
     // Escrevendo os campos variáveis da struct header no arquivo
     fwrite(&(headerArq->status), sizeof(char), 1, pontArq);
@@ -167,7 +165,7 @@ bool header_escrever(FILE* pontArq, HEADER* headerArq, bool semantico){
         fwrite(headerArq->descreveDefense, sizeof(char), TAM_DESC_DEF, pontArq);
     }
 
-    return true;
+    return;
 }
 
 /* header_apagar():
@@ -183,7 +181,7 @@ void header_apagar(HEADER** header){
 }
 
 // Funções auxiliares, explicadas mais adiante
-bool dado_set_tamReg (DADO *registro);
+void dado_set_tamReg (DADO *registro);
 
 DADO* dado_criar(char removido, int tamReg, long int prox, int idAttack, int year, float finLoss, char* country, char* attackType, char* targetInd, char* defMec){
     
@@ -247,11 +245,11 @@ int dado_get_tamanho(DADO* dado){
     return dado->tamanhoRegistro;
 }
 
-bool dado_escrever (FILE *pontArqBin, DADO *dado){
+void dado_escrever (FILE *pontArqBin, DADO *dado){
         // Verifiva a corretude dos ponteiros
-        if (pontArqBin == NULL) return false;
+        if (pontArqBin == NULL) return;
     
-        if (dado == NULL) return false;
+        if (dado == NULL) return;
     
         // Escreve os dados no arquivo binário
         fwrite(&(dado->removido), sizeof(char), 1, pontArqBin);
@@ -267,7 +265,7 @@ bool dado_escrever (FILE *pontArqBin, DADO *dado){
         if(dado->defenseMechanism != NULL) fwrite(dado->defenseMechanism, sizeof(char), strlen(dado->defenseMechanism), pontArqBin);
     
         // Retorna o status da operação
-        return true;
+        return;
 }
 
 /* dado_set_tamReg():
@@ -275,8 +273,8 @@ Calcula o número de bytes do registro e atualiza na struct
 Parâmetros: Ponteiro para struct
 Retorna: booleano indicando status da operação
 */
-bool dado_set_tamReg (DADO *registro){
-    if(registro == NULL) return false;
+void dado_set_tamReg (DADO *registro){
+    if(registro == NULL) return;
 
     int contadorBytes = 25; // Inicializa o contador com o tamanho dos campos fixos
         
@@ -288,7 +286,7 @@ bool dado_set_tamReg (DADO *registro){
     
     registro->tamanhoRegistro = contadorBytes;
 
-    return true;  
+    return;  
 }
 
 

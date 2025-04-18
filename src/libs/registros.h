@@ -20,16 +20,16 @@
     void header_apagar(HEADER** header);
 
     // Define o status de um header pré existente
-    bool header_set_status(HEADER* header, char status);
+    void header_set_status(HEADER* header, char status);
 
     // Define o campo próximo byteOffset de um header
-    bool header_set_proxByteOffset(HEADER* header, long int proxByOff);
+    void header_set_proxByteOffset(HEADER* header, long int proxByOff);
 
     // Define o campo nroRegArq de um header
-    bool header_set_nroRegArq(HEADER* header, int nroRegAq);
+    void header_set_nroRegArq(HEADER* header, int nroRegAq);
 
     // Escreve o header passado no arquivo binário
-    bool header_escrever(FILE* pontArq, HEADER* header, bool semantico);
+    void header_escrever(FILE* pontArq, HEADER* header, bool semantico);
 
     // Aloca espaço na heap para um dado e o inicializa com os valores passados
     DADO* dado_criar(char removido, int tamReg, long int prox, int idAttack, int year, float finLoss, char* country, char* attackType, char* targetInd, char* defMec);
@@ -38,7 +38,7 @@
     int dado_get_tamanho(DADO* dado);
 
     // Escrve o dado passado no arquivo binário
-    bool dado_escrever (FILE *pontArqBin, DADO *dado);
+    void dado_escrever (FILE *pontArqBin, DADO *dado);
 
     // Desaloca a memória do dado passado e aponta seu ponteiro para NULL
     void dado_apagar(DADO **registro);

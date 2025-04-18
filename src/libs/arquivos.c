@@ -7,25 +7,16 @@
 #include "registros.h"
 #include "arquivos.h"
 
-bool arquivo_criar(char* nomeArqBin, char* nomeArqCSV){
+void arquivo_criar(char* nomeArqBin, char* nomeArqCSV){
     // Abre o arquivo .csv para leitura
     FILE* pontArqCSV = fopen(nomeArqCSV, "r");
-    if(pontArqCSV == NULL){
-        printf("Erro ao abrir arquivo .csv\n");
-        return false;
-    }
+    if(pontArqCSV == NULL) return;
 
-    if(nomeArqBin == NULL){
-        printf("Erro com o ponteiro para o nome do arquivo\n");
-        return false;
-    }
+    if(nomeArqBin == NULL) return;
 
     // Cria um arquivo binário para gravação. Caso já exista, sobrescreve
     FILE* pontArqBin = fopen(nomeArqBin, "wb");
-    if(pontArqBin == NULL){
-        printf("Erro ao criar arquivo\n");
-        return false;
-    }
+    if(pontArqBin == NULL) return;
     
     /* LEITURA DOS CAMPOS DO HEADER */
     char *campos[7]; // Vetor de ponteiros de strings para guardar os campos do header e dos dados
@@ -48,10 +39,7 @@ bool arquivo_criar(char* nomeArqBin, char* nomeArqCSV){
 
     // Criando struct header com os campos semânticos do header do .csv
     HEADER *headerArq = header_criar(campos[0], campos[1], campos[2], campos[3], campos[4], campos[5], campos[6]);
-    if(headerArq == NULL){
-        printf("Erro ao criar header\n");
-        return false;
-    }
+    if(headerArq == NULL) return;
 
     // Escrevendo header no arquivo binário
     header_escrever(pontArqBin, headerArq, true); 
@@ -114,5 +102,9 @@ bool arquivo_criar(char* nomeArqBin, char* nomeArqCSV){
     header_apagar(&headerArq); // Desalocando struct header
     fclose(pontArqBin); // Fechando o arquivo
 
-    return true;
+    return;
+}
+
+void arquivo_imprimir(char* nomeArqBin){
+    if(nomeArqBin == NULL) return;
 }

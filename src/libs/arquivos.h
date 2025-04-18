@@ -1,6 +1,7 @@
 #ifndef ARQUIVOS_H
     #define ARQUIVOS_H
 
-    bool arquivo_criar(char* nomeArqBin, char* nomeArqCSV);
+    void arquivo_criar(char* nomeArqBin, char* nomeArqCSV);
+    void arquivo_imprimir(char* nomeArqBin);
 
 #endif
