@@ -114,5 +114,9 @@ void arquivo_imprimir(char* nomeArqBin){
 
     fseek(pontArqBin, 0, SEEK_SET); // Posiciona o ponteiro no início do arquivo
 
+    HEADER* header = header_ler(pontArqBin, NULL);
 
+    header_apagar(&header);
+
+    return;
 }

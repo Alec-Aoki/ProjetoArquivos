@@ -146,10 +146,34 @@ HEADER* header_ler(FILE* pontArq, HEADER* header){
     if(pontArq == NULL) return NULL;
 
     // Criando uma nova struct do tipo header caso uma não seja fornecida
-    if(header == NULL){
+    if(header == NULL){;
         header = (HEADER *) malloc(sizeof(HEADER));
         if (header == NULL) return NULL;
     }
+
+    fseek(pontArq, 0, SEEK_SET); // Posicionando ponteiro no início do arquivo
+
+    fread(&(header->status), sizeof(char), 1, pontArq);
+    fread(&(header->topo), sizeof(long int), 1, pontArq);
+    fread(&(header->proxByteOffset), sizeof(long int), 1, pontArq);
+    fread(&(header->nroRegArq), sizeof(int), 1, pontArq);
+    fread(&(header->nroRegRem), sizeof(int), 1, pontArq);
+
+    fread(header->descreveIdentificador, sizeof(char), TAM_DESC_ID, pontArq);
+    fread(header->descreveYear, sizeof(char), TAM_DESC_YEAR, pontArq);
+    fread(header->descreveFinancialLoss, sizeof(char), TAM_DESC_FIN_LOSS, pontArq);
+    fread(&(header->codDescreveCountry), sizeof(char), 1, pontArq);
+    fread(header->descreveCountry, sizeof(char), TAM_DESC_COUNTRY, pontArq);
+    fread(&(header->codDescreveType), sizeof(char), 1, pontArq);
+    fread(header->descreveType, sizeof(char), TAM_DESC_TYPE, pontArq);
+    fread(&(header->codDescreveTargetIndustry), sizeof(char), 1, pontArq);
+    fread(header->descreveTargetIndustry, sizeof(char), TAM_DESC_TGT_IND, pontArq);
+    fread(&(header->codDescreveDefense), sizeof(char), 1, pontArq);
+    fread(header->descreveDefense, sizeof(char), TAM_DESC_DEF, pontArq);
+
+    /*Pra printar as strings, usar printf("%.*s", TAM_DEC_XXX, header->XXX), pq n tem o \0*/
+
+    return header;
 }
 
 /* header_apagar():
