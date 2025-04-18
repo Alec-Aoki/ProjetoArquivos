@@ -42,6 +42,10 @@ struct dados_ {
     char* defenseMechanism; // Estratégia de defesa usada para resolver o problema
 };
 
+/* ------------------------------------------------------------------------------------- */
+/* FUNÇÕES DO HEADER*/
+/* ------------------------------------------------------------------------------------- */
+
 /* header_criar():
 Cria uma struct do tipo HEADER e a inicializa
 Parâmetros: ponteiros para strings (descrições do header)
@@ -74,42 +78,6 @@ HEADER* header_criar(char* descIdent, char* descYear, char* descFinLoss, char* d
     strncpy(novoHeader->descreveDefense, descDef, TAM_DESC_DEF);
 
     return novoHeader; // Retornando ponteiro para HEADER
-}
-
-/* header_set_status():
-Define o campo de status de um header pré-existente
-Parâmetros: ponteiro para o header, status a ser definido
-Retorna: 
-*/
-void header_set_status(HEADER* header, char status){
-    if(header == NULL) return;
-
-    header->status = status; // Definindo o novo status
-    return;
-}
-
-/* header_set_proxByteOffset()
-Define o campo proxByteOffset de um header
-Parâmetros: ponteiro para header, valor do próximo byte offset livre
-Retorno: 
-*/
-void header_set_proxByteOffset(HEADER* header, long int proxByOff){
-    if(header == NULL) return;
-
-    header->proxByteOffset = proxByOff;
-    return;
-}
-
-/* header_set_nroRegArq()
-Define o campo nroRegArq de um header
-Parâmetros: ponteiro para header, quantidade de registros no arquivos
-Retorno: false se header nulo, true caso contrário
-*/
-void header_set_nroRegArq(HEADER* header, int nroRegAq){
-    if(header == NULL) return;
-
-    header->nroRegArq = nroRegAq;
-    return;
 }
 
 /* header_escrever():
@@ -168,6 +136,22 @@ void header_escrever(FILE* pontArq, HEADER* headerArq, bool semantico){
     return;
 }
 
+/*TODO*/
+/* header_ler():
+
+Parâmetros:
+Retorna:
+*/
+HEADER* header_ler(FILE* pontArq, HEADER* header){
+    if(pontArq == NULL) return NULL;
+
+    // Criando uma nova struct do tipo header caso uma não seja fornecida
+    if(header == NULL){
+        header = (HEADER *) malloc(sizeof(HEADER));
+        if (header == NULL) return NULL;
+    }
+}
+
 /* header_apagar():
 Desaloca uma struct do tipo header e define seu ponteiro para NULL
 Parâmetros: ponteiro de ponteiro para a struct a ser desalocada
@@ -179,6 +163,46 @@ void header_apagar(HEADER** header){
 
     return;
 }
+
+/* header_set_status():
+Define o campo de status de um header pré-existente
+Parâmetros: ponteiro para o header, status a ser definido
+Retorna: 
+*/
+void header_set_status(HEADER* header, char status){
+    if(header == NULL) return;
+
+    header->status = status; // Definindo o novo status
+    return;
+}
+
+/* header_set_proxByteOffset()
+Define o campo proxByteOffset de um header
+Parâmetros: ponteiro para header, valor do próximo byte offset livre
+Retorno: 
+*/
+void header_set_proxByteOffset(HEADER* header, long int proxByOff){
+    if(header == NULL) return;
+
+    header->proxByteOffset = proxByOff;
+    return;
+}
+
+/* header_set_nroRegArq()
+Define o campo nroRegArq de um header
+Parâmetros: ponteiro para header, quantidade de registros no arquivos
+Retorno: false se header nulo, true caso contrário
+*/
+void header_set_nroRegArq(HEADER* header, int nroRegAq){
+    if(header == NULL) return;
+
+    header->nroRegArq = nroRegAq;
+    return;
+}
+
+/* ------------------------------------------------------------------------------------- */
+/* FUNÇÕES DOS DADOS */
+/* ------------------------------------------------------------------------------------- */
 
 // Funções auxiliares, explicadas mais adiante
 void dado_set_tamReg (DADO *registro);
@@ -271,7 +295,7 @@ void dado_escrever (FILE *pontArqBin, DADO *dado){
 /* dado_set_tamReg():
 Calcula o número de bytes do registro e atualiza na struct
 Parâmetros: Ponteiro para struct
-Retorna: booleano indicando status da operação
+Retorna: 
 */
 void dado_set_tamReg (DADO *registro){
     if(registro == NULL) return;
@@ -289,4 +313,18 @@ void dado_set_tamReg (DADO *registro){
     return;  
 }
 
+/*TODO*/
+/* dado_ler():
 
+Parâmetros:
+Retorna:
+*/
+DADO* dado_ler(FILE* pontArq, DADO* dado){
+    if(pontArq == NULL) return NULL;
+
+    // Criando uma nova struct do tipo dado caso uma não seja fornecida
+    if(dado == NULL){
+        dado = (DADO *) malloc(sizeof(DADO));
+        if (dado == NULL) return NULL;
+    }
+}

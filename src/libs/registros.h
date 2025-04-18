@@ -21,7 +21,7 @@
 
     /*TODO*/
     // Lê o header de um arquivo binário
-    HEADER* header_ler(FILE* pontArq);
+    HEADER* header_ler(FILE* pontArq, HEADER* header);
 
     // Desaloca a memória do header passado e aponta seu ponteiro para NULL
     void header_apagar(HEADER** header);
@@ -43,7 +43,7 @@
 
     /*TODO*/
     // Lê um dado de um arquivo binário
-    DADO* dado_ler(FILE* pontArq);
+    DADO* dado_ler(FILE* pontArq, DADO* dado);
 
     // Desaloca a memória do dado passado e aponta seu ponteiro para NULL
     void dado_apagar(DADO **registro);
