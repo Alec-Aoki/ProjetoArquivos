@@ -254,7 +254,7 @@ bool dado_escrever (FILE *pontArqBin, DADO *dado){
         if (dado == NULL) return false;
     
         // Escreve os dados no arquivo binário
-        fwrite(&(dado->removido), sizeof(int), 1, pontArqBin);
+        fwrite(&(dado->removido), sizeof(char), 1, pontArqBin);
         fwrite(&(dado->tamanhoRegistro), sizeof(int), 1, pontArqBin);
         fwrite(&(dado->prox), sizeof(long int), 1, pontArqBin);
         fwrite(&(dado->idAttack), sizeof(int), 1, pontArqBin);
@@ -278,16 +278,8 @@ Retorna: booleano indicando status da operação
 bool dado_set_tamReg (DADO *registro){
     if(registro == NULL) return false;
 
-    int contadorBytes = 0; // Inicializa o contador com o tamanho dos campos fixos
-    
-    // Adiciona ao contador o tamanho dos campos fixos
-    contadorBytes += sizeof(registro->removido);
-    contadorBytes += sizeof(registro->tamanhoRegistro);
-    contadorBytes += sizeof(registro->prox);
-    contadorBytes += sizeof(registro->idAttack);
-    contadorBytes += sizeof(registro->year);
-    contadorBytes += sizeof(registro->financialLoss);
-    
+    int contadorBytes = 25; // Inicializa o contador com o tamanho dos campos fixos
+        
     // Adiciona ao contador o tamanho dos campos variáveis
     if (registro->country != NULL) contadorBytes += strlen(registro->country);
     if (registro->attackType != NULL) contadorBytes += strlen(registro->attackType);

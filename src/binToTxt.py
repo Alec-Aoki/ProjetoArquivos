@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
+
 import struct
 import sys
 
-# Constants from registros.h
+# Define constants from the C code
 TAM_DESC_ID = 23
 TAM_DESC_YEAR = 27
 TAM_DESC_FIN_LOSS = 28
@@ -13,204 +14,183 @@ TAM_DESC_DEF = 67
 
 class Header:
     def __init__(self):
-        self.status = '0'
-        self.topo = -1
+        self.status = ''
+        self.topo = 0
         self.proxByteOffset = 0
         self.nroRegArq = 0
         self.nroRegRem = 0
-        self.descreveIdentificador = ""
-        self.descreveYear = ""
-        self.descreveFinancialLoss = ""
-        self.codDescreveCountry = '1'
-        self.descreveCountry = ""
-        self.codDescreveType = '2'
-        self.descreveType = ""
-        self.codDescreveTargetIndustry = '3'
-        self.descreveTargetIndustry = ""
-        self.codDescreveDefense = '4'
-        self.descreveDefense = ""
+        self.descreveIdentificador = ''
+        self.descreveYear = ''
+        self.descreveFinancialLoss = ''
+        self.codDescreveCountry = ''
+        self.descreveCountry = ''
+        self.codDescreveType = ''
+        self.descreveType = ''
+        self.codDescreveTargetIndustry = ''
+        self.descreveTargetIndustry = ''
+        self.codDescreveDefense = ''
+        self.descreveDefense = ''
 
 class Record:
     def __init__(self):
-        self.removido = 0
+        self.removido = ''
         self.tamanhoRegistro = 0
-        self.prox = -1
+        self.prox = 0
         self.idAttack = 0
         self.year = 0
         self.financialLoss = 0.0
-        self.country = ""
-        self.attackType = ""
-        self.targetIndustry = ""
-        self.defenseMechanism = ""
+        self.country = ''
+        self.attackType = ''
+        self.targetIndustry = ''
+        self.defenseMechanism = ''
 
-def read_header(bin_file):
-    # Save the starting position
-    start_pos = bin_file.tell()
-    
+def read_header(file):
+    """Read the header from the binary file"""
     header = Header()
     
-    # Read variable fields
-    header.status = bin_file.read(1).decode('utf-8')
-    header.topo = struct.unpack('q', bin_file.read(8))[0]  # long int (8 bytes)
-    header.proxByteOffset = struct.unpack('q', bin_file.read(8))[0]  # long int (8 bytes)
-    header.nroRegArq = struct.unpack('i', bin_file.read(4))[0]  # int (4 bytes)
-    header.nroRegRem = struct.unpack('i', bin_file.read(4))[0]  # int (4 bytes)
+    # Read the variable fields
+    header.status = file.read(1).decode('ascii')
+    header.topo = struct.unpack('q', file.read(8))[0]  # long int is 8 bytes
+    header.proxByteOffset = struct.unpack('q', file.read(8))[0]
+    header.nroRegArq = struct.unpack('i', file.read(4))[0]  # int is 4 bytes
+    header.nroRegRem = struct.unpack('i', file.read(4))[0]
     
-    # Read semantic fields
-    header.descreveIdentificador = bin_file.read(TAM_DESC_ID).decode('utf-8').rstrip('\0')
-    header.descreveYear = bin_file.read(TAM_DESC_YEAR).decode('utf-8').rstrip('\0')
-    header.descreveFinancialLoss = bin_file.read(TAM_DESC_FIN_LOSS).decode('utf-8').rstrip('\0')
+    # Read the semantic fields
+    header.descreveIdentificador = file.read(TAM_DESC_ID).decode('ascii')
+    header.descreveYear = file.read(TAM_DESC_YEAR).decode('ascii')
+    header.descreveFinancialLoss = file.read(TAM_DESC_FIN_LOSS).decode('ascii')
     
-    header.codDescreveCountry = bin_file.read(1).decode('utf-8')
-    header.descreveCountry = bin_file.read(TAM_DESC_COUNTRY).decode('utf-8').rstrip('\0')
+    header.codDescreveCountry = file.read(1).decode('ascii')
+    header.descreveCountry = file.read(TAM_DESC_COUNTRY).decode('ascii')
     
-    header.codDescreveType = bin_file.read(1).decode('utf-8')
-    header.descreveType = bin_file.read(TAM_DESC_TYPE).decode('utf-8').rstrip('\0')
+    header.codDescreveType = file.read(1).decode('ascii')
+    header.descreveType = file.read(TAM_DESC_TYPE).decode('ascii')
     
-    header.codDescreveTargetIndustry = bin_file.read(1).decode('utf-8')
-    header.descreveTargetIndustry = bin_file.read(TAM_DESC_TGT_IND).decode('utf-8').rstrip('\0')
+    header.codDescreveTargetIndustry = file.read(1).decode('ascii')
+    header.descreveTargetIndustry = file.read(TAM_DESC_TGT_IND).decode('ascii')
     
-    header.codDescreveDefense = bin_file.read(1).decode('utf-8')
-    header.descreveDefense = bin_file.read(TAM_DESC_DEF).decode('utf-8').rstrip('\0')
+    header.codDescreveDefense = file.read(1).decode('ascii')
+    header.descreveDefense = file.read(TAM_DESC_DEF).decode('ascii')
     
-    # Calculate the header size
-    header_size = bin_file.tell() - start_pos
-    
-    return header, header_size
+    return header
 
-def read_variable_string(bin_file):
-    """Read variable length string field that may be empty or have content with identifier and delimiter."""
-    result = ""
-    
-    # Read first byte to check if it's a field identifier or a delimiter
-    first_byte = bin_file.read(1)
-    if not first_byte or first_byte == b'|':
-        # Empty field, just return empty string
-        return ""
-    
-    # It's a field identifier, read the actual content
-    field_id = first_byte.decode('utf-8')
-    
-    # Read until we find the delimiter '|'
-    byte = bin_file.read(1)
-    while byte and byte != b'|':
-        result += byte.decode('utf-8')
-        byte = bin_file.read(1)
-    
-    return result
-
-def read_record(bin_file):
+def read_record(file):
+    """Read a record from the binary file"""
     record = Record()
     
-    # Try to read the first field of the record
-    removido_bytes = bin_file.read(4)
-    if not removido_bytes or len(removido_bytes) < 4:
-        return None  # End of file or corrupted record
-    
     # Read fixed-size fields
-    record.removido = struct.unpack('i', removido_bytes)[0]  # int (4 bytes)
-    record.tamanhoRegistro = struct.unpack('i', bin_file.read(4))[0]  # int (4 bytes)
-    record.prox = struct.unpack('q', bin_file.read(8))[0]  # long int (8 bytes)
-    record.idAttack = struct.unpack('i', bin_file.read(4))[0]  # int (4 bytes)
-    record.year = struct.unpack('i', bin_file.read(4))[0]  # int (4 bytes)
-    record.financialLoss = struct.unpack('f', bin_file.read(4))[0]  # float (4 bytes)
+    record.removido = file.read(1).decode('ascii')
+    record.tamanhoRegistro = struct.unpack('i', file.read(4))[0]
+    record.prox = struct.unpack('q', file.read(8))[0]
+    record.idAttack = struct.unpack('i', file.read(4))[0]
+    record.year = struct.unpack('i', file.read(4))[0]
+    record.financialLoss = struct.unpack('f', file.read(4))[0]
     
-    # Read variable-length fields that may be empty
-    record.country = read_variable_string(bin_file)
-    record.attackType = read_variable_string(bin_file)
-    record.targetIndustry = read_variable_string(bin_file)
-    record.defenseMechanism = read_variable_string(bin_file)
+    # Read variable-length fields with delimiters
+    content = file.read(record.tamanhoRegistro - 25)  # 25 is the size of the fixed fields
+    
+    # Parse the variable length fields which are in format like "1Brazil|2Ransomware|3Finance|4Patch Management|"
+    content_str = content.decode('ascii')
+    
+    # Extract variable fields by finding delimiters
+    fields = {}
+    current_field = ""
+    current_id = ""
+    
+    i = 0
+    while i < len(content_str):
+        if content_str[i] in "1234":  # Field identifiers
+            current_id = content_str[i]
+            i += 1
+            current_field = ""
+            while i < len(content_str) and content_str[i] != '|':
+                current_field += content_str[i]
+                i += 1
+            fields[current_id] = current_field
+        else:
+            i += 1  # Skip delimiters or unexpected characters
+    
+    # Assign fields based on their identifiers
+    record.country = fields.get('1', '')
+    record.attackType = fields.get('2', '')
+    record.targetIndustry = fields.get('3', '')
+    record.defenseMechanism = fields.get('4', '')
     
     return record
 
-def bin_to_text(bin_filename, text_filename):
-    with open(bin_filename, 'rb') as bin_file, open(text_filename, 'w') as text_file:
-        # Read header and get its size
-        header, header_size = read_header(bin_file)
-        
-        # Write header information to text file
-        text_file.write("==== HEADER INFORMATION ====\n")
-        text_file.write(f"Status: {header.status}\n")
-        text_file.write(f"Top offset of removed records: {header.topo}\n")
-        text_file.write(f"Next byte offset from header: {header.proxByteOffset}\n")
-        text_file.write(f"Number of records in file: {header.nroRegArq}\n")
-        text_file.write(f"Number of removed records: {header.nroRegRem}\n")
-        text_file.write(f"Header size: {header_size} bytes\n")
-        text_file.write("\n==== SEMANTIC DESCRIPTIONS ====\n")
-        text_file.write(f"ID Attack: {header.descreveIdentificador}\n")
-        text_file.write(f"Year: {header.descreveYear}\n")
-        text_file.write(f"Financial Loss: {header.descreveFinancialLoss}\n")
-        text_file.write(f"Country ({header.codDescreveCountry}): {header.descreveCountry}\n")
-        text_file.write(f"Attack Type ({header.codDescreveType}): {header.descreveType}\n")
-        text_file.write(f"Target Industry ({header.codDescreveTargetIndustry}): {header.descreveTargetIndustry}\n")
-        text_file.write(f"Defense Mechanism ({header.codDescreveDefense}): {header.descreveDefense}\n")
-        
-        # Write records
-        text_file.write("\n==== RECORDS ====\n")
-        record_num = 1
-        
-        # First record starts after the header
-        first_record_offset = header_size
-        current_offset = first_record_offset
-        
-        record_positions = []  # To store record positions for later calculation
-        
-        while True:
-            record_start = bin_file.tell()
-            record = read_record(bin_file)
-            if record is None:
-                break
+def convert_to_text(bin_filename, txt_filename):
+    """Convert binary file to text file"""
+    try:
+        with open(bin_filename, 'rb') as bin_file, open(txt_filename, 'w', encoding='utf-8') as txt_file:
+            # Read header
+            header = read_header(bin_file)
             
-            record_end = bin_file.tell()
-            record_size = record_end - record_start
-            record_positions.append((record_start, record_size))
-                
-            text_file.write(f"\n--- Record #{record_num} (Offset: {record_start}) ---\n")
-            text_file.write(f"Removed: {'Yes' if record.removido else 'No'}\n")
-            text_file.write(f"Record size: {record.tamanhoRegistro} bytes\n")
-            text_file.write(f"Next removed record: {record.prox}\n")
-            text_file.write(f"Attack ID: {record.idAttack}\n")
-            text_file.write(f"Year: {record.year}\n")
-            text_file.write(f"Financial Loss: ${record.financialLoss:.2f}\n")
-            text_file.write(f"Country: {record.country if record.country else '[Empty]'}\n")
-            text_file.write(f"Attack Type: {record.attackType if record.attackType else '[Empty]'}\n")
-            text_file.write(f"Target Industry: {record.targetIndustry if record.targetIndustry else '[Empty]'}\n")
-            text_file.write(f"Defense Mechanism: {record.defenseMechanism if record.defenseMechanism else '[Empty]'}\n")
+            # Write header information to text file
+            txt_file.write("===== HEADER INFORMATION =====\n")
+            txt_file.write(f"Status: {header.status}\n")
+            txt_file.write(f"Top: {header.topo}\n")
+            txt_file.write(f"Next Byte Offset: {header.proxByteOffset}\n")
+            txt_file.write(f"Number of Records: {header.nroRegArq}\n")
+            txt_file.write(f"Number of Removed Records: {header.nroRegRem}\n")
+            txt_file.write(f"Description - ID: {header.descreveIdentificador}\n")
+            txt_file.write(f"Description - Year: {header.descreveYear}\n")
+            txt_file.write(f"Description - Financial Loss: {header.descreveFinancialLoss}\n")
+            txt_file.write(f"Description - Country: {header.descreveCountry}\n")
+            txt_file.write(f"Description - Attack Type: {header.descreveType}\n")
+            txt_file.write(f"Description - Target Industry: {header.descreveTargetIndustry}\n")
+            txt_file.write(f"Description - Defense Mechanism: {header.descreveDefense}\n")
+            txt_file.write("\n===== RECORDS =====\n")
             
-            record_num += 1
-        
-        # Calculate the next free byte offset
-        if record_positions:
-            last_record_offset, last_record_size = record_positions[-1]
-            calculated_next_offset = last_record_offset + last_record_size
-        else:
-            calculated_next_offset = header_size
-        
-        # Add a summary section
-        text_file.write("\n==== SUMMARY ====\n")
-        text_file.write(f"Next byte offset from header: {header.proxByteOffset}\n")
-        text_file.write(f"Calculated next free byte offset: {calculated_next_offset}\n")
-        text_file.write(f"Total records read: {record_num - 1}\n")
-        
-        # Check if there's a discrepancy
-        if header.proxByteOffset != calculated_next_offset:
-            text_file.write(f"WARNING: Discrepancy detected between header byte offset and calculated next free offset!\n")
+            # Read and write records
+            record_count = 0
+            current_offset = 276  # Header size
             
-    print(f"Successfully converted {bin_filename} to {text_filename}")
-
-def print_usage():
-    print("Usage: python bin_to_text.py <input_bin_file> <output_text_file>")
+            while current_offset < header.proxByteOffset:
+                bin_file.seek(current_offset)
+                try:
+                    record = read_record(bin_file)
+                    record_count += 1
+                    
+                    txt_file.write(f"\nRecord #{record_count}:\n")
+                    txt_file.write(f"Removed: {record.removido}\n")
+                    txt_file.write(f"Record Size: {record.tamanhoRegistro} bytes\n")
+                    txt_file.write(f"Next Removed: {record.prox}\n")
+                    txt_file.write(f"ID Attack: {record.idAttack}\n")
+                    txt_file.write(f"Year: {record.year}\n")
+                    txt_file.write(f"Financial Loss: {record.financialLoss:.2f}\n")
+                    txt_file.write(f"Country: {record.country}\n")
+                    txt_file.write(f"Attack Type: {record.attackType}\n")
+                    txt_file.write(f"Target Industry: {record.targetIndustry}\n")
+                    txt_file.write(f"Defense Mechanism: {record.defenseMechanism}\n")
+                    
+                    # Move to the next record
+                    current_offset += record.tamanhoRegistro
+                except Exception as e:
+                    print(f"Error reading record at offset {current_offset}: {e}")
+                    break
+            
+            # After processing all records, add the byte offset information
+            txt_file.write("\n===== BYTE OFFSET INFORMATION =====\n")
+            txt_file.write(f"Expected next free byteOffset (calculated): {current_offset}\n")
+            txt_file.write(f"Next free byteOffset from header: {header.proxByteOffset}\n")
+            
+            print(f"Successfully converted {record_count} records to {txt_filename}")
+    
+    except Exception as e:
+        print(f"Error: {e}")
+        return False
+    
+    return True
 
 if __name__ == "__main__":
     if len(sys.argv) != 3:
-        print_usage()
+        print("Usage: python binary_reader.py <binary_file> <output_text_file>")
         sys.exit(1)
-        
-    bin_filename = sys.argv[1]
-    text_filename = sys.argv[2]
     
-    try:
-        bin_to_text(bin_filename, text_filename)
-    except Exception as e:
-        print(f"Error: {e}")
-        sys.exit(1)
+    bin_filename = sys.argv[1]
+    txt_filename = sys.argv[2]
+    
+    if convert_to_text(bin_filename, txt_filename):
+        print("Conversion completed successfully.")
+    else:
+        print("Conversion failed.")

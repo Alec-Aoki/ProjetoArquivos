@@ -65,7 +65,7 @@ bool arquivo_criar(char* nomeArqBin, char* nomeArqCSV){
 
     // Contadores para atualizar os dados do header
     int quantRegDados = 0;
-    int byteOffset = 0;
+    int byteOffset = 276; // Inicializado com o tamanho do header
 
     while (fgets(buffer, sizeof(buffer), pontArqCSV) != NULL){
         // Identifica o fim da linha lida e substitui o "\n" por um '\0'
@@ -91,7 +91,7 @@ bool arquivo_criar(char* nomeArqBin, char* nomeArqCSV){
         }
 
         // Guarda os dados lidos na struct DADO
-        DADO *RegTemp = dado_criar(0, 0, -1, str_to_int(campos[0]), str_to_int(campos[1]), str_to_float(campos[2]), campos[3], campos[4], campos[5], campos[6]);
+        DADO *RegTemp = dado_criar('0', 0, -1, str_to_int(campos[0]), str_to_int(campos[1]), str_to_float(campos[2]), campos[3], campos[4], campos[5], campos[6]);
 
         quantRegDados++; // Incrementando a quantidade de registros no arquivo
         byteOffset += dado_get_tamanho(RegTemp);
@@ -105,7 +105,7 @@ bool arquivo_criar(char* nomeArqBin, char* nomeArqCSV){
     // Alterando o status do arquivo antes de fechá-lo
     header_set_status(headerArq, '1');
     header_set_nroRegArq(headerArq, quantRegDados);
-    header_set_proxByteOffset(headerArq, byteOffset + 1);
+    header_set_proxByteOffset(headerArq, byteOffset);
 
     /* ESCREVENDO HEADER ATUALIZADO NO ARQUIVO */
     header_escrever(pontArqBin, headerArq, false); // Não precisamos escrever os campos semânticos novamente
