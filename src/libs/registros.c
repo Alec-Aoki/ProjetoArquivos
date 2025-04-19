@@ -80,6 +80,18 @@ HEADER* header_criar(char* descIdent, char* descYear, char* descFinLoss, char* d
     return novoHeader; // Retornando ponteiro para HEADER
 }
 
+/* header_apagar():
+Desaloca uma struct do tipo header e define seu ponteiro para NULL
+Parâmetros: ponteiro de ponteiro para a struct a ser desalocada
+Retorna: void
+*/
+void header_apagar(HEADER** header){
+    free(*header); // Desalocando memória
+    *header = NULL; // Definindo o ponteiro para NULL
+
+    return;
+}
+
 /* header_escrever():
 Escreve um header passado no arquivo binário
 Parâmetros: ponteiro para um arquivo, ponteiro para um header e valor booleano (true = escrever string semanticas, false = escrever somente struct)
@@ -173,18 +185,6 @@ HEADER* header_ler(FILE* pontArq, HEADER* header){
     /*Pra printar as strings, usar printf("%.*s", TAM_DEC_XXX, header->XXX), pq n tem o \0*/
 
     return header;
-}
-
-/* header_apagar():
-Desaloca uma struct do tipo header e define seu ponteiro para NULL
-Parâmetros: ponteiro de ponteiro para a struct a ser desalocada
-Retorna: void
-*/
-void header_apagar(HEADER** header){
-    free(*header); // Desalocando memória
-    *header = NULL; // Definindo o ponteiro para NULL
-
-    return;
 }
 
 /* header_set_status():
