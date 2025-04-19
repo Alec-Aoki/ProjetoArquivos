@@ -13,6 +13,10 @@
     typedef struct header_ HEADER;
     typedef struct dados_ DADO;
 
+    /* ------------------------------------------------------------------------------------- */
+    /* FUNÇÕES DO HEADER*/
+    /* ------------------------------------------------------------------------------------- */
+
     // Aloca espaço na heap para um header e o inicializa com as strings semânticas
     HEADER* header_criar(char* descIdent, char* descYear, char* descFinLoss, char* descCountry, char* descType, char* descTargInd, char* descDef);
 
@@ -37,6 +41,10 @@
     // Retorna o campo nroRegArq de um header
     int header_get_nroRegArq(HEADER* header);
 
+    /* ------------------------------------------------------------------------------------- */
+    /* FUNÇÕES DOS DADOS */
+    /* ------------------------------------------------------------------------------------- */
+
     // Aloca espaço na heap para um dado e o inicializa com os valores passados
     DADO* dado_criar(char removido, int tamReg, long int prox, int idAttack, int year, float finLoss, char* country, char* attackType, char* targetInd, char* defMec);
 
@@ -54,4 +62,18 @@
 
     // Retorna o valor do campo tamanhoRegistro de um dado
     int dado_get_tamanho(DADO* dado);
+
+    int dado_get_idAttacK(DADO* dado);
+
+    int dado_get_year(DADO* dado);
+
+    float dado_get_finLoss(DADO* dado);
+
+    char* dado_get_country(DADO* dado);
+
+    char* dado_get_attackType(DADO* dado);
+
+    char* dado_get_targetIndustry(DADO* dado);
+
+    char* dado_get_defenseMech(DADO* dado);
 #endif

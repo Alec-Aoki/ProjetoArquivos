@@ -296,18 +296,6 @@ void dado_apagar(DADO **registro){
     *registro = NULL; 
 }
 
-
-/* dado_get_tamanho()
-Retorna o tamanho em bytes de um registro de dado
-Parâmetros: ponteiro para struct dado
-Retorno: -1 caso a struct seja nula, caso contrário o valor guardado no campo tamanhoRegistro
-*/
-int dado_get_tamanho(DADO* dado){
-    if(dado == NULL) return -1;
-
-    return dado->tamanhoRegistro;
-}
-
 /*dado_escrever():
 Escreve os campos de uma struct dado em um arquivo
 Parâmetros: ponteiro para arquivo, ponteiro para uma struct dado
@@ -334,27 +322,6 @@ void dado_escrever (FILE *pontArq, DADO *dado){
     
         // Retorna o status da operação
         return;
-}
-
-/* dado_set_tamReg():
-Calcula o número de bytes do registro e atualiza na struct
-Parâmetros: Ponteiro para struct
-Retorna: 
-*/
-void dado_set_tamReg (DADO *registro){
-    if(registro == NULL) return;
-
-    int contadorBytes = 25; // Inicializa o contador com o tamanho dos campos fixos
-        
-    // Adiciona ao contador o tamanho dos campos variáveis
-    if (registro->country != NULL) contadorBytes += strlen(registro->country);
-    if (registro->attackType != NULL) contadorBytes += strlen(registro->attackType);
-    if (registro->targetIndustry != NULL) contadorBytes += strlen(registro->targetIndustry);
-    if (registro->defenseMechanism != NULL) contadorBytes += strlen(registro->defenseMechanism);
-    
-    registro->tamanhoRegistro = contadorBytes;
-
-    return;  
 }
 
 /* dado_ler():
@@ -425,4 +392,78 @@ void dado_imprimir(HEADER* header, DADO* dado){
     printf("%.*s : %s\n", TAM_DESC_DEF, header->descreveDefense, dado->defenseMechanism);
     
     return;
+}
+
+/* dado_set_tamReg():
+Calcula o número de bytes do registro e atualiza na struct
+Parâmetros: Ponteiro para struct
+Retorna: 
+*/
+void dado_set_tamReg (DADO *registro){
+    if(registro == NULL) return;
+
+    int contadorBytes = 25; // Inicializa o contador com o tamanho dos campos fixos
+        
+    // Adiciona ao contador o tamanho dos campos variáveis
+    if (registro->country != NULL) contadorBytes += strlen(registro->country);
+    if (registro->attackType != NULL) contadorBytes += strlen(registro->attackType);
+    if (registro->targetIndustry != NULL) contadorBytes += strlen(registro->targetIndustry);
+    if (registro->defenseMechanism != NULL) contadorBytes += strlen(registro->defenseMechanism);
+    
+    registro->tamanhoRegistro = contadorBytes;
+
+    return;  
+}
+
+/* dado_get_tamanho()
+Retorna o tamanho em bytes de um registro de dado
+Parâmetros: ponteiro para struct dado
+Retorno: -1 caso a struct seja nula, caso contrário o valor guardado no campo tamanhoRegistro
+*/
+int dado_get_tamanho(DADO* dado){
+    if(dado == NULL) return -1;
+
+    return dado->tamanhoRegistro;
+}
+
+int dado_get_idAttacK(DADO* dado){
+    if(dado == NULL) return -1;
+
+    return dado->idAttack;
+}
+
+int dado_get_year(DADO* dado){
+    if(dado == NULL) return -1;
+
+    return dado->year;
+}
+
+float dado_get_finLoss(DADO* dado){
+    if(dado == NULL) return -1;
+
+    return dado->financialLoss;
+}
+
+char* dado_get_country(DADO* dado){
+    if(dado == NULL) return NULL;
+
+    return dado->country;
+}
+
+char* dado_get_attackType(DADO* dado){
+    if(dado == NULL) return NULL;
+
+    return dado->attackType;
+}
+
+char* dado_get_targetIndustry(DADO* dado){
+    if(dado == NULL) return NULL;
+
+    return dado->targetIndustry;
+}
+
+char* dado_get_defenseMech(DADO* dado){
+    if(dado == NULL) return NULL;
+
+    return dado->defenseMechanism;
 }
