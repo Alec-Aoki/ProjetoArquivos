@@ -43,7 +43,7 @@
 
     /*TODO*/
     // Lê um dado de um arquivo binário
-    DADO* dado_ler(FILE* pontArq, DADO* dado);
+    DADO* dado_ler(FILE* pontArq, DADO* dado, int byteOffset);
 
     // Desaloca a memória do dado passado e aponta seu ponteiro para NULL
     void dado_apagar(DADO **registro);

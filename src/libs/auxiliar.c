@@ -61,3 +61,38 @@ char *formata_string_registro (char *string, char *id){
 
     return strTemp; // Retorna a string formatada
 }
+
+/* separa_campo():
+A partir de um ponteiro que aponta para o inicio de uma string do registro separa os campos dela
+Parâmetro: Ponteiro para ponteiro de char
+Retorna: string
+*/
+char *separa_campo (char **pontStr) {
+    // recebe um ponteiro para a primeira ocorrecia do caractere dado (Fim da string)
+    char *lugarDelimitador = strchr(*pontStr, '|');
+    // Aponta para o inicio pulando o ID
+    char *inicio = *pontStr + 1;
+
+    // Calcula do tamanho da string
+    int tamStr = lugarDelimitador - inicio; 
+    
+    // Caso campo nulo
+    if (tamStr <= 0) {
+        *pontStr = lugarDelimitador + 1;
+        return strdup("NADA CONSTA");
+    }
+
+    // Aloca memória para string e verifica se ocorreu corretamente
+    char *campo = (char *) malloc(tamStr+1);
+    if (campo == NULL) return NULL;
+
+    // Copia a string e adiciona o caractere terminador
+    memcpy(campo, inicio, tamStr);
+    campo[tamStr] = '\0';
+
+    // Avança o ponteiro para o próximo campo
+    *pontStr = tamStr+1;
+
+    // retorna a string sem id nem delimitador
+    return campo;
+}
