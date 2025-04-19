@@ -110,7 +110,11 @@ void arquivo_criar(char* nomeArqBin, char* nomeArqCSV){
     return;
 }
 
-/*TODO*/
+/* arquivo_imprimir():
+Imprime os conteúdos do arquivo binário de acordo com as descrições do header
+Parâmetros: ponteiro para string (nome do arquivo binário)
+Retorna:
+*/
 void arquivo_imprimir(char* nomeArqBin){
     if(nomeArqBin == NULL) return; // Erro com nome do arquivo binário a ser aberto
 
@@ -122,18 +126,22 @@ void arquivo_imprimir(char* nomeArqBin){
     HEADER* header = header_ler(pontArqBin, NULL);
 
     int byteOffset = 276; // Inicializado com tamanho do header
+    // Lendo o primeiro dado fora do loop
     DADO* dado = dado_ler(pontArqBin, NULL, byteOffset);
     byteOffset += dado_get_tamanho(dado);
     dado_imprimir(header, dado);
     printf("\n");
 
+    int contRegArq = header_get_nroRegArq(header) - 1; // Contador para loop de leitura de dados
 
-    // Atualizar isso aqui mais tarde
-    for (int i = 0; i < 2999; i++){
+    // Loop de leitura de dados
+    while(contRegArq > 0){
         dado_ler(pontArqBin, dado, byteOffset);
         byteOffset += dado_get_tamanho(dado);
         dado_imprimir(header, dado);
         printf("\n");
+
+        contRegArq--;
     }
 
     dado_apagar(&dado);

@@ -223,6 +223,17 @@ void header_set_nroRegArq(HEADER* header, int nroRegAq){
     return;
 }
 
+/* header_get_nroRegArq
+Retorna o valor do campo nroRegArq de uma struct header
+Parâmetros: ponteiro para struct do tipo header
+Retorna: valor do campo nroRegArq da struct (-1 se header == NULL)
+*/
+int header_get_nroRegArq(HEADER* header){
+    if(header == NULL) return -1;
+
+    return header->nroRegArq;
+}
+
 /* ------------------------------------------------------------------------------------- */
 /* FUNÇÕES DOS DADOS */
 /* ------------------------------------------------------------------------------------- */

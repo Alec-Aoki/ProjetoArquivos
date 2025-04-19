@@ -34,6 +34,9 @@
     // Define o campo nroRegArq de um header
     void header_set_nroRegArq(HEADER* header, int nroRegAq);
 
+    // Retorna o campo nroRegArq de um header
+    int header_get_nroRegArq(HEADER* header);
+
     // Aloca espaço na heap para um dado e o inicializa com os valores passados
     DADO* dado_criar(char removido, int tamReg, long int prox, int idAttack, int year, float finLoss, char* country, char* attackType, char* targetInd, char* defMec);
 
