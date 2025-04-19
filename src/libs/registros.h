@@ -19,7 +19,6 @@
     // Escreve o header passado no arquivo binário
     void header_escrever(FILE* pontArq, HEADER* header, bool semantico);
 
-    /*TODO*/
     // Lê o header de um arquivo binário
     HEADER* header_ler(FILE* pontArq, HEADER* header);
 
@@ -41,7 +40,6 @@
     // Escerve o dado passado no arquivo binário
     void dado_escrever (FILE *pontArqBin, DADO *dado);
 
-    /*TODO*/
     // Lê um dado de um arquivo binário
     DADO* dado_ler(FILE* pontArq, DADO* dado, int byteOffset);
 

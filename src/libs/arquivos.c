@@ -120,13 +120,18 @@ void arquivo_imprimir(char* nomeArqBin){
     fseek(pontArqBin, 0, SEEK_SET); // Posiciona o ponteiro no início do arquivo
 
     HEADER* header = header_ler(pontArqBin, NULL);
-    DADO* dado = dado_ler(pontArqBin, NULL);
+
+    int byteOffset = 276; // Inicializado com tamanho do header
+    DADO* dado = dado_ler(pontArqBin, NULL, byteOffset);
+    byteOffset += dado_get_tamanho(dado);
     dado_imprimir(header, dado);
     printf("\n");
 
+
     // Atualizar isso aqui mais tarde
-    while(pontArqBin != EOF){
-        dado_ler(pontArqBin, dado);
+    for (int i = 0; i < 2999; i++){
+        dado_ler(pontArqBin, dado, byteOffset);
+        byteOffset += dado_get_tamanho(dado);
         dado_imprimir(header, dado);
         printf("\n");
     }

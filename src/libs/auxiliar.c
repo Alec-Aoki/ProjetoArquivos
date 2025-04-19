@@ -42,8 +42,6 @@ Parâmetros: string a ser formatada
 Retorna: uma string formatada  
 */
 char *formata_string_registro (char *string, char *id){
-    
-
     // Aloca memória para a string com o tamanho extra para os delimitadores
     char *strTemp = (char *) malloc(sizeof(char)*(strlen(string)+strlen(id)+2));
     if (strTemp == NULL) return NULL;
@@ -91,7 +89,7 @@ char *separa_campo (char **pontStr) {
     campo[tamStr] = '\0';
 
     // Avança o ponteiro para o próximo campo
-    *pontStr = tamStr+1;
+    *pontStr = lugarDelimitador + 1;
 
     // retorna a string sem id nem delimitador
     return campo;

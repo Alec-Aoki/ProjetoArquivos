@@ -346,13 +346,12 @@ void dado_set_tamReg (DADO *registro){
     return;  
 }
 
-/*TODO*/
 /* dado_ler():
-
-Parâmetros:
-Retorna:
+Lê um registro do arquivo e guarda numa struct DADO
+Parâmetros: Ponteiro para arquivo, ponteiro para struct DADO, byteOffset do registro
+Retorna: Ponteiro para struct DADO
 */
-DADO* dado_ler(FILE* pontArq, DADO* dado){
+DADO* dado_ler(FILE* pontArq, DADO* dado, int byteOffset){
     if(pontArq == NULL) return NULL;
 
     // Criando uma nova struct do tipo dado caso uma não seja fornecida
@@ -360,6 +359,42 @@ DADO* dado_ler(FILE* pontArq, DADO* dado){
         dado = (DADO *) malloc(sizeof(DADO));
         if (dado == NULL) return NULL;
     }
+
+    // Posiciona na posição pós header
+    fseek(pontArq, byteOffset, SEEK_SET);
+    
+    // Lê o campo removida do arquivo e guarda na struct
+    fread(&(dado)->removido, sizeof(char), 1, pontArq);
+    // Verifica se o dado está logicamente removido
+    if (dado->removido == 1) return NULL;
+
+    // Lê os campos do arquivo e guarda na struct
+    fread(&(dado)->tamanhoRegistro, sizeof(int), 1, pontArq);
+    fread(&(dado)->prox, sizeof(long int), 1, pontArq);
+    fread(&(dado)->idAttack, sizeof(int), 1, pontArq);
+    fread(&(dado)->year, sizeof(int), 1, pontArq);
+    fread(&(dado)->financialLoss, sizeof(float), 1, pontArq);
+
+    // Cacula o tamanho dos campos da tamanho variável
+    int bytesRestantes = dado->tamanhoRegistro - 25;
+    char *buffer = (char *) malloc(bytesRestantes + 1);
+    fread(buffer, sizeof(char), bytesRestantes, pontArq);
+    buffer[bytesRestantes] = '\0';
+    
+    // Ponteiro que aponta para o início do buffer
+    char *pontCampo = buffer;
+
+    // Lê os dados do buffer e guarda nos campos da struct
+    dado->country = separa_campo(&pontCampo);
+    dado->attackType = separa_campo(&pontCampo);
+    dado->targetIndustry = separa_campo(&pontCampo);
+    dado->defenseMechanism = separa_campo(&pontCampo);
+
+    // Desaloca a memória do buffer e o aponta para NULL
+    free(buffer);
+    buffer = NULL;
+
+    return dado;
 }
 
 /* dado_imprimir():
@@ -370,8 +405,8 @@ Retorna:
 void dado_imprimir(HEADER* header, DADO* dado){
     if(header == NULL || dado == NULL) return;
 
-    printf("%.*s : %int\n", TAM_DESC_ID, header->descreveIdentificador, dado->idAttack);
-    printf("%.*s : %int\n", TAM_DESC_YEAR, header->descreveYear, dado->year);
+    printf("%.*s : %d\n", TAM_DESC_ID, header->descreveIdentificador, dado->idAttack);
+    printf("%.*s : %d\n", TAM_DESC_YEAR, header->descreveYear, dado->year);
     printf("%.*s : %s\n", TAM_DESC_COUNTRY, header->descreveCountry, dado->country);
     printf("%.*s : %s\n", TAM_DESC_TGT_IND, header->descreveTargetIndustry, dado->targetIndustry);
     printf("%.*s : %s\n", TAM_DESC_TYPE, header->descreveType, dado->attackType);
