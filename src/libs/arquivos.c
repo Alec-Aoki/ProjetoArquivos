@@ -7,6 +7,11 @@
 #include "registros.h"
 #include "arquivos.h"
 
+/* arquivo_criar()
+Transforma um arquivo .csv em .bin
+Parâmetros: ponteiros para strings (nomes dos arquivos)
+Retorna:
+*/
 void arquivo_criar(char* nomeArqBin, char* nomeArqCSV){
     // Abre o arquivo .csv para leitura
     FILE* pontArqCSV = fopen(nomeArqCSV, "r");
@@ -115,8 +120,18 @@ void arquivo_imprimir(char* nomeArqBin){
     fseek(pontArqBin, 0, SEEK_SET); // Posiciona o ponteiro no início do arquivo
 
     HEADER* header = header_ler(pontArqBin, NULL);
+    DADO* dado = dado_ler(pontArqBin, NULL);
+    dado_imprimir(header, dado);
+    printf("\n");
 
+    // Atualizar isso aqui mais tarde
+    while(pontArqBin != EOF){
+        dado_ler(pontArqBin, dado);
+        dado_imprimir(header, dado);
+        printf("\n");
+    }
+
+    dado_apagar(&dado);
     header_apagar(&header);
-
     return;
 }

@@ -45,6 +45,9 @@
     // Lê um dado de um arquivo binário
     DADO* dado_ler(FILE* pontArq, DADO* dado, int byteOffset);
 
+    // Imprime os campos de dado de acordo com as descrições do header
+    void dado_imprimir(HEADER* header, DADO* dado);
+
     // Desaloca a memória do dado passado e aponta seu ponteiro para NULL
     void dado_apagar(DADO **registro);
 

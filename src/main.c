@@ -13,6 +13,7 @@ int main(void){
     scanf("%c", &op);
     scanf("%s", nomeArquivoBin);
 
+    // Funcionalidade 1
     if(op == '1'){
         char nomeArquivoCSV[100];
 
@@ -21,6 +22,7 @@ int main(void){
         arquivo_criar(nomeArquivoBin, nomeArquivoCSV);   
     }
         
+    // Funcionalidade 2
     else if (op == '2'){
         arquivo_imprimir(nomeArquivoBin);
     }

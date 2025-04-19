@@ -49,7 +49,7 @@ struct dados_ {
 /* header_criar():
 Cria uma struct do tipo HEADER e a inicializa
 Parâmetros: ponteiros para strings (descrições do header)
-Retorna: ponteiro para a struct do tipo HEADER
+Retorna: ponteiro para a struct do tipo header
 */
 HEADER* header_criar(char* descIdent, char* descYear, char* descFinLoss, char* descCountry, char* descType, char* descTargInd, char* descDef){
     HEADER* novoHeader = (HEADER *) malloc(sizeof(HEADER)); // Alocando dinâmicamente uma struct do tipo HEADER
@@ -136,11 +136,10 @@ void header_escrever(FILE* pontArq, HEADER* headerArq, bool semantico){
     return;
 }
 
-/*TODO*/
 /* header_ler():
 
-Parâmetros:
-Retorna:
+Parâmetros: ponteiro para arquivo, ponteiro para header
+Retorna: ponteiro para header
 */
 HEADER* header_ler(FILE* pontArq, HEADER* header){
     if(pontArq == NULL) return NULL;
@@ -231,6 +230,11 @@ void header_set_nroRegArq(HEADER* header, int nroRegAq){
 // Funções auxiliares, explicadas mais adiante
 void dado_set_tamReg (DADO *registro);
 
+/* dado_criar():
+Aloca memória para uma struct do tipo dado e inicializa seus campos
+Parâmetros: valores dos campos da struct
+Retorna: ponteiro para dado
+*/
 DADO* dado_criar(char removido, int tamReg, long int prox, int idAttack, int year, float finLoss, char* country, char* attackType, char* targetInd, char* defMec){
     
     DADO *novoRegistro = (DADO *) malloc(sizeof(DADO));
@@ -293,24 +297,29 @@ int dado_get_tamanho(DADO* dado){
     return dado->tamanhoRegistro;
 }
 
-void dado_escrever (FILE *pontArqBin, DADO *dado){
+/*dado_escrever():
+Escreve os campos de uma struct dado em um arquivo
+Parâmetros: ponteiro para arquivo, ponteiro para uma struct dado
+Retorna:
+*/
+void dado_escrever (FILE *pontArq, DADO *dado){
         // Verifiva a corretude dos ponteiros
-        if (pontArqBin == NULL) return;
+        if (pontArq == NULL) return;
     
         if (dado == NULL) return;
     
         // Escreve os dados no arquivo binário
-        fwrite(&(dado->removido), sizeof(char), 1, pontArqBin);
-        fwrite(&(dado->tamanhoRegistro), sizeof(int), 1, pontArqBin);
-        fwrite(&(dado->prox), sizeof(long int), 1, pontArqBin);
-        fwrite(&(dado->idAttack), sizeof(int), 1, pontArqBin);
-        fwrite(&(dado->year), sizeof(int), 1, pontArqBin);
-        fwrite(&(dado->financialLoss), sizeof(float), 1, pontArqBin);
+        fwrite(&(dado->removido), sizeof(char), 1, pontArq);
+        fwrite(&(dado->tamanhoRegistro), sizeof(int), 1, pontArq);
+        fwrite(&(dado->prox), sizeof(long int), 1, pontArq);
+        fwrite(&(dado->idAttack), sizeof(int), 1, pontArq);
+        fwrite(&(dado->year), sizeof(int), 1, pontArq);
+        fwrite(&(dado->financialLoss), sizeof(float), 1, pontArq);
 
-        if(dado->country != NULL) fwrite(dado->country, sizeof(char), strlen(dado->country), pontArqBin);
-        if(dado->attackType != NULL) fwrite(dado->attackType, sizeof(char), strlen(dado->attackType), pontArqBin);
-        if(dado->targetIndustry != NULL) fwrite(dado->targetIndustry, sizeof(char), strlen(dado->targetIndustry), pontArqBin);
-        if(dado->defenseMechanism != NULL) fwrite(dado->defenseMechanism, sizeof(char), strlen(dado->defenseMechanism), pontArqBin);
+        if(dado->country != NULL) fwrite(dado->country, sizeof(char), strlen(dado->country), pontArq);
+        if(dado->attackType != NULL) fwrite(dado->attackType, sizeof(char), strlen(dado->attackType), pontArq);
+        if(dado->targetIndustry != NULL) fwrite(dado->targetIndustry, sizeof(char), strlen(dado->targetIndustry), pontArq);
+        if(dado->defenseMechanism != NULL) fwrite(dado->defenseMechanism, sizeof(char), strlen(dado->defenseMechanism), pontArq);
     
         // Retorna o status da operação
         return;
@@ -351,4 +360,23 @@ DADO* dado_ler(FILE* pontArq, DADO* dado){
         dado = (DADO *) malloc(sizeof(DADO));
         if (dado == NULL) return NULL;
     }
+}
+
+/* dado_imprimir():
+Imprime um dado usando as descrições semânticas do header
+Parâmetros: ponteiro para o header, ponteiro para o dado
+Retorna:
+*/
+void dado_imprimir(HEADER* header, DADO* dado){
+    if(header == NULL || dado == NULL) return;
+
+    printf("%.*s : %int\n", TAM_DESC_ID, header->descreveIdentificador, dado->idAttack);
+    printf("%.*s : %int\n", TAM_DESC_YEAR, header->descreveYear, dado->year);
+    printf("%.*s : %s\n", TAM_DESC_COUNTRY, header->descreveCountry, dado->country);
+    printf("%.*s : %s\n", TAM_DESC_TGT_IND, header->descreveTargetIndustry, dado->targetIndustry);
+    printf("%.*s : %s\n", TAM_DESC_TYPE, header->descreveType, dado->attackType);
+    printf("%.*s : %.2f\n", TAM_DESC_FIN_LOSS, header->descreveFinancialLoss, dado->financialLoss);
+    printf("%.*s : %s\n", TAM_DESC_DEF, header->descreveDefense, dado->defenseMechanism);
+    
+    return;
 }
