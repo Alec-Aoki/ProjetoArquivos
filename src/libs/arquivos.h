@@ -4,7 +4,9 @@
     // Transforma um arquivo de .csv para .bin
     void arquivo_criar(char* nomeArqBin, char* nomeArqCSV);
 
-    /*TODO*/
+    // Imprime todos os registros de um arquivo binário
     void arquivo_imprimir(char* nomeArqBin);
 
+    /*TODO*/
+    void arquivo_busca(char* nomeArqBin, int quantBuscas);
 #endif

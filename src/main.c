@@ -27,5 +27,11 @@ int main(void){
         arquivo_imprimir(nomeArquivoBin);
     }
 
+    else if (op == '3'){
+        int quantBuscas;
+        scanf("%d", &quantBuscas);
+        arquivo_busca(nomeArquivoBin, quantBuscas);
+    }
+
     return 0;
 }

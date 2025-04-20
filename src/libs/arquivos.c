@@ -126,17 +126,13 @@ void arquivo_imprimir(char* nomeArqBin){
     HEADER* header = header_ler(pontArqBin, NULL);
 
     int byteOffset = 276; // Inicializado com tamanho do header
-    // Lendo o primeiro dado fora do loop
-    DADO* dado = dado_ler(pontArqBin, NULL, byteOffset);
-    byteOffset += dado_get_tamanho(dado);
-    dado_imprimir(header, dado);
-    printf("\n");
+    DADO* dado = NULL;
 
-    int contRegArq = header_get_nroRegArq(header) - 1; // Contador para loop de leitura de dados
+    int contRegArq = header_get_nroRegArq(header); // Contador para loop de leitura de dados
 
     // Loop de leitura de dados
     while(contRegArq > 0){
-        dado_ler(pontArqBin, dado, byteOffset);
+        dado = dado_ler(pontArqBin, dado, byteOffset);
         byteOffset += dado_get_tamanho(dado);
         dado_imprimir(header, dado);
         printf("\n");
@@ -146,5 +142,103 @@ void arquivo_imprimir(char* nomeArqBin){
 
     dado_apagar(&dado);
     header_apagar(&header);
+    fclose(pontArqBin);
+    return;
+}
+
+void arquivo_busca(char* nomeArqBin, int quantBuscas){
+    if(nomeArqBin == NULL) return;
+
+    FILE* pontArqBin = fopen(nomeArqBin, "rb"); // Abrindo arquivo binário no modo de leitura
+    if(pontArqBin == NULL) return; // Erro com a abertura do arquivo
+
+    fseek(pontArqBin, 0, SEEK_SET); // Posiciona o ponteiro no início do arquivo
+
+    HEADER* header = header_ler(pontArqBin, NULL);
+
+    char buffer[256]; // Para ler quais campos serão buscados
+    bool camposBool[7]; // Para guardar quais campos serão buscados
+    int valorInt;
+    float valorFloat;
+    char valorString[4][100];
+    int byteOffset; // Inicializado com tamanho do header
+    DADO* dado = NULL;
+    int contRegArq;
+
+    for(int i = 0; i < quantBuscas; i++){
+        int quantResultados;
+        scanf("%d %[^\n]s", &quantResultados, buffer); // Buffer agora armazena uma string com os campos a serem pesquisados e seus valores
+        
+        int j = -1;
+
+        char *tok = strtok(buffer, " ");
+        while(tok != NULL){
+            // Descobrindo qual campo deve ser buscado
+            if(strcmp(tok, "idAttack") == 0) j = 0;
+            else if(strcmp(tok, "year") == 0) j = 1;
+            else if(strcmp(tok, "financialLoss") == 0) j = 2;
+            else if(strcmp(tok, "country") == 0) j = 3;
+            else if(strcmp(tok, "attackType") == 0) j = 4;
+            else if(strcmp(tok, "targetIndustry") == 0) j = 5;
+            else if(strcmp(tok, "defenseMechanism") == 0) j = 6;
+
+            /*DEPOIS DESSE PONTO*/
+
+            camposBool[i] = 0;
+
+            tok = strtok(NULL, " "); // Tok agora aponta para a string que é o valor do campo que queremos
+            if (j < 0 || j > 6) continue;
+            if(j < 2) valorInt = atoi(tok);
+            if(j == 2) valorFloat = atof(tok);
+            if(j > 2) strcpy(valorString[j - 3], tok);
+        }
+
+        /*ANTES DE POSSO*/
+
+        byteOffset = 276;
+        contRegArq = header_get_nroRegArq(header);
+        printf("**********\n");
+
+        while(contRegArq > 0 && quantResultados > 0){
+            dado = dado_ler(pontArqBin, dado, byteOffset);
+
+            switch(j){
+                case 1:
+                    if(dado_get_idAttacK(dado) == valorInt) dado_imprimir(header, dado);
+                    break;
+                case 2:
+                    if(dado_get_year(dado) == valorInt) dado_imprimir(header, dado);
+                    break;
+                case 3:
+                    if(dado_get_finLoss(dado) == valorFloat) dado_imprimir(header, dado);
+                    break;
+                case 4:
+                    if(strcmp(dado_get_country(dado),valorString[0]) == 0) dado_imprimir(header, dado);
+                    break;
+                case 5:
+                    if(strcmp(dado_get_attackType(dado),valorString[1]) == 0) dado_imprimir(header, dado);
+                    break;
+                case 6:
+                    if(strcmp(dado_get_targetIndustry(dado),valorString[2]) == 0) dado_imprimir(header, dado);
+                    break;
+                case 7:
+                    if(strcmp(dado_get_defenseMech(dado),valorString[3]) == 0) dado_imprimir(header, dado);
+                    break;
+                default:
+                    quantResultados++;
+                    break;
+            }
+            printf("\n");
+            
+            quantResultados--;
+            byteOffset += dado_get_tamanho(dado);
+        }
+
+        printf("**********\n");
+    }
+
+    dado_apagar(&dado);
+    header_apagar(&header);
+    fclose(pontArqBin);
     return;
 }
