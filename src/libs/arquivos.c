@@ -129,7 +129,7 @@ void arquivo_imprimir(char* nomeArqBin){
     DADO* dado = NULL;
 
     int contRegArq = header_get_nroRegArq(header); // Contador para loop de leitura de dados
-
+    
     // Loop de leitura de dados
     while(contRegArq > 0){
         dado = dado_ler(pontArqBin, dado, byteOffset);
@@ -167,11 +167,16 @@ void arquivo_busca(char* nomeArqBin, int quantBuscas){
 
     for(int i = 0; i < quantBuscas; i++){
         int quantResultados;
-        scanf("%d %[^\n]s", &quantResultados, buffer); // Buffer agora armazena uma string com os campos a serem pesquisados e seus valores
-        
-        int j = -1;
+        fgets(buffer, sizeof(buffer), stdin); // Buffer agora armazena uma string com os campos a serem pesquisados e seus valores
+        buffer[strcspn(buffer, "\n")] = '\0';
 
         char *tok = strtok(buffer, " ");
+        quantResultados = str_to_int(tok);
+    
+        printf("NUM : %d\n", quantResultados);
+        int j = -1;
+
+        tok = strtok(NULL, " ");
         while(tok != NULL){
             // Descobrindo qual campo deve ser buscado
             if(strcmp(tok, "idAttack") == 0) j = 0;
@@ -188,8 +193,8 @@ void arquivo_busca(char* nomeArqBin, int quantBuscas){
 
             tok = strtok(NULL, " "); // Tok agora aponta para a string que é o valor do campo que queremos
             if (j < 0 || j > 6) continue;
-            if(j < 2) valorInt = atoi(tok);
-            if(j == 2) valorFloat = atof(tok);
+            if(j < 2) valorInt = str_to_int(tok);
+            if(j == 2) valorFloat = str_to_float(tok);
             if(j > 2) strcpy(valorString[j - 3], tok);
         }
 
@@ -228,12 +233,142 @@ void arquivo_busca(char* nomeArqBin, int quantBuscas){
                     quantResultados++;
                     break;
             }
-            printf("\n");
+            //printf("\n");
             
             quantResultados--;
             byteOffset += dado_get_tamanho(dado);
         }
 
+        printf("**********\n");
+    }
+
+    dado_apagar(&dado);
+    header_apagar(&header);
+    fclose(pontArqBin);
+    return;
+}
+
+void busca (char *nomeArqBin, int quantBuscas){
+    if(nomeArqBin == NULL) return;
+
+    FILE* pontArqBin = fopen(nomeArqBin, "rb"); // Abrindo arquivo binário no modo de leitura
+    if(pontArqBin == NULL) return; // Erro com a abertura do arquivo
+
+    fseek(pontArqBin, 0, SEEK_SET); // Posiciona o ponteiro no início do arquivo
+
+    HEADER* header = header_ler(pontArqBin, NULL);
+
+    char buffer[256];
+    int byteOffset;
+    char *ptr;
+    int valorInt;
+    float valorFloat;
+    char valorStr[4][20];
+    
+    DADO *dado = NULL;
+    byteOffset = 276;
+    int contRegArq = header_get_nroRegArq(header);
+
+    for (int i = 0; i < quantBuscas; i++) {
+        getchar();
+        fgets(buffer, sizeof(buffer), stdin);
+        buffer[strcspn(buffer, "\n")] = '\0';
+        ptr = buffer;
+    
+        int numCampos;
+        sscanf(ptr, "%d", &numCampos);
+        char campos[numCampos][20];
+        int flag = -1;
+        int j = 0;
+        
+        char *tok = strsep(&ptr, " ");
+        while((tok = strsep(&ptr, " ")) != NULL && j < numCampos) {
+            strcpy(campos[j], tok);
+            campos[j][strlen(tok)] = '\0';
+    
+            // Determina qual campo deve ser buscado
+            if(strcmp(campos[j], "idAttack") == 0) flag = 0;
+            else if(strcmp(campos[j], "year") == 0) flag = 1;
+            else if(strcmp(tok, "financialLoss") == 0) j = 2;
+            else if(strcmp(tok, "country") == 0) j = 3;
+            else if(strcmp(tok, "attackType") == 0) j = 4;
+            else if(strcmp(tok, "targetIndustry") == 0) j = 5;
+            else if(strcmp(tok, "defenseMechanism") == 0) j = 6;
+        
+            // Tok aponta para o valor
+            tok = strsep(&ptr, " ");
+            if(tok == NULL) break;
+            
+            
+            if (flag == 0 || flag == 1) valorInt = str_to_int(tok);
+            else if (flag == 2) valorFloat = str_to_float(tok);
+            else if (flag > 2 && flag <= 6) {
+                strcpy(valorStr[flag-3], tok);
+                valorStr[flag-3][strlen(tok)] = '\0';
+            }
+            j++;
+        }
+    
+        printf("**********\n");
+        
+        byteOffset = 276;
+        int currentRegArq = header_get_nroRegArq(header);
+        
+        while(currentRegArq > 0) {
+            dado = dado_ler(pontArqBin, dado, byteOffset);
+            if(dado == NULL) break;
+            
+            switch(flag) {
+                case 0:  // idAttack
+                    if(dado_get_idAttacK(dado) == valorInt) {
+                        dado_imprimir(header, dado);
+                        printf("\n");
+                    };
+                    break;
+                case 1:  // year
+                    if(dado_get_year(dado) == valorInt) {
+                        dado_imprimir(header, dado);
+                        printf("\n");
+                        }
+                    break;
+                case 2:  // financialLoss
+                    if(dado_get_finLoss(dado) == valorFloat) {
+                        dado_imprimir(header, dado);
+                        printf("\n");
+                    }
+                    break;
+                case 3:  // country
+                    if(strcmp(dado_get_country(dado), valorStr[0]) == 0) {
+                        dado_imprimir(header, dado);
+                        printf("\n");
+                    }
+                    break;
+                case 4:  // attackType
+                    if(strcmp(dado_get_attackType(dado), valorStr[1]) == 0) {
+                        dado_imprimir(header, dado);
+                        printf("\n");
+                    }
+                    break;
+                case 5:  // targetIndustry
+                    if(strcmp(dado_get_targetIndustry(dado), valorStr[2]) == 0) {
+                        dado_imprimir(header, dado);
+                        printf("\n");
+                    }
+                    break;
+                case 6:  // defenseMechanism
+                    if(strcmp(dado_get_defenseMech(dado), valorStr[3]) == 0) {
+                        dado_imprimir(header, dado);
+                        printf("\n");
+                    }
+                    break;
+                default:
+                    break;
+            }
+            
+            byteOffset += dado_get_tamanho(dado);
+            currentRegArq--;
+        }
+        
         printf("**********\n");
     }
 

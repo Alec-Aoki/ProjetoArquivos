@@ -9,28 +9,31 @@
 int main(void){
     char op;
     char nomeArquivoBin[100];
+    char nomeArquivoCSV[100];
 
     scanf("%c", &op);
-    scanf("%s", nomeArquivoBin);
+        
 
     // Funcionalidade 1
     if(op == '1'){
-        char nomeArquivoCSV[100];
-
+        
         scanf("%s", nomeArquivoCSV);
+        scanf("%s", nomeArquivoBin);
 
         arquivo_criar(nomeArquivoBin, nomeArquivoCSV);   
     }
         
     // Funcionalidade 2
-    else if (op == '2'){
+    if (op == '2'){
+        scanf("%s", nomeArquivoBin);
         arquivo_imprimir(nomeArquivoBin);
     }
 
-    else if (op == '3'){
+    if (op == '3'){
+        scanf("%s", nomeArquivoBin);
         int quantBuscas;
         scanf("%d", &quantBuscas);
-        arquivo_busca(nomeArquivoBin, quantBuscas);
+        busca(nomeArquivoBin, quantBuscas);
     }
 
     return 0;
