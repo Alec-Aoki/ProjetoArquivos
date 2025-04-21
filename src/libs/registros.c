@@ -46,14 +46,9 @@ struct dados_ {
 /* FUNÇÕES DO HEADER*/
 /* ------------------------------------------------------------------------------------- */
 
-/* header_criar():
-Cria uma struct do tipo HEADER e a inicializa
-Parâmetros: ponteiros para strings (descrições do header)
-Retorna: ponteiro para a struct do tipo header
-*/
 HEADER* header_criar(char* descIdent, char* descYear, char* descFinLoss, char* descCountry, char* descType, char* descTargInd, char* descDef){
     HEADER* novoHeader = (HEADER *) malloc(sizeof(HEADER)); // Alocando dinâmicamente uma struct do tipo HEADER
-    if(novoHeader == NULL) return NULL;
+    if(novoHeader == NULL) return NULL; // Erro de alocação de memória
 
     /* INICIALIZANDO O HEADER */
     // Campos de valor variável
@@ -69,6 +64,7 @@ HEADER* header_criar(char* descIdent, char* descYear, char* descFinLoss, char* d
     novoHeader->codDescreveTargetIndustry = '3';
     novoHeader->codDescreveDefense = '4';
 
+    // Strings
     strncpy(novoHeader->descreveIdentificador, descIdent, TAM_DESC_ID);
     strncpy(novoHeader->descreveYear, descYear, TAM_DESC_YEAR);
     strncpy(novoHeader->descreveFinancialLoss, descFinLoss, TAM_DESC_FIN_LOSS);
@@ -80,27 +76,19 @@ HEADER* header_criar(char* descIdent, char* descYear, char* descFinLoss, char* d
     return novoHeader; // Retornando ponteiro para HEADER
 }
 
-/* header_apagar():
-Desaloca uma struct do tipo header e define seu ponteiro para NULL
-Parâmetros: ponteiro de ponteiro para a struct a ser desalocada
-Retorna: void
-*/
 void header_apagar(HEADER** header){
+    if(*header == NULL) return;
+
     free(*header); // Desalocando memória
     *header = NULL; // Definindo o ponteiro para NULL
 
     return;
 }
 
-/* header_escrever():
-Escreve um header passado no arquivo binário
-Parâmetros: ponteiro para um arquivo, ponteiro para um header e valor booleano (true = escrever string semanticas, false = escrever somente struct)
-Retorna:
-*/
 void header_escrever(FILE* pontArq, HEADER* headerArq, bool semantico){
-    fseek(pontArq, 0, SEEK_SET); // Posicionando pontArq no início do arquivo
+    if((pontArq == NULL) || (headerArq == NULL)) return;
 
-    if(pontArq == NULL) return;
+    fseek(pontArq, 0, SEEK_SET); // Posicionando pontArq no início do arquivo
 
     // Escrevendo os campos variáveis da struct header no arquivo
     fwrite(&(headerArq->status), sizeof(char), 1, pontArq);
@@ -148,13 +136,8 @@ void header_escrever(FILE* pontArq, HEADER* headerArq, bool semantico){
     return;
 }
 
-/* header_ler():
-
-Parâmetros: ponteiro para arquivo, ponteiro para header
-Retorna: ponteiro para header
-*/
 HEADER* header_ler(FILE* pontArq, HEADER* header){
-    if(pontArq == NULL) return NULL;
+    if(pontArq == NULL) return NULL; // Erro
 
     // Criando uma nova struct do tipo header caso uma não seja fornecida
     if(header == NULL){;
@@ -164,12 +147,14 @@ HEADER* header_ler(FILE* pontArq, HEADER* header){
 
     fseek(pontArq, 0, SEEK_SET); // Posicionando ponteiro no início do arquivo
 
+    // Lendo campos que não são strings
     fread(&(header->status), sizeof(char), 1, pontArq);
     fread(&(header->topo), sizeof(long int), 1, pontArq);
     fread(&(header->proxByteOffset), sizeof(long int), 1, pontArq);
     fread(&(header->nroRegArq), sizeof(int), 1, pontArq);
     fread(&(header->nroRegRem), sizeof(int), 1, pontArq);
 
+    // Lendo strings
     fread(header->descreveIdentificador, sizeof(char), TAM_DESC_ID, pontArq);
     fread(header->descreveYear, sizeof(char), TAM_DESC_YEAR, pontArq);
     fread(header->descreveFinancialLoss, sizeof(char), TAM_DESC_FIN_LOSS, pontArq);
@@ -182,16 +167,9 @@ HEADER* header_ler(FILE* pontArq, HEADER* header){
     fread(&(header->codDescreveDefense), sizeof(char), 1, pontArq);
     fread(header->descreveDefense, sizeof(char), TAM_DESC_DEF, pontArq);
 
-    /*Pra printar as strings, usar printf("%.*s", TAM_DEC_XXX, header->XXX), pq n tem o \0*/
-
     return header;
 }
 
-/* header_set_status():
-Define o campo de status de um header pré-existente
-Parâmetros: ponteiro para o header, status a ser definido
-Retorna: 
-*/
 void header_set_status(HEADER* header, char status){
     if(header == NULL) return;
 
@@ -199,11 +177,6 @@ void header_set_status(HEADER* header, char status){
     return;
 }
 
-/* header_set_proxByteOffset()
-Define o campo proxByteOffset de um header
-Parâmetros: ponteiro para header, valor do próximo byte offset livre
-Retorno: 
-*/
 void header_set_proxByteOffset(HEADER* header, long int proxByOff){
     if(header == NULL) return;
 
@@ -211,11 +184,6 @@ void header_set_proxByteOffset(HEADER* header, long int proxByOff){
     return;
 }
 
-/* header_set_nroRegArq()
-Define o campo nroRegArq de um header
-Parâmetros: ponteiro para header, quantidade de registros no arquivos
-Retorno: false se header nulo, true caso contrário
-*/
 void header_set_nroRegArq(HEADER* header, int nroRegAq){
     if(header == NULL) return;
 
@@ -223,11 +191,6 @@ void header_set_nroRegArq(HEADER* header, int nroRegAq){
     return;
 }
 
-/* header_get_nroRegArq
-Retorna o valor do campo nroRegArq de uma struct header
-Parâmetros: ponteiro para struct do tipo header
-Retorna: valor do campo nroRegArq da struct (-1 se header == NULL)
-*/
 int header_get_nroRegArq(HEADER* header){
     if(header == NULL) return -1;
 
@@ -238,21 +201,15 @@ int header_get_nroRegArq(HEADER* header){
 /* FUNÇÕES DOS DADOS */
 /* ------------------------------------------------------------------------------------- */
 
-// Funções auxiliares, explicadas mais adiante
+// Função auxiliar, explicada mais adiante
 void dado_set_tamReg (DADO *registro);
 
-/* dado_criar():
-Aloca memória para uma struct do tipo dado e inicializa seus campos
-Parâmetros: valores dos campos da struct
-Retorna: ponteiro para dado
-*/
 DADO* dado_criar(char removido, int tamReg, long int prox, int idAttack, int year, float finLoss, char* country, char* attackType, char* targetInd, char* defMec){
-    
+    // Alocando memória na heap para a struct
     DADO *novoRegistro = (DADO *) malloc(sizeof(DADO));
-    if (novoRegistro == NULL) return NULL;
+    if (novoRegistro == NULL) return NULL; // Erro de alocação
 
     /* INICIALIZANDO A STRUCT */
-
     // Campos de tamanho fixo
     novoRegistro->removido = removido;
     novoRegistro->tamanhoRegistro = tamReg;
@@ -262,73 +219,52 @@ DADO* dado_criar(char removido, int tamReg, long int prox, int idAttack, int yea
     novoRegistro->financialLoss = finLoss;
 
 
-    // Campos de tamanho variável com delimitadores
+    // Campos de tamanho variável, COM delimitadores
     novoRegistro->country = formata_string_registro(country, "1");
     novoRegistro->attackType = formata_string_registro(attackType, "2");
     novoRegistro->targetIndustry = formata_string_registro(targetInd, "3");
     novoRegistro->defenseMechanism = formata_string_registro(defMec, "4");
 
-    dado_set_tamReg(novoRegistro);
+    dado_set_tamReg(novoRegistro); // Atualizando tamanho do registro
 
     return novoRegistro; // Retorna ponteiro para struct DADO
 }
 
-/* dado_apagar():
-Desaloca memória da struct e dos campos de tamanho variável
-Parâmetro: ponteiro para ponteiro da struct
-Retorno: void
-*/
 void dado_apagar(DADO **registro){
+    if(*registro == NULL) return;
+
     // Desaloca a memória das strings de tamanhos variáveis
-    if (*registro != NULL){
-        if ((*registro)->country != NULL)
-            free((*registro)->country);
-        if ((*registro)->attackType != NULL)
-            free((*registro)->attackType);
-        if ((*registro)->targetIndustry != NULL)
-            free((*registro)->targetIndustry);
-        if ((*registro)->defenseMechanism != NULL)
-            free((*registro)->defenseMechanism);    
-    }
+    if ((*registro)->country != NULL) free((*registro)->country);
+    if ((*registro)->attackType != NULL) free((*registro)->attackType);
+    if ((*registro)->targetIndustry != NULL) free((*registro)->targetIndustry);
+    if ((*registro)->defenseMechanism != NULL) free((*registro)->defenseMechanism);    
 
     // Desaloca memória da estrututa DADO e define ponteiro para NULL
     free(*registro);
     *registro = NULL; 
 }
 
-/*dado_escrever():
-Escreve os campos de uma struct dado em um arquivo
-Parâmetros: ponteiro para arquivo, ponteiro para uma struct dado
-Retorna:
-*/
 void dado_escrever (FILE *pontArq, DADO *dado){
-        // Verifiva a corretude dos ponteiros
-        if (pontArq == NULL) return;
-    
-        if (dado == NULL) return;
-    
-        // Escreve os dados no arquivo binário
-        fwrite(&(dado->removido), sizeof(char), 1, pontArq);
-        fwrite(&(dado->tamanhoRegistro), sizeof(int), 1, pontArq);
-        fwrite(&(dado->prox), sizeof(long int), 1, pontArq);
-        fwrite(&(dado->idAttack), sizeof(int), 1, pontArq);
-        fwrite(&(dado->year), sizeof(int), 1, pontArq);
-        fwrite(&(dado->financialLoss), sizeof(float), 1, pontArq);
+    // Verifica a corretude dos ponteiros
+    if ((pontArq == NULL) || (dado == NULL)) return;
+        
+    // Escreve os dados no arquivo binário
+    fwrite(&(dado->removido), sizeof(char), 1, pontArq);
+    fwrite(&(dado->tamanhoRegistro), sizeof(int), 1, pontArq);
+    fwrite(&(dado->prox), sizeof(long int), 1, pontArq);
+    fwrite(&(dado->idAttack), sizeof(int), 1, pontArq);
+    fwrite(&(dado->year), sizeof(int), 1, pontArq);
+    fwrite(&(dado->financialLoss), sizeof(float), 1, pontArq);
 
-        if(dado->country != NULL) fwrite(dado->country, sizeof(char), strlen(dado->country), pontArq);
-        if(dado->attackType != NULL) fwrite(dado->attackType, sizeof(char), strlen(dado->attackType), pontArq);
-        if(dado->targetIndustry != NULL) fwrite(dado->targetIndustry, sizeof(char), strlen(dado->targetIndustry), pontArq);
-        if(dado->defenseMechanism != NULL) fwrite(dado->defenseMechanism, sizeof(char), strlen(dado->defenseMechanism), pontArq);
+    // Escrevendo as strings caso elas não sejam nulas
+    if(dado->country != NULL) fwrite(dado->country, sizeof(char), strlen(dado->country), pontArq);
+    if(dado->attackType != NULL) fwrite(dado->attackType, sizeof(char), strlen(dado->attackType), pontArq);
+    if(dado->targetIndustry != NULL) fwrite(dado->targetIndustry, sizeof(char), strlen(dado->targetIndustry), pontArq);
+    if(dado->defenseMechanism != NULL) fwrite(dado->defenseMechanism, sizeof(char), strlen(dado->defenseMechanism), pontArq);
     
-        // Retorna o status da operação
-        return;
+    return;
 }
 
-/* dado_ler():
-Lê um registro do arquivo e guarda numa struct DADO
-Parâmetros: Ponteiro para arquivo, ponteiro para struct DADO, byteOffset do registro
-Retorna: Ponteiro para struct DADO
-*/
 DADO* dado_ler(FILE* pontArq, DADO* dado, int byteOffset){
     if(pontArq == NULL) return NULL;
 
@@ -375,14 +311,10 @@ DADO* dado_ler(FILE* pontArq, DADO* dado, int byteOffset){
     return dado;
 }
 
-/* dado_imprimir():
-Imprime um dado usando as descrições semânticas do header
-Parâmetros: ponteiro para o header, ponteiro para o dado
-Retorna:
-*/
 void dado_imprimir(HEADER* header, DADO* dado){
-    if(header == NULL || dado == NULL) return;
+    if((header == NULL) || (dado == NULL)) return;
 
+    // Imprimindo as descrições semânticas dos campos do dado e seus valores
     printf("%.*s : %d\n", TAM_DESC_ID, header->descreveIdentificador, dado->idAttack);
     printf("%.*s : %d\n", TAM_DESC_YEAR, header->descreveYear, dado->year);
     printf("%.*s : %s\n", TAM_DESC_COUNTRY, header->descreveCountry, dado->country);
@@ -415,11 +347,6 @@ void dado_set_tamReg (DADO *registro){
     return;  
 }
 
-/* dado_get_tamanho()
-Retorna o tamanho em bytes de um registro de dado
-Parâmetros: ponteiro para struct dado
-Retorno: -1 caso a struct seja nula, caso contrário o valor guardado no campo tamanhoRegistro
-*/
 int dado_get_tamanho(DADO* dado){
     if(dado == NULL) return -1;
 
