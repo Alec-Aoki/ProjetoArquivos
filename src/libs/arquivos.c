@@ -7,11 +7,6 @@
 #include "registros.h"
 #include "arquivos.h"
 
-/* arquivo_criar()
-Transforma um arquivo .csv em .bin
-Parâmetros: ponteiros para strings (nomes dos arquivos)
-Retorna:
-*/
 void arquivo_criar(char* nomeArqBin, char* nomeArqCSV){
     // Abre o arquivo .csv para leitura
     FILE* pontArqCSV = fopen(nomeArqCSV, "r");
@@ -58,7 +53,7 @@ void arquivo_criar(char* nomeArqBin, char* nomeArqCSV){
 
     // Contadores para atualizar os dados do header
     int quantRegDados = 0;
-    int byteOffset = 276; // Inicializado com o tamanho do header
+    int byteOffset = BYTEOFFSET_HEADER; // Inicializado com o tamanho do header
 
     while (fgets(buffer, sizeof(buffer), pontArqCSV) != NULL){
         // Identifica o fim da linha lida e substitui o "\n" por um '\0'
@@ -110,11 +105,6 @@ void arquivo_criar(char* nomeArqBin, char* nomeArqCSV){
     return;
 }
 
-/* arquivo_imprimir():
-Imprime os conteúdos do arquivo binário de acordo com as descrições do header
-Parâmetros: ponteiro para string (nome do arquivo binário)
-Retorna:
-*/
 void arquivo_imprimir(char* nomeArqBin){
     if(nomeArqBin == NULL) return; // Erro com nome do arquivo binário a ser aberto
 
@@ -123,21 +113,21 @@ void arquivo_imprimir(char* nomeArqBin){
 
     fseek(pontArqBin, 0, SEEK_SET); // Posiciona o ponteiro no início do arquivo
 
-    HEADER* header = header_ler(pontArqBin, NULL);
+    HEADER* header = header_ler(pontArqBin, NULL); // Leitura do header do arquivo
 
-    int byteOffset = 276; // Inicializado com tamanho do header
+    int byteOffset = BYTEOFFSET_HEADER; // Inicializado com tamanho do header
     DADO* dado = NULL;
 
-    int contRegArq = header_get_nroRegArq(header); // Contador para loop de leitura de dados
+    int quantRegArq = header_get_nroRegArq(header); // Contador para loop de leitura de dados
     
     // Loop de leitura de dados
-    while(contRegArq > 0){
+    while(quantRegArq > 0){
         dado = dado_ler(pontArqBin, dado, byteOffset);
         byteOffset += dado_get_tamanho(dado);
         dado_imprimir(header, dado);
         printf("\n");
 
-        contRegArq--;
+        quantRegArq--;
     }
 
     dado_apagar(&dado);
@@ -154,40 +144,50 @@ void arquivo_buscar(char *nomeArqBin, int quantBuscas){
 
     fseek(pontArqBin, 0, SEEK_SET); // Posiciona o ponteiro no início do arquivo
 
-    HEADER* header = header_ler(pontArqBin, NULL);
+    HEADER* header = header_ler(pontArqBin, NULL); // Leitura do header do arquivo
 
-    char buffer[256];
-    int byteOffset = 276;
+    char buffer[256]; // Buffer para leitura de strings
+    int byteOffset = BYTEOFFSET_HEADER; // Byteoffset inicial para leitura dos dados do arquivo
     char *ptr;
-    int valorInt;
-    float valorFloat;
-    char valorStr[4][20];
+
+    /*Variáveis auxiliares para guardar os valores dos campos a serem pesquisados*/
+    int valorInt[2]; // idAttack ou year
+    float valorFloat; // financialLoss
+    char valorStr[4][20]; // country, attackType, targetIndustry ou defenseMechanism
+
+    int quantRespostas; // Quantidade de dados a serem imprimidos
+    int quantCampos; // Quantidade de campos que deverão ser consultados
+    int flag; // Indicador de qual campo deve ser buscado
+    int j; // Contador para quantCampos
     
     DADO *dado = NULL;
-    int contRegArq = header_get_nroRegArq(header);
+    int quantRegArq; // Variável para guardar a quantidade de registros no arquivo
 
+    /*Loop de buscas*/
     for (int i = 0; i < quantBuscas; i++) {
-        int quantRespostas;
-        scanf("%d", &quantRespostas);
+        quantCampos = 0; // Inicializando a quantidade de campos a serem buscados
+        flag = -1; // Inicializando qual campo deve ser buscado
+        j = 0; // Inicializando o contador para quantCampos
 
+        scanf("%d", &quantRespostas); // Recebendo do usuário quantas respostas (dados) devemos imprimir
+
+        // Lendo string contendo os campos a serem buscados e seus valores
         fgets(buffer, sizeof(buffer), stdin);
         buffer[strcspn(buffer, "\n")] = '\0';
         ptr = buffer;
 
-        int quantCampos = 0;
         // Contando quantidade de campos pela quantidade de espaços na string
         for(char *pontContaEspacos = buffer; *pontContaEspacos; pontContaEspacos++){
             if(*pontContaEspacos == ' ') quantCampos++;
         }
-
         quantCampos = (quantCampos + 1)/2;
     
-        int flag = -1;
-        int j = 0; // Contador para quantCampos
-        int quaisCampos[quantCampos];
+        int quaisCampos[quantCampos]; // Vetor para sabermos quais campos buscarmos
         
+        /*Lendo qual campo devemos buscar, salvando essa informação no vetor quais campos
+        e guardando seus valores nas variáveis auxiliares corretas*/
         char *tok = strsep(&ptr, " ");
-        while((tok = strsep(&ptr, " ")) != NULL && j < quantCampos) {
+        while((tok = strsep(&ptr, " ")) != NULL && j < quantCampos) { // Loop enquanto não chegarmos ao fim da string ou da quantidade de campos
             // Determina qual campo deve ser buscado
             if(strcmp(tok, "idAttack") == 0) flag = 0;
             else if(strcmp(tok, "year") == 0) flag = 1;
@@ -197,34 +197,40 @@ void arquivo_buscar(char *nomeArqBin, int quantBuscas){
             else if(strcmp(tok, "targetIndustry") == 0) flag = 5;
             else if(strcmp(tok, "defenseMechanism") == 0) flag = 6;
 
-            quaisCampos[j] = flag;
+            quaisCampos[j] = flag; // Guardando esse campo no vetor
         
-            // Tok aponta para o valor
-            tok = strsep(&ptr, " ");
-            if(tok == NULL) break;
+            // Avançando o ponteiro na string
+            tok = strsep(&ptr, " "); // Tok aponta para o valor do campo que acaba de ser guardado
+            if(tok == NULL) break; // Caso tenhamos chegado ao final da string
             
-            if (flag == 0 || flag == 1) valorInt = str_to_int(tok);
+            // Atribuindo esse valor para a variável auxilar correta
+            if (flag == 0 || flag == 1) valorInt[flag] = str_to_int(tok);
             else if (flag == 2) valorFloat = str_to_float(tok);
             else if (flag > 2 && flag <= 6) {
                 int tamStr = strlen(tok) - 2;
                 strncpy(valorStr[flag-3], tok + 1, tamStr);
                 valorStr[flag-3][tamStr] = '\0';
             }
-            j++;
+
+            j++; // Avançando o contador para a quantidade de campos e voltando ao início do while
         }
     
+        /*Recuperando e imprimindo os dados*/
         printf("**********\n");
         
-        byteOffset = 276;
-        int quantRegArq = header_get_nroRegArq(header);
-        
-        bool dadoValido = true;
-        while(quantRegArq > 0 && quantRespostas > 0) {
-            dado = dado_ler(pontArqBin, dado, byteOffset);
-            if(dado == NULL) break;
+        // Preparando para leitura de dados
+        byteOffset = BYTEOFFSET_HEADER;
+        quantRegArq = header_get_nroRegArq(header);
+        bool dadoValido = true; // Flag para verificar se o dado lido obedece à busca requerida
 
+        while(quantRegArq > 0 && quantRespostas > 0) { // Loop para ler e verificar dados até que o arquivo ou a quantidade de respostas acabe
+            dado = dado_ler(pontArqBin, dado, byteOffset); // Lendo dado do arquivo
+            if(dado == NULL) break; // Erro
+
+            // Loop para verificar se todos os campos são obedecidos, percorrendo o vetor quaisCampos para isso
             for(int k = 0; k < quantCampos; k++){
                 switch(quaisCampos[k]) {
+                    // Caso algum dos campos não satisfaça a busca, a flag é settada para false
                     case 0:  // idAttack
                         if(dado_get_idAttacK(dado) != valorInt) dadoValido = false;
                         break;
@@ -250,20 +256,21 @@ void arquivo_buscar(char *nomeArqBin, int quantBuscas){
                         break;
                 }
             }
-
+            
+            // Imprimindo dado caso ele seja válido
             if(dadoValido){
                 dado_imprimir(header, dado);
                 printf("\n");
-                quantRespostas--;
+                quantRespostas--; // Atualizando a quantidade de respostas a serem imprimidas, somente se necessário
             }
 
-            dadoValido = true;
+            dadoValido = true; // Resettando a flag
             
-            byteOffset += dado_get_tamanho(dado);
-            quantRegArq--;
+            byteOffset += dado_get_tamanho(dado); // Atualizando o byteOffset (indo para a leitura do próximo dado)
+            quantRegArq--; // Atualizando a quantidade de dados buscada
         }
 
-        if(quantRegArq == 0 && quantRespostas > 0) printf("NAO TEM\n");
+        if(quantRegArq == 0 && quantRespostas > 0) printf("NAO TEM\n"); // Não foi encontrado um dado que obedece os campos de busca
         
         printf("**********\n");
     }

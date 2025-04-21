@@ -1,3 +1,9 @@
+/*
+Lida com a manipulação direta dos campos de structs
+do tipo HEADER e DADOS, incluindo escrever e ler de/em
+arquivos
+*/
+
 #ifndef REGISTROS_H
     #define REGISTROS_H
 
@@ -9,7 +15,7 @@
     #define TAM_DESC_TYPE 38
     #define TAM_DESC_TGT_IND 38
     #define TAM_DESC_DEF 67
-    #define TAM_HEADER 276
+    #define BYTEOFFSET_HEADER 276
 
     typedef struct header_ HEADER;
     typedef struct dados_ DADO;

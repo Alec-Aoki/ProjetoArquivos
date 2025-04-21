@@ -1,14 +1,27 @@
+/*
+Lida com as 3 principais funcionalidades do
+projeto, utilizando as outras 2 bilbiotecas
+para tanto
+*/
+
 #ifndef ARQUIVOS_H
     #define ARQUIVOS_H
 
-    // Transforma um arquivo de .csv para .bin
+    /* arquivo_criar()
+    Transforma um arquivo .csv em .bin
+    Parâmetros: ponteiros para strings (nomes dos arquivos)
+    */
     void arquivo_criar(char* nomeArqBin, char* nomeArqCSV);
 
-    // Imprime todos os registros de um arquivo binário
+    /* arquivo_imprimir():
+    Imprime os conteúdos do arquivo binário de acordo com as descrições do header
+    Parâmetros: ponteiro para string (nome do arquivo binário)
+    */
     void arquivo_imprimir(char* nomeArqBin);
 
-    /*TODO*/
+    /* arquivo_buscar():
+    Imprime na tela a quantidade requisitada de dados que satisfazer os campos de busca
+    Parâmetros: ponteiro para string (nome do arquivo binário), quanttidade de buscas a serem feitas
+    */
     void arquivo_buscar(char* nomeArqBin, int quantBuscas);
-
-    void busca(char* nomeArqBin, int quantBuscas);
 #endif
