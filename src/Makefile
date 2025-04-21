@@ -17,4 +17,4 @@ clean:
 	rm -f *.txt
 
 zip:
-	zip -r programaTrab.zip Makefile main.c /libs/arquivos.c /libs/arquivos.h /libs/registros.c /libs/registros.h /libs/auxiliar.c /libs/auxiliar.h
+	zip -r programaTrab.zip ./Makefile ./main.c ./libs/arquivos.c ./libs/arquivos.h ./libs/registros.c ./libs/registros.h ./libs/auxiliar.c ./libs/auxiliar.h
