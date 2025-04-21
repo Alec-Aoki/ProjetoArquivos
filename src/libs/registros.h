@@ -119,6 +119,12 @@ arquivos
     */
     int dado_get_tamanho(DADO* dado);
 
+    /* dado_get_removido()
+    Retorna o valor do campo removido
+    Parâmetros: ponteiro para struct dado
+    Retorno: -2 caso a struct seja nula, caso contrário o valor guardado no campo removido
+    */
+    char dado_get_removido(DADO* dado);
 
     /* dado_get_idAttack()
     Retorna o valor do campo idAttack de uma struct dado

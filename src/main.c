@@ -5,6 +5,10 @@
 
 #include "./libs/arquivos.h"
 
+/*
+ALEC CAMPOS AOKI - 15436800
+JÕAO RICARDO DE ALMEIDA LUSTOSA - 15463697
+*/
 
 int main(void){
     char op;

@@ -16,7 +16,5 @@ clean:
 	rm -f *.bin
 	rm -f *.txt
 
-remake:
-	make clean
-	make all
-	make run
+zip:
+	zip -r programaTrab.zip Makefile main.c /libs/arquivos.c /libs/arquivos.h /libs/registros.c /libs/registros.h /libs/auxiliar.c /libs/auxiliar.h

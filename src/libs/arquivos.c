@@ -7,16 +7,54 @@
 #include "registros.h"
 #include "arquivos.h"
 
+/*FUNÇÃO FORNECIDAS PARA CORREÇÃO*/
+void binarioNaTela(char *nomeArquivoBinario) { /* Você não precisa entender o código dessa função. */
+
+	/* Use essa função para comparação no run.codes. Lembre-se de ter fechado (fclose) o arquivo anteriormente.
+	*  Ela vai abrir de novo para leitura e depois fechar (você não vai perder pontos por isso se usar ela). */
+
+	unsigned long i, cs;
+	unsigned char *mb;
+	size_t fl;
+	FILE *fs;
+	if(nomeArquivoBinario == NULL || !(fs = fopen(nomeArquivoBinario, "rb"))) {
+		fprintf(stderr, "ERRO AO ESCREVER O BINARIO NA TELA (função binarioNaTela): não foi possível abrir o arquivo que me passou para leitura. Ele existe e você tá passando o nome certo? Você lembrou de fechar ele com fclose depois de usar?\n");
+		return;
+	}
+	fseek(fs, 0, SEEK_END);
+	fl = ftell(fs);
+	fseek(fs, 0, SEEK_SET);
+	mb = (unsigned char *) malloc(fl);
+	fread(mb, 1, fl, fs);
+
+	cs = 0;
+	for(i = 0; i < fl; i++) {
+		cs += (unsigned long) mb[i];
+	}
+	printf("%lf\n", (cs / (double) 100));
+	free(mb);
+	fclose(fs);
+}
+
 void arquivo_criar(char* nomeArqBin, char* nomeArqCSV){
     // Abre o arquivo .csv para leitura
     FILE* pontArqCSV = fopen(nomeArqCSV, "r");
-    if(pontArqCSV == NULL) return;
+    if(pontArqCSV == NULL){
+        printf("Falha no processamento do arquivo.\n");
+        return;
+    }
 
-    if(nomeArqBin == NULL) return;
+    if(nomeArqBin == NULL){
+        printf("Falha no processamento do arquivo.\n");
+        return;
+    }
 
     // Cria um arquivo binário para gravação. Caso já exista, sobrescreve
     FILE* pontArqBin = fopen(nomeArqBin, "wb");
-    if(pontArqBin == NULL) return;
+    if(pontArqBin == NULL){
+        printf("Falha no processamento do arquivo.\n");
+        return;
+    }
     
     /* LEITURA DOS CAMPOS DO HEADER */
     char *campos[7]; // Vetor de ponteiros de strings para guardar os campos do header e dos dados
@@ -39,7 +77,10 @@ void arquivo_criar(char* nomeArqBin, char* nomeArqCSV){
 
     // Criando struct header com os campos semânticos do header do .csv
     HEADER *headerArq = header_criar(campos[0], campos[1], campos[2], campos[3], campos[4], campos[5], campos[6]);
-    if(headerArq == NULL) return;
+    if(headerArq == NULL){
+        printf("Falha no processamento do arquivo.\n");
+        return;
+    }
 
     // Escrevendo header no arquivo binário
     header_escrever(pontArqBin, headerArq, true); 
@@ -102,14 +143,22 @@ void arquivo_criar(char* nomeArqBin, char* nomeArqCSV){
     header_apagar(&headerArq); // Desalocando struct header
     fclose(pontArqBin); // Fechando o arquivo
 
+    binarioNaTela(nomeArqBin); // Função para o runcodes
+
     return;
 }
 
 void arquivo_imprimir(char* nomeArqBin){
-    if(nomeArqBin == NULL) return; // Erro com nome do arquivo binário a ser aberto
+    if(nomeArqBin == NULL){ // Erro com nome do arquivo binário a ser aberto
+        printf("Falha no processamento do arquivo.\n");
+        return;
+    }
 
     FILE* pontArqBin = fopen(nomeArqBin, "rb"); // Abrindo arquivo binário no modo de leitura
-    if(pontArqBin == NULL) return; // Erro com a abertura do arquivo
+    if(pontArqBin == NULL){ // Erro com a abertura do arquivo
+        printf("Falha no processamento do arquivo.\n");
+        return;
+    }
 
     fseek(pontArqBin, 0, SEEK_SET); // Posiciona o ponteiro no início do arquivo
 
@@ -119,14 +168,21 @@ void arquivo_imprimir(char* nomeArqBin){
     DADO* dado = NULL;
 
     int quantRegArq = header_get_nroRegArq(header); // Contador para loop de leitura de dados
+    if(quantRegArq == 0){
+        printf("Registro inexistente.\n");
+        return;
+    }
     
     // Loop de leitura de dados
     while(quantRegArq > 0){
         dado = dado_ler(pontArqBin, dado, byteOffset);
-        byteOffset += dado_get_tamanho(dado);
-        dado_imprimir(header, dado);
-        printf("\n");
+        // Imprimindo o dado somente se ele não estiver removido
+        if(dado_get_removido(dado) != '1'){
+            dado_imprimir(header, dado);
+            printf("\n");
+        }
 
+        byteOffset += dado_get_tamanho(dado);
         quantRegArq--;
     }
 
@@ -140,11 +196,18 @@ void arquivo_buscar(char *nomeArqBin, int quantBuscas){
     if(nomeArqBin == NULL) return;
 
     FILE* pontArqBin = fopen(nomeArqBin, "rb"); // Abrindo arquivo binário no modo de leitura
-    if(pontArqBin == NULL) return; // Erro com a abertura do arquivo
+    if(pontArqBin == NULL){ // Erro com a abertura do arquivo
+        printf("Falha no processamento do arquivo.\n");
+        return;
+    }
 
     fseek(pontArqBin, 0, SEEK_SET); // Posiciona o ponteiro no início do arquivo
 
     HEADER* header = header_ler(pontArqBin, NULL); // Leitura do header do arquivo
+    if(header == NULL){ // Erro com a criação do header
+        printf("Falha no processamento do arquivo.\n");
+        return;
+    }
 
     char buffer[256]; // Buffer para leitura de strings
     int byteOffset = BYTEOFFSET_HEADER; // Byteoffset inicial para leitura dos dados do arquivo
@@ -232,10 +295,10 @@ void arquivo_buscar(char *nomeArqBin, int quantBuscas){
                 switch(quaisCampos[k]) {
                     // Caso algum dos campos não satisfaça a busca, a flag é settada para false
                     case 0:  // idAttack
-                        if(dado_get_idAttacK(dado) != valorInt) dadoValido = false;
+                        if(dado_get_idAttacK(dado) != valorInt[0]) dadoValido = false;
                         break;
                     case 1:  // year
-                        if(dado_get_year(dado) != valorInt) dadoValido = false;
+                        if(dado_get_year(dado) != valorInt[1]) dadoValido = false;
                         break;
                     case 2:  // financialLoss
                         if(dado_get_finLoss(dado) != valorFloat) dadoValido = false;
@@ -270,7 +333,7 @@ void arquivo_buscar(char *nomeArqBin, int quantBuscas){
             quantRegArq--; // Atualizando a quantidade de dados buscada
         }
 
-        if(quantRegArq == 0 && quantRespostas > 0) printf("NAO TEM\n"); // Não foi encontrado um dado que obedece os campos de busca
+        if(quantRegArq == 0 && quantRespostas > 0) printf("Registro inexistente.\n"); // Não foi encontrado um dado que obedece os campos de busca
         
         printf("**********\n");
     }

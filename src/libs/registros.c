@@ -353,6 +353,12 @@ int dado_get_tamanho(DADO* dado){
     return dado->tamanhoRegistro;
 }
 
+char dado_get_removido(DADO* dado){
+    if(dado == NULL) return '2';
+
+    return dado->removido;
+}
+
 int dado_get_idAttacK(DADO* dado){
     if(dado == NULL) return -1;
 
