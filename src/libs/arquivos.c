@@ -233,21 +233,14 @@ void arquivo_buscar(char *nomeArqBin, int quantBuscas){
         flag = -1; // Inicializando qual campo deve ser buscado
         j = 0; // Inicializando o contador para quantCampos
 
-        scanf("%d", &quantRespostas); // Recebendo do usuário quantas respostas (dados) devemos imprimir
+        scanf("%d", &quantCampos); // Recebendo do usuário quantas respostas (dados) devemos imprimir
+        int quaisCampos[quantCampos]; // Vetor para sabermos quais campos buscarmos
 
         // Lendo string contendo os campos a serem buscados e seus valores
         fgets(buffer, sizeof(buffer), stdin);
         buffer[strcspn(buffer, "\n")] = '\0';
         ptr = buffer;
-
-        // Contando quantidade de campos pela quantidade de espaços na string
-        for(char *pontContaEspacos = buffer; *pontContaEspacos; pontContaEspacos++){
-            if(*pontContaEspacos == ' ') quantCampos++;
-        }
-        quantCampos = (quantCampos + 1)/2;
-    
-        int quaisCampos[quantCampos]; // Vetor para sabermos quais campos buscarmos
-        
+       
         /*Lendo qual campo devemos buscar, salvando essa informação no vetor quais campos
         e guardando seus valores nas variáveis auxiliares corretas*/
         char *tok = strsep(&ptr, " ");
@@ -279,15 +272,14 @@ void arquivo_buscar(char *nomeArqBin, int quantBuscas){
             j++; // Avançando o contador para a quantidade de campos e voltando ao início do while
         }
     
-        /*Recuperando e imprimindo os dados*/
-        printf("**********\n");
-        
+        /*Recuperando e imprimindo os dados*/        
         // Preparando para leitura de dados
         byteOffset = BYTEOFFSET_HEADER;
         quantRegArq = header_get_nroRegArq(header);
         bool dadoValido = true; // Flag para verificar se o dado lido obedece à busca requerida
+        bool respostaEncontrada = false;
 
-        while(quantRegArq > 0 && quantRespostas > 0) { // Loop para ler e verificar dados até que o arquivo ou a quantidade de respostas acabe
+        while(quantRegArq > 0) { // Loop para ler e verificar dados até que o arquivo ou a quantidade de respostas acabe
             dado = dado_ler(pontArqBin, dado, byteOffset); // Lendo dado do arquivo
             if(dado == NULL) break; // Erro
 
@@ -323,19 +315,20 @@ void arquivo_buscar(char *nomeArqBin, int quantBuscas){
             
             // Imprimindo dado caso ele seja válido
             if(dadoValido){
+                respostaEncontrada = true;
                 dado_imprimir(header, dado);
                 printf("\n");
-                quantRespostas--; // Atualizando a quantidade de respostas a serem imprimidas, somente se necessário
             }
 
             dadoValido = true; // Resettando a flag
             
-            byteOffset += dado_get_tamanho(dado); // Atualizando o byteOffset (indo para a leitura do próximo dado)
+            byteOffset += dado_get_tamanho(dado) + 5; // Atualizando o byteOffset (indo para a leitura do próximo dado)
             quantRegArq--; // Atualizando a quantidade de dados buscada
         }
 
-        if(quantRegArq == 0 && quantRespostas > 0) printf("Registro inexistente.\n"); // Não foi encontrado um dado que obedece os campos de busca
-        
+        if(!respostaEncontrada) printf("Registro inexistente.\n\n"); // Não foi encontrado um dado que obedece os campos de busca
+        respostaEncontrada = false; // Resettando flag
+
         printf("**********\n");
     }
 
