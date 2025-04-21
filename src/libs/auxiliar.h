@@ -32,5 +32,5 @@ para arquivos ou structs do tipo HEADER ou DADO
     Parâmetro: ponteiro para ponteiro de char
     Retorna: uma string
     */
-    char *separa_campo (char **pontStr);
+    char *separa_campo (char **pontStr, int id);
 #endif

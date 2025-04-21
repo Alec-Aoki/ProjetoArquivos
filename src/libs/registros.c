@@ -279,8 +279,6 @@ DADO* dado_ler(FILE* pontArq, DADO* dado, int byteOffset){
     
     // Lê o campo removida do arquivo e guarda na struct
     fread(&(dado)->removido, sizeof(char), 1, pontArq);
-    // Verifica se o dado está logicamente removido
-    if (dado->removido == 1) return NULL;
 
     // Lê os campos do arquivo e guarda na struct
     fread(&(dado)->tamanhoRegistro, sizeof(int), 1, pontArq);
@@ -290,7 +288,7 @@ DADO* dado_ler(FILE* pontArq, DADO* dado, int byteOffset){
     fread(&(dado)->financialLoss, sizeof(float), 1, pontArq);
 
     // Cacula o tamanho dos campos da tamanho variável
-    int bytesRestantes = dado->tamanhoRegistro - 25;
+    int bytesRestantes = (dado->tamanhoRegistro - 25) + 5;
     char *buffer = (char *) malloc(bytesRestantes + 1);
     fread(buffer, sizeof(char), bytesRestantes, pontArq);
     buffer[bytesRestantes] = '\0';
@@ -299,10 +297,10 @@ DADO* dado_ler(FILE* pontArq, DADO* dado, int byteOffset){
     char *pontCampo = buffer;
 
     // Lê os dados do buffer e guarda nos campos da struct
-    dado->country = separa_campo(&pontCampo);
-    dado->attackType = separa_campo(&pontCampo);
-    dado->targetIndustry = separa_campo(&pontCampo);
-    dado->defenseMechanism = separa_campo(&pontCampo);
+    dado->country = separa_campo(&pontCampo, 1);
+    dado->attackType = separa_campo(&pontCampo, 2);
+    dado->targetIndustry = separa_campo(&pontCampo, 3);
+    dado->defenseMechanism = separa_campo(&pontCampo, 4);
 
     // Desaloca a memória do buffer e o aponta para NULL
     free(buffer);
@@ -314,14 +312,34 @@ DADO* dado_ler(FILE* pontArq, DADO* dado, int byteOffset){
 void dado_imprimir(HEADER* header, DADO* dado){
     if((header == NULL) || (dado == NULL)) return;
 
+
     // Imprimindo as descrições semânticas dos campos do dado e seus valores
-    printf("%.*s : %d\n", TAM_DESC_ID, header->descreveIdentificador, dado->idAttack);
-    printf("%.*s : %d\n", TAM_DESC_YEAR, header->descreveYear, dado->year);
-    printf("%.*s : %s\n", TAM_DESC_COUNTRY, header->descreveCountry, dado->country);
-    printf("%.*s : %s\n", TAM_DESC_TGT_IND, header->descreveTargetIndustry, dado->targetIndustry);
-    printf("%.*s : %s\n", TAM_DESC_TYPE, header->descreveType, dado->attackType);
-    printf("%.*s : %.2f\n", TAM_DESC_FIN_LOSS, header->descreveFinancialLoss, dado->financialLoss);
-    printf("%.*s : %s\n", TAM_DESC_DEF, header->descreveDefense, dado->defenseMechanism);
+    /*idAttack*/
+    printf("%.*s: ", TAM_DESC_ID, header->descreveIdentificador);
+    if(dado->idAttack == -1) printf("NADA CONSTA\n");
+    else printf("%d\n", dado->idAttack);
+
+    /*year*/
+    printf("%.*s: ", TAM_DESC_YEAR, header->descreveYear);
+    if(dado->year == -1) printf("NADA CONSTA\n");
+    else printf("%d\n", dado->year);
+
+    /*country*/
+    printf("%.*s: %s\n", TAM_DESC_COUNTRY, header->descreveCountry, dado->country);
+
+    /*targetIndustry*/
+    printf("%.*s: %s\n", TAM_DESC_TGT_IND, header->descreveTargetIndustry, dado->targetIndustry);
+
+    /*attackType*/
+    printf("%.*s: %s\n", TAM_DESC_TYPE, header->descreveType, dado->attackType);
+
+    /*financialLoss*/
+    printf("%.*s: ", TAM_DESC_FIN_LOSS, header->descreveFinancialLoss);
+    if(dado->financialLoss == -1) printf("NADA CONSTA\n");
+    else printf("%.2f\n", dado->financialLoss);
+
+    /*defenseMechanism*/
+    printf("%.*s: %s\n", TAM_DESC_DEF, header->descreveDefense, dado->defenseMechanism);
     
     return;
 }

@@ -183,7 +183,7 @@ void arquivo_imprimir(char* nomeArqBin){
             printf("\n");
         }
 
-        byteOffset += dado_get_tamanho(dado);
+        byteOffset += dado_get_tamanho(dado) + 5;
         quantRegArq--;
     }
 

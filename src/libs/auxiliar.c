@@ -39,7 +39,10 @@ char *formata_string_registro (char *string, char *id){
     return strTemp; // Retorna a string formatada
 }
 
-char *separa_campo (char **pontStr) {
+char *separa_campo (char **pontStr, int id) {
+    if(**pontStr != (id + '0')){
+        return strdup("NADA CONSTA");
+    }
     // Recebe um ponteiro para a primeira ocorrecia do caractere dado (Fim da string)
     char *lugarDelimitador = strchr(*pontStr, '|');
     // Aponta para o inicio pulando o ID
@@ -47,12 +50,6 @@ char *separa_campo (char **pontStr) {
 
     // Calcula do tamanho da string
     int tamStr = lugarDelimitador - inicio; 
-    
-    // Caso campo nulo
-    if (tamStr <= 0) {
-        *pontStr = lugarDelimitador + 1;
-        return strdup("NADA CONSTA");
-    }
 
     // Aloca memória para string e verifica se ocorreu corretamente
     char *campo = (char *) malloc(tamStr+1);
