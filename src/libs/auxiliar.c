@@ -4,48 +4,28 @@
 
 #include "auxiliar.h"
 
-//  Funções auxiliares
-    
-/* str_to_int():
-A função converte uma string numérica para um intero, caso nula -1
-Parâmetros: uma string
-Retorno : o inteiro correspondente, ou -1 
-*/
 int str_to_int (char *str) {
-    if (str == NULL)
-        return -1;
+    if (str == NULL) return -1; // Erro
     
-    if (strcmp(str, "") == 0)
-        return -1;
+    if (strcmp(str, "") == 0) return -1; // Erro
 
     return atoi(str);
 }
     
-/* str_to_float():
-A função converte uma string numérica para um float, caso nula -1
-Parâmetros: uma string
-Retorno : o float correspondente, ou -1 
-*/
 float str_to_float (char *str) {
-    if (str == NULL)
-        return -1;
+    if (str == NULL) return -1; // Erro
     
-    if (strcmp(str, "") == 0)
-        return -1;
+    if (strcmp(str, "") == 0) return -1; // Erro
 
     return atof(str);    
 }
 
-/* formata_string_registro():
-Aloca dinamicamente memória para uma string e adiciona delimitadores no inicio e final
-Parâmetros: string a ser formatada
-Retorna: uma string formatada  
-*/
 char *formata_string_registro (char *string, char *id){
     // Aloca memória para a string com o tamanho extra para os delimitadores
     char *strTemp = (char *) malloc(sizeof(char)*(strlen(string)+strlen(id)+2));
-    if (strTemp == NULL) return NULL;
+    if (strTemp == NULL) return NULL; // Erro de alocação de memória
 
+    // Caso de campos nulos
     if (string == NULL || strcmp(string, "") == 0){
         strcpy(strTemp, "|");
         return strTemp;
@@ -60,13 +40,8 @@ char *formata_string_registro (char *string, char *id){
     return strTemp; // Retorna a string formatada
 }
 
-/* separa_campo():
-A partir de um ponteiro que aponta para o inicio de uma string do registro separa os campos dela
-Parâmetro: Ponteiro para ponteiro de char
-Retorna: string
-*/
 char *separa_campo (char **pontStr) {
-    // recebe um ponteiro para a primeira ocorrecia do caractere dado (Fim da string)
+    // Recebe um ponteiro para a primeira ocorrecia do caractere dado (Fim da string)
     char *lugarDelimitador = strchr(*pontStr, '|');
     // Aponta para o inicio pulando o ID
     char *inicio = *pontStr + 1;
