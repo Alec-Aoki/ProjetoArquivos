@@ -8,7 +8,7 @@
     void arquivo_imprimir(char* nomeArqBin);
 
     /*TODO*/
-    void arquivo_busca(char* nomeArqBin, int quantBuscas);
+    void arquivo_buscar(char* nomeArqBin, int quantBuscas);
 
     void busca(char* nomeArqBin, int quantBuscas);
 #endif

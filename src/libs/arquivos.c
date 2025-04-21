@@ -146,109 +146,7 @@ void arquivo_imprimir(char* nomeArqBin){
     return;
 }
 
-void arquivo_busca(char* nomeArqBin, int quantBuscas){
-    if(nomeArqBin == NULL) return;
-
-    FILE* pontArqBin = fopen(nomeArqBin, "rb"); // Abrindo arquivo binário no modo de leitura
-    if(pontArqBin == NULL) return; // Erro com a abertura do arquivo
-
-    fseek(pontArqBin, 0, SEEK_SET); // Posiciona o ponteiro no início do arquivo
-
-    HEADER* header = header_ler(pontArqBin, NULL);
-
-    char buffer[256]; // Para ler quais campos serão buscados
-    bool camposBool[7]; // Para guardar quais campos serão buscados
-    int valorInt;
-    float valorFloat;
-    char valorString[4][100];
-    int byteOffset; // Inicializado com tamanho do header
-    DADO* dado = NULL;
-    int contRegArq;
-
-    for(int i = 0; i < quantBuscas; i++){
-        int quantResultados;
-        fgets(buffer, sizeof(buffer), stdin); // Buffer agora armazena uma string com os campos a serem pesquisados e seus valores
-        buffer[strcspn(buffer, "\n")] = '\0';
-
-        char *tok = strtok(buffer, " ");
-        quantResultados = str_to_int(tok);
-    
-        printf("NUM : %d\n", quantResultados);
-        int j = -1;
-
-        tok = strtok(NULL, " ");
-        while(tok != NULL){
-            // Descobrindo qual campo deve ser buscado
-            if(strcmp(tok, "idAttack") == 0) j = 0;
-            else if(strcmp(tok, "year") == 0) j = 1;
-            else if(strcmp(tok, "financialLoss") == 0) j = 2;
-            else if(strcmp(tok, "country") == 0) j = 3;
-            else if(strcmp(tok, "attackType") == 0) j = 4;
-            else if(strcmp(tok, "targetIndustry") == 0) j = 5;
-            else if(strcmp(tok, "defenseMechanism") == 0) j = 6;
-
-            /*DEPOIS DESSE PONTO*/
-
-            camposBool[i] = 0;
-
-            tok = strtok(NULL, " "); // Tok agora aponta para a string que é o valor do campo que queremos
-            if (j < 0 || j > 6) continue;
-            if(j < 2) valorInt = str_to_int(tok);
-            if(j == 2) valorFloat = str_to_float(tok);
-            if(j > 2) strcpy(valorString[j - 3], tok);
-        }
-
-        /*ANTES DE POSSO*/
-
-        byteOffset = 276;
-        contRegArq = header_get_nroRegArq(header);
-        printf("**********\n");
-
-        while(contRegArq > 0 && quantResultados > 0){
-            dado = dado_ler(pontArqBin, dado, byteOffset);
-
-            switch(j){
-                case 1:
-                    if(dado_get_idAttacK(dado) == valorInt) dado_imprimir(header, dado);
-                    break;
-                case 2:
-                    if(dado_get_year(dado) == valorInt) dado_imprimir(header, dado);
-                    break;
-                case 3:
-                    if(dado_get_finLoss(dado) == valorFloat) dado_imprimir(header, dado);
-                    break;
-                case 4:
-                    if(strcmp(dado_get_country(dado),valorString[0]) == 0) dado_imprimir(header, dado);
-                    break;
-                case 5:
-                    if(strcmp(dado_get_attackType(dado),valorString[1]) == 0) dado_imprimir(header, dado);
-                    break;
-                case 6:
-                    if(strcmp(dado_get_targetIndustry(dado),valorString[2]) == 0) dado_imprimir(header, dado);
-                    break;
-                case 7:
-                    if(strcmp(dado_get_defenseMech(dado),valorString[3]) == 0) dado_imprimir(header, dado);
-                    break;
-                default:
-                    quantResultados++;
-                    break;
-            }
-            //printf("\n");
-            
-            quantResultados--;
-            byteOffset += dado_get_tamanho(dado);
-        }
-
-        printf("**********\n");
-    }
-
-    dado_apagar(&dado);
-    header_apagar(&header);
-    fclose(pontArqBin);
-    return;
-}
-
-void busca (char *nomeArqBin, int quantBuscas){
+void arquivo_buscar(char *nomeArqBin, int quantBuscas){
     if(nomeArqBin == NULL) return;
 
     FILE* pontArqBin = fopen(nomeArqBin, "rb"); // Abrindo arquivo binário no modo de leitura
@@ -259,52 +157,58 @@ void busca (char *nomeArqBin, int quantBuscas){
     HEADER* header = header_ler(pontArqBin, NULL);
 
     char buffer[256];
-    int byteOffset;
+    int byteOffset = 276;
     char *ptr;
     int valorInt;
     float valorFloat;
     char valorStr[4][20];
     
     DADO *dado = NULL;
-    byteOffset = 276;
     int contRegArq = header_get_nroRegArq(header);
 
     for (int i = 0; i < quantBuscas; i++) {
-        getchar();
+        int quantRespostas;
+        scanf("%d", &quantRespostas);
+
         fgets(buffer, sizeof(buffer), stdin);
         buffer[strcspn(buffer, "\n")] = '\0';
         ptr = buffer;
+
+        int quantCampos = 0;
+        // Contando quantidade de campos pela quantidade de espaços na string
+        for(char *pontContaEspacos = buffer; *pontContaEspacos; pontContaEspacos++){
+            if(*pontContaEspacos == ' ') quantCampos++;
+        }
+
+        quantCampos = (quantCampos + 1)/2;
     
-        int numCampos;
-        sscanf(ptr, "%d", &numCampos);
-        char campos[numCampos][20];
         int flag = -1;
-        int j = 0;
+        int j = 0; // Contador para quantCampos
+        int quaisCampos[quantCampos];
         
         char *tok = strsep(&ptr, " ");
-        while((tok = strsep(&ptr, " ")) != NULL && j < numCampos) {
-            strcpy(campos[j], tok);
-            campos[j][strlen(tok)] = '\0';
-    
+        while((tok = strsep(&ptr, " ")) != NULL && j < quantCampos) {
             // Determina qual campo deve ser buscado
-            if(strcmp(campos[j], "idAttack") == 0) flag = 0;
-            else if(strcmp(campos[j], "year") == 0) flag = 1;
-            else if(strcmp(tok, "financialLoss") == 0) j = 2;
-            else if(strcmp(tok, "country") == 0) j = 3;
-            else if(strcmp(tok, "attackType") == 0) j = 4;
-            else if(strcmp(tok, "targetIndustry") == 0) j = 5;
-            else if(strcmp(tok, "defenseMechanism") == 0) j = 6;
+            if(strcmp(tok, "idAttack") == 0) flag = 0;
+            else if(strcmp(tok, "year") == 0) flag = 1;
+            else if(strcmp(tok, "financialLoss") == 0) flag = 2;
+            else if(strcmp(tok, "country") == 0) flag = 3;
+            else if(strcmp(tok, "attackType") == 0) flag = 4;
+            else if(strcmp(tok, "targetIndustry") == 0) flag = 5;
+            else if(strcmp(tok, "defenseMechanism") == 0) flag = 6;
+
+            quaisCampos[j] = flag;
         
             // Tok aponta para o valor
             tok = strsep(&ptr, " ");
             if(tok == NULL) break;
             
-            
             if (flag == 0 || flag == 1) valorInt = str_to_int(tok);
             else if (flag == 2) valorFloat = str_to_float(tok);
             else if (flag > 2 && flag <= 6) {
-                strcpy(valorStr[flag-3], tok);
-                valorStr[flag-3][strlen(tok)] = '\0';
+                int tamStr = strlen(tok) - 2;
+                strncpy(valorStr[flag-3], tok + 1, tamStr);
+                valorStr[flag-3][tamStr] = '\0';
             }
             j++;
         }
@@ -312,62 +216,54 @@ void busca (char *nomeArqBin, int quantBuscas){
         printf("**********\n");
         
         byteOffset = 276;
-        int currentRegArq = header_get_nroRegArq(header);
+        int quantRegArq = header_get_nroRegArq(header);
         
-        while(currentRegArq > 0) {
+        bool dadoValido = true;
+        while(quantRegArq > 0 && quantRespostas > 0) {
             dado = dado_ler(pontArqBin, dado, byteOffset);
             if(dado == NULL) break;
-            
-            switch(flag) {
-                case 0:  // idAttack
-                    if(dado_get_idAttacK(dado) == valorInt) {
-                        dado_imprimir(header, dado);
-                        printf("\n");
-                    };
-                    break;
-                case 1:  // year
-                    if(dado_get_year(dado) == valorInt) {
-                        dado_imprimir(header, dado);
-                        printf("\n");
-                        }
-                    break;
-                case 2:  // financialLoss
-                    if(dado_get_finLoss(dado) == valorFloat) {
-                        dado_imprimir(header, dado);
-                        printf("\n");
-                    }
-                    break;
-                case 3:  // country
-                    if(strcmp(dado_get_country(dado), valorStr[0]) == 0) {
-                        dado_imprimir(header, dado);
-                        printf("\n");
-                    }
-                    break;
-                case 4:  // attackType
-                    if(strcmp(dado_get_attackType(dado), valorStr[1]) == 0) {
-                        dado_imprimir(header, dado);
-                        printf("\n");
-                    }
-                    break;
-                case 5:  // targetIndustry
-                    if(strcmp(dado_get_targetIndustry(dado), valorStr[2]) == 0) {
-                        dado_imprimir(header, dado);
-                        printf("\n");
-                    }
-                    break;
-                case 6:  // defenseMechanism
-                    if(strcmp(dado_get_defenseMech(dado), valorStr[3]) == 0) {
-                        dado_imprimir(header, dado);
-                        printf("\n");
-                    }
-                    break;
-                default:
-                    break;
+
+            for(int k = 0; k < quantCampos; k++){
+                switch(quaisCampos[k]) {
+                    case 0:  // idAttack
+                        if(dado_get_idAttacK(dado) != valorInt) dadoValido = false;
+                        break;
+                    case 1:  // year
+                        if(dado_get_year(dado) != valorInt) dadoValido = false;
+                        break;
+                    case 2:  // financialLoss
+                        if(dado_get_finLoss(dado) != valorFloat) dadoValido = false;
+                        break;
+                    case 3:  // country
+                        if(strcmp(dado_get_country(dado), valorStr[0]) != 0) dadoValido = false;
+                        break;
+                    case 4:  // attackType
+                        if(strcmp(dado_get_attackType(dado), valorStr[1]) != 0) dadoValido = false;
+                        break;
+                    case 5:  // targetIndustry
+                        if(strcmp(dado_get_targetIndustry(dado), valorStr[2]) != 0) dadoValido = false;
+                        break;
+                    case 6:  // defenseMechanism
+                        if(strcmp(dado_get_defenseMech(dado), valorStr[3]) != 0) dadoValido = false;
+                        break;
+                    default:
+                        break;
+                }
             }
+
+            if(dadoValido){
+                dado_imprimir(header, dado);
+                printf("\n");
+                quantRespostas--;
+            }
+
+            dadoValido = true;
             
             byteOffset += dado_get_tamanho(dado);
-            currentRegArq--;
+            quantRegArq--;
         }
+
+        if(quantRegArq == 0 && quantRespostas > 0) printf("NAO TEM\n");
         
         printf("**********\n");
     }

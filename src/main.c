@@ -33,7 +33,7 @@ int main(void){
         scanf("%s", nomeArquivoBin);
         int quantBuscas;
         scanf("%d", &quantBuscas);
-        busca(nomeArquivoBin, quantBuscas);
+        arquivo_buscar(nomeArquivoBin, quantBuscas);
     }
 
     return 0;
