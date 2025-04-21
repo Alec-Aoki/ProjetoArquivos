@@ -85,7 +85,7 @@ arquivos
     Parâmetros: valores dos campos da struct
     Retorna: ponteiro para dado
     */
-    DADO* dado_criar(char removido, int tamReg, long int prox, int idAttack, int year, float finLoss, char* country, char* attackType, char* targetInd, char* defMec);
+    DADO* dado_criar(int removido, int tamReg, long int prox, int idAttack, int year, float finLoss, char* country, char* attackType, char* targetInd, char* defMec);
 
     /* dado_apagar():
     Desaloca memória da struct e dos campos de tamanho variável

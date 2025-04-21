@@ -21,15 +21,14 @@ float str_to_float (char *str) {
 }
 
 char *formata_string_registro (char *string, char *id){
+    // Caso de campos nulos
+    if (string == NULL || strcmp(string, "") == 0){
+        return NULL;
+    }
+
     // Aloca memória para a string com o tamanho extra para os delimitadores
     char *strTemp = (char *) malloc(sizeof(char)*(strlen(string)+strlen(id)+2));
     if (strTemp == NULL) return NULL; // Erro de alocação de memória
-
-    // Caso de campos nulos
-    if (string == NULL || strcmp(string, "") == 0){
-        strcpy(strTemp, "|");
-        return strTemp;
-    }
     
     // Construção segura da string
     strTemp[0] = '\0'; // Inicializa o buffer

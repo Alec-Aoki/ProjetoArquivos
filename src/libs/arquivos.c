@@ -94,7 +94,7 @@ void arquivo_criar(char* nomeArqBin, char* nomeArqCSV){
 
     // Contadores para atualizar os dados do header
     int quantRegDados = 0;
-    int byteOffset = BYTEOFFSET_HEADER; // Inicializado com o tamanho do header
+    long int byteOffset = BYTEOFFSET_HEADER; // Inicializado com o tamanho do header
 
     while (fgets(buffer, sizeof(buffer), pontArqCSV) != NULL){
         // Identifica o fim da linha lida e substitui o "\n" por um '\0'
@@ -120,17 +120,18 @@ void arquivo_criar(char* nomeArqBin, char* nomeArqCSV){
         }
 
         // Guarda os dados lidos na struct DADO
-        DADO *RegTemp = dado_criar('0', 0, -1, str_to_int(campos[0]), str_to_int(campos[1]), str_to_float(campos[2]), campos[3], campos[4], campos[5], campos[6]);
+        DADO *RegTemp = dado_criar(0, 0, -1, str_to_int(campos[0]), str_to_int(campos[1]), str_to_float(campos[2]), campos[3], campos[4], campos[5], campos[6]);
 
         quantRegDados++; // Incrementando a quantidade de registros no arquivo
-        byteOffset += dado_get_tamanho(RegTemp);
 
         // Escreve os registros no arquivo binario
         dado_escrever(pontArqBin, RegTemp);
+        byteOffset += dado_get_tamanho(RegTemp) + 5; // Atualizando byteOffset
         dado_apagar(&RegTemp);
     }
 
     /* ATUALIZANDO CAMPOS DO HEADER */
+    fseek(pontArqCSV, 0, SEEK_SET);
     // Alterando o status do arquivo antes de fechá-lo
     header_set_status(headerArq, '1');
     header_set_nroRegArq(headerArq, quantRegDados);

@@ -204,14 +204,14 @@ int header_get_nroRegArq(HEADER* header){
 // Função auxiliar, explicada mais adiante
 void dado_set_tamReg (DADO *registro);
 
-DADO* dado_criar(char removido, int tamReg, long int prox, int idAttack, int year, float finLoss, char* country, char* attackType, char* targetInd, char* defMec){
+DADO* dado_criar(int removido, int tamReg, long int prox, int idAttack, int year, float finLoss, char* country, char* attackType, char* targetInd, char* defMec){
     // Alocando memória na heap para a struct
     DADO *novoRegistro = (DADO *) malloc(sizeof(DADO));
     if (novoRegistro == NULL) return NULL; // Erro de alocação
 
     /* INICIALIZANDO A STRUCT */
     // Campos de tamanho fixo
-    novoRegistro->removido = removido;
+    novoRegistro->removido = removido + '0';
     novoRegistro->tamanhoRegistro = tamReg;
     novoRegistro->prox = prox;
     novoRegistro->idAttack = idAttack;
@@ -342,7 +342,7 @@ void dado_set_tamReg (DADO *registro){
     if (registro->targetIndustry != NULL) contadorBytes += strlen(registro->targetIndustry);
     if (registro->defenseMechanism != NULL) contadorBytes += strlen(registro->defenseMechanism);
     
-    registro->tamanhoRegistro = contadorBytes;
+    registro->tamanhoRegistro = contadorBytes - 5;
 
     return;  
 }
