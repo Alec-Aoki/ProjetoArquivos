@@ -36,6 +36,7 @@ void binarioNaTela(char *nomeArquivoBinario) { /* Você não precisa entender o 
 	fclose(fs);
 }
 
+/*Funcionalidade 1*/
 void arquivo_criar(char* nomeArqBin, char* nomeArqCSV){
     // Abre o arquivo .csv para leitura
     FILE* pontArqCSV = fopen(nomeArqCSV, "r");
@@ -149,6 +150,7 @@ void arquivo_criar(char* nomeArqBin, char* nomeArqCSV){
     return;
 }
 
+/*Funcionalidade 2*/
 void arquivo_imprimir(char* nomeArqBin){
     if(nomeArqBin == NULL){ // Erro com nome do arquivo binário a ser aberto
         printf("Falha no processamento do arquivo.\n");
@@ -193,6 +195,7 @@ void arquivo_imprimir(char* nomeArqBin){
     return;
 }
 
+/*Funcionalidade 3*/
 void arquivo_buscar(char *nomeArqBin, int quantBuscas){
     if(nomeArqBin == NULL) return;
 

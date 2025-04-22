@@ -17,7 +17,6 @@ int main(void){
 
     scanf("%c", &op);
         
-
     // Funcionalidade 1
     if(op == '1'){
         
@@ -33,6 +32,7 @@ int main(void){
         arquivo_imprimir(nomeArquivoBin);
     }
 
+    // Funcionalidade 3
     if (op == '3'){
         scanf("%s", nomeArquivoBin);
         int quantBuscas;
