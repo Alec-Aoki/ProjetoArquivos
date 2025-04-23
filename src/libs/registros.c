@@ -360,7 +360,7 @@ void dado_set_tamReg (DADO *registro){
     if (registro->targetIndustry != NULL) contadorBytes += strlen(registro->targetIndustry);
     if (registro->defenseMechanism != NULL) contadorBytes += strlen(registro->defenseMechanism);
     
-    registro->tamanhoRegistro = contadorBytes - 5;
+    registro->tamanhoRegistro = contadorBytes - 5; // -5 bytes = -4 bytes (int) do campo tamanhoRegistro e -1 bytes (char) do campo removido
 
     return;  
 }
