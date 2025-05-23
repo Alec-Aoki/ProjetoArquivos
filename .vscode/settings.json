@@ -3,6 +3,7 @@
         "stdlib.h": "c",
         "stdbool.h": "c",
         "stdio.h": "c",
-        "cabecalho.h": "c"
+        "cabecalho.h": "c",
+        "auxiliar.h": "c"
     }
 }

@@ -10,12 +10,17 @@ de tipo DADO
 
 typedef struct dados_ DADO;
 
+/* ------------------------------------------------------------------------------------- */
+/* FUNÇÕES DOS DADOS*/
+/* ------------------------------------------------------------------------------------- */
+
 /* dado_criar():
 Aloca memória para uma struct do tipo dado e inicializa seus campos
 Parâmetros: valores dos campos da struct
 Retorna: ponteiro para dado
 */
-DADO *dado_criar(int removido, int tamReg, long int prox, int idAttack, int year, float finLoss, char *country, char *attackType, char *targetInd, char *defMec);
+DADO *dado_criar(int removido, int tamReg, long int prox, int idAttack, int year, float finLoss,
+                 char *country, char *attackType, char *targetInd, char *defMec);
 
 /* dado_apagar():
 Desaloca memória da struct e dos campos de tamanho variável
@@ -35,5 +40,5 @@ Parâmetros: ponteiro pra struct do tipo dado, inteiro de 1 a 4 (campo)
 Retorna: ponteiro para string (NULL se não encontrado ou dado nulo)
 */
 char *dado_get_string(DADO *dado, int campo);
- 
+
 #endif

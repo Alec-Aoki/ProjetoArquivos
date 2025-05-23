@@ -27,7 +27,8 @@ Cria uma struct do tipo HEADER e a inicializa
 Parâmetros: ponteiros para strings (descrições do header)
 Retorna: ponteiro para a struct do tipo header
 */
-HEADER *header_criar(char *descIdent, char *descYear, char *descFinLoss, char *descCountry, char *descType, char *descTargInd, char *descDef);
+HEADER *header_criar(char *descIdent, char *descYear, char *descFinLoss, char *descCountry,
+                     char *descType, char *descTargInd, char *descDef);
 
 /* header_apagar():
 Desaloca uma struct do tipo header e define seu ponteiro para NULL
@@ -66,6 +67,6 @@ Retorna a string "descreve" de um campo
 Parâmetros: ponteiro pra struct do tipo header, inteiro de 1 a 7 (campo)
 Retorna: ponteiro para string (NULL se não encontrado ou header nulo)
 */
-char* header_get_descricao(HEADER* header, int campo);
+char *header_get_descricao(HEADER *header, int campo);
 
 #endif

@@ -3,8 +3,8 @@
 #include <string.h>
 #include <stdbool.h>
 
-#include "./registros/header.h"
-#include "./registros/dados.h"
+#include "./libs/registros/header.h"
+#include "./libs/registros/dados.h"
 
 int main(void)
 {
@@ -59,8 +59,6 @@ int main(void)
         "",            // targetInd (vazio)
         "Criptografia" // defMec
     );
-
-    printf("ALO VOCE\n");
 
     // Impressão dos registros
     printf("\n=== DADO 1 ===\n");

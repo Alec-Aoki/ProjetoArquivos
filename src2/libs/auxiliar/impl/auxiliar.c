@@ -2,7 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include "auxiliar.h"
+#include "../auxiliar.h"
 
 int str_to_int(char *str)
 {

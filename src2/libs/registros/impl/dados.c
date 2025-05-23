@@ -3,7 +3,7 @@
 #include <string.h>
 #include <stdbool.h>
 
-#include "../../auxiliar.h"
+#include "../../auxiliar/auxiliar.h"
 #include "../header.h"
 #include "../dados.h"
 
@@ -26,11 +26,36 @@ struct dados_
 };
 
 /* ------------------------------------------------------------------------------------- */
-/* FUNÇÕES DE DADOS*/
+/* FUNÇÕES DOS DADOS*/
 /* ------------------------------------------------------------------------------------- */
 
-// Função auxiliar, explicada mais adiante
-void dado_set_tamReg(DADO *registro);
+// Função auxiliar
+/* dado_set_tamReg():
+Calcula o número de bytes do registro e atualiza na struct
+Parâmetros: Ponteiro para struct
+Retorna:
+*/
+void dado_set_tamReg(DADO *registro)
+{
+    if (registro == NULL)
+        return;
+
+    int contadorBytes = 20; // Inicializa o contador com o tamanho dos campos fixos
+
+    // Adiciona ao contador o tamanho dos campos variáveis
+    if (registro->country != NULL)
+        contadorBytes += strlen(registro->country);
+    if (registro->attackType != NULL)
+        contadorBytes += strlen(registro->attackType);
+    if (registro->targetIndustry != NULL)
+        contadorBytes += strlen(registro->targetIndustry);
+    if (registro->defenseMechanism != NULL)
+        contadorBytes += strlen(registro->defenseMechanism);
+
+    registro->tamanhoRegistro = contadorBytes;
+
+    return;
+}
 
 DADO *dado_criar(int removido, int tamReg, long int prox, int idAttack, int year, float finLoss,
                  char *country, char *attackType, char *targetInd, char *defMec)
@@ -121,33 +146,6 @@ void dado_imprimir(HEADER *header, DADO *dado)
 
     /*defenseMechanism*/
     printf("%.*s: %s\n", TAM_DESC_DEF, header_get_descricao(header, 7), dado->defenseMechanism);
-
-    return;
-}
-
-/* dado_set_tamReg():
-Calcula o número de bytes do registro e atualiza na struct
-Parâmetros: Ponteiro para struct
-Retorna:
-*/
-void dado_set_tamReg(DADO *registro)
-{
-    if (registro == NULL)
-        return;
-
-    int contadorBytes = 20; // Inicializa o contador com o tamanho dos campos fixos
-
-    // Adiciona ao contador o tamanho dos campos variáveis
-    if (registro->country != NULL)
-        contadorBytes += strlen(registro->country);
-    if (registro->attackType != NULL)
-        contadorBytes += strlen(registro->attackType);
-    if (registro->targetIndustry != NULL)
-        contadorBytes += strlen(registro->targetIndustry);
-    if (registro->defenseMechanism != NULL)
-        contadorBytes += strlen(registro->defenseMechanism);
-
-    registro->tamanhoRegistro = contadorBytes;
 
     return;
 }
