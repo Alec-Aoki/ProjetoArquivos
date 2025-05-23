@@ -3,8 +3,8 @@ Lida com a manipulação direta dos campos da struct
 de tipo HEADER
 */
 
-#ifndef CABECALHO_H
-#define CABECALHO_H
+#ifndef HEADER_H
+#define HEADER_H
 
 // Tamanhos fixos dos campos do header (em bytes)
 #define TAM_DESC_ID 23
@@ -54,11 +54,18 @@ Retorno: false se header nulo, true caso contrário
 */
 void header_set_nroRegArq(HEADER *header, int nroRegAq);
 
-/* header_get_nroRegArq
+/* header_get_nroRegArq()
 Retorna o valor do campo nroRegArq de uma struct header
 Parâmetros: ponteiro para struct do tipo header
 Retorna: valor do campo nroRegArq da struct (-1 se header == NULL)
 */
 int header_get_nroRegArq(HEADER *header);
+
+/* header_get_descricao():
+Retorna a string "descreve" de um campo
+Parâmetros: ponteiro pra struct do tipo header, inteiro de 1 a 7 (campo)
+Retorna: ponteiro para string (NULL se não encontrado ou header nulo)
+*/
+char* header_get_descricao(HEADER* header, int campo);
 
 #endif

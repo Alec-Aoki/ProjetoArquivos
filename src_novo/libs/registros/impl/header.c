@@ -4,7 +4,7 @@
 #include <stdbool.h>
 
 #include "../../auxiliar.h"
-#include "cabecalho.h"
+#include "../header.h"
 
 /*Armazena os campos de um registro de header*/
 struct header_
@@ -108,4 +108,28 @@ int header_get_nroRegArq(HEADER *header)
         return -1;
 
     return header->nroRegArq;
+}
+
+char* header_get_descricao(HEADER* header, int campo){
+    if(header == NULL)
+        return NULL;
+    
+    switch(campo){
+        case 1:
+            return header->descreveIdentificador;
+        case 2:
+            return header->descreveYear;
+        case 3:
+            return header->descreveFinancialLoss;
+        case 4:
+            return header->descreveCountry;
+        case 5:
+            return header->descreveType;
+        case 6:
+            return header->descreveTargetIndustry;
+        case 7:
+            return header->descreveDefense;
+        default:
+            return NULL;
+    }
 }
