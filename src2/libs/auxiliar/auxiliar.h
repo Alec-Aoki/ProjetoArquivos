@@ -33,4 +33,8 @@ Parâmetro: ponteiro para ponteiro de char
 Retorna: uma string
 */
 char *separa_campo(char **pontStr, int id);
+
+/*FUNÇÃO FORNECIDA PARA CORREÇÃO*/
+void binarioNaTela(char *nomeArquivoBinario);
+
 #endif

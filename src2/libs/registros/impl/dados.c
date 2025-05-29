@@ -75,22 +75,10 @@ DADO *dado_criar(int removido, int tamReg, long int prox, int idAttack, int year
     novoRegistro->financialLoss = finLoss;
 
     // Campos de tamanho variável, COM delimitadores
-    if (country != NULL)
-        strcpy(novoRegistro->country, country);
-    else
-        strcpy(novoRegistro->country, "NADA CONSTA");
-    if (attackType != NULL)
-        strcpy(novoRegistro->attackType, attackType);
-    else
-        strcpy(novoRegistro->attackType, "NADA CONSTA");
-    if (targetInd != NULL)
-        strcpy(novoRegistro->targetIndustry, targetInd);
-    else
-        strcpy(novoRegistro->targetIndustry, "NADA CONSTA");
-    if (defMec != NULL)
-        strcpy(novoRegistro->defenseMechanism, defMec);
-    else
-        strcpy(novoRegistro->defenseMechanism, "NADA CONSTA");
+    strcpy(novoRegistro->country, formata_string_registro(country, "1"));
+    strcpy(novoRegistro->attackType, formata_string_registro(attackType, "2"));
+    strcpy(novoRegistro->targetIndustry, formata_string_registro(targetInd, "3"));
+    strcpy(novoRegistro->defenseMechanism, formata_string_registro(defMec, "4"));
 
     dado_set_tamReg(novoRegistro); // Atualizando tamanho do registro
 
@@ -105,6 +93,42 @@ void dado_apagar(DADO **registro)
     // Desaloca memória da estrututa DADO e define ponteiro para NULL
     free(*registro);
     *registro = NULL;
+}
+
+char *dado_get_string(DADO *dado, int campo)
+{
+    if (dado == NULL)
+        return NULL;
+
+    switch (campo)
+    {
+    case 1:
+        return dado->country;
+    case 2:
+        return dado->attackType;
+    case 3:
+        return dado->targetIndustry;
+    case 4:
+        return dado->defenseMechanism;
+    default:
+        return NULL;
+    }
+}
+
+int dado_get_tamReg(DADO *dado)
+{
+    if (dado == NULL)
+        return -1;
+
+    return dado->tamanhoRegistro;
+}
+
+char dado_get_removido(DADO *dado)
+{
+    if (dado == NULL)
+        return 'a';
+
+    return dado->removido;
 }
 
 void dado_imprimir(HEADER *header, DADO *dado)
@@ -150,22 +174,76 @@ void dado_imprimir(HEADER *header, DADO *dado)
     return;
 }
 
-char *dado_get_string(DADO *dado, int campo)
+DADO *dado_ler(FILE *pontArq, DADO *dado, int byteOffset)
 {
-    if (dado == NULL)
+    if (pontArq == NULL)
         return NULL;
 
-    switch (campo)
+    // Criando uma nova struct do tipo dado caso uma não seja fornecida
+    if (dado == NULL)
     {
-    case 1:
-        return dado->country;
-    case 2:
-        return dado->attackType;
-    case 3:
-        return dado->targetIndustry;
-    case 4:
-        return dado->defenseMechanism;
-    default:
-        return NULL;
+        dado = (DADO *)malloc(sizeof(DADO));
+        if (dado == NULL)
+            return NULL;
     }
+
+    // Posiciona na posição pós header
+    fseek(pontArq, byteOffset, BYTEOFFSET_HEADER);
+
+    // Lê o campo removida do arquivo e guarda na struct
+    fread(&(dado)->removido, sizeof(char), 1, pontArq);
+
+    // Lê os campos do arquivo e guarda na struct
+    fread(&(dado)->tamanhoRegistro, sizeof(int), 1, pontArq);
+    fread(&(dado)->prox, sizeof(long int), 1, pontArq);
+    fread(&(dado)->idAttack, sizeof(int), 1, pontArq);
+    fread(&(dado)->year, sizeof(int), 1, pontArq);
+    fread(&(dado)->financialLoss, sizeof(float), 1, pontArq);
+
+    // Cacula o tamanho dos campos da tamanho variável
+    int bytesRestantes = (dado->tamanhoRegistro - 25) + 5;
+    char *buffer = (char *)malloc(bytesRestantes + 1);
+    fread(buffer, sizeof(char), bytesRestantes, pontArq);
+    buffer[bytesRestantes] = '\0';
+
+    // Ponteiro que aponta para o início do buffer
+    char *pontCampo = buffer;
+    // Lê os dados do buffer e guarda nos campos da struct
+    strcpy(dado->country, separa_campo(&pontCampo, 1));
+    strcpy(dado->attackType, separa_campo(&pontCampo, 2));
+    strcpy(dado->targetIndustry, separa_campo(&pontCampo, 3));
+    strcpy(dado->defenseMechanism, separa_campo(&pontCampo, 4));
+
+    // Desaloca a memória do buffer e o aponta para NULL
+    free(buffer);
+    buffer = NULL;
+
+    return dado;
+}
+
+void dado_escrever(FILE *pontArq, DADO *dado)
+{
+    // Verifica a corretude dos ponteiros
+    if ((pontArq == NULL) || (dado == NULL))
+        return;
+
+    // Escreve os dados no arquivo binário
+    fwrite(&(dado->removido), sizeof(char), 1, pontArq);
+    fwrite(&(dado->tamanhoRegistro), sizeof(int), 1, pontArq);
+    fwrite(&(dado->prox), sizeof(long int), 1, pontArq);
+    fwrite(&(dado->idAttack), sizeof(int), 1, pontArq);
+    fwrite(&(dado->year), sizeof(int), 1, pontArq);
+    fwrite(&(dado->financialLoss), sizeof(float), 1, pontArq);
+
+    // Escrevendo as strings caso elas não sejam nulas
+    if (dado->country[0] != '$')
+        fwrite(dado->country, sizeof(char), strlen(dado->country), pontArq);
+    if (dado->attackType[0] != '$')
+        fwrite(dado->attackType, sizeof(char), strlen(dado->attackType), pontArq);
+    if (dado->targetIndustry[0] != '$')
+        fwrite(dado->targetIndustry, sizeof(char), strlen(dado->targetIndustry), pontArq);
+    if (dado->defenseMechanism[0] != '$')
+        fwrite(dado->defenseMechanism, sizeof(char), strlen(dado->defenseMechanism), pontArq);
+
+    return;
 }

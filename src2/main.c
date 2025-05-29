@@ -5,72 +5,183 @@
 
 #include "./libs/registros/header.h"
 #include "./libs/registros/dados.h"
+#include "./libs/auxiliar/auxiliar.h"
 
 int main(void)
 {
-    // Criação do header com descrições
-    HEADER *header = header_criar(
-        "Identificador do Ataque",      // descIdent
-        "Ano do Incidente",             // descYear
-        "Perda Financeira (milhoes)",   // descFinLoss
-        "Pais Afetado",                 // descCountry
-        "Tipo de Ataque Cibernetico",   // descType
-        "Industria Alvo",               // descTargInd
-        "Mecanismo de Defesa Utilizado" // descDef
-    );
+    char nomeArqCSV[256];
+    char nomeArqBin[256];
 
-    if (header == NULL)
+    scanf("%s", nomeArqCSV);
+    scanf("%s", nomeArqBin);
+
     {
-        printf("Erro na criação do header!\n");
-        return 1;
+        // Abre o arquivo .csv para leitura
+        FILE *pontArqCSV = fopen(nomeArqCSV, "r");
+        if (pontArqCSV == NULL)
+        {
+            printf("Falha no processamento do arquivo.\n");
+            return 0;
+        }
+
+        if (nomeArqBin == NULL)
+        {
+            printf("Falha no processamento do arquivo.\n");
+            return 0;
+        }
+
+        // Cria um arquivo binário para gravação. Caso já exista, sobrescreve
+        FILE *pontArqBin = fopen(nomeArqBin, "wb");
+        if (pontArqBin == NULL)
+        {
+            printf("Falha no processamento do arquivo.\n");
+            return 0;
+        }
+
+        /* LEITURA DOS CAMPOS DO HEADER */
+        char *campos[7];       // Vetor de ponteiros de strings para guardar os campos do header e dos dados
+        char buffer[256] = ""; // Buffer para leitura do header e dos campos do .csv
+
+        fseek(pontArqCSV, 0, SEEK_SET); // Posiciona o ponteiro no inicio do arquivo
+
+        fread(buffer, 253, 1, pontArqCSV); // Lê a primeira linha do .csv (descrições semânticas do header)
+        buffer[253] = '\0';                // Substituindo '\n' por '\0' no buffer, por segurança
+
+        // Vamos utilizar o strtok para separar a string no buffer nas ',' e evitar alocar espaço para as strings do header
+        char *tok = strtok(buffer, ",");
+        // Guarda cada parte da string em um dos campos do vetor campos
+        int i = 0;
+        while (tok != NULL && i < 7)
+        {
+            campos[i] = tok;
+            tok = strtok(NULL, ",");
+            i++;
+        }
+
+        // Criando struct header com os campos semânticos do header do .csv
+        HEADER *headerArq = header_criar(campos[0], campos[1], campos[2], campos[3], campos[4], campos[5], campos[6]);
+        if (headerArq == NULL)
+        {
+            printf("Falha no processamento do arquivo.\n");
+            return 0;
+        }
+
+        // Escrevendo header no arquivo binário
+        header_escrever(pontArqBin, headerArq, true);
+
+        /* LEITURA DOS DADOS */
+        // Posiciona o ponteiro no inicio do arquivo
+        fseek(pontArqCSV, 0, SEEK_SET);
+
+        // Pega a primeira linha do arquivo e ignora
+        fgets(buffer, sizeof(buffer), pontArqCSV);
+
+        // Contadores para atualizar os dados do header
+        int quantRegDados = 0;
+        long int byteOffset = BYTEOFFSET_HEADER; // Inicializado com o tamanho do header
+
+        while (fgets(buffer, sizeof(buffer), pontArqCSV) != NULL)
+        {
+            // Identifica o fim da linha lida e substitui o "\n" por um '\0'
+            int fimDaLinha = strcspn(buffer, "\n");
+            buffer[fimDaLinha] = '\0';
+
+            for (int j = 0; j < 7; j++)
+            {
+                campos[j] = "";
+            }
+
+            // Variáveis necessárias para a leitura do arquivo
+            char *ptr = buffer; // Ponteiro de char que aponta para o início da string armazenada do buffer
+            char *campo;        // Ponteiro de char que receberá as strings entre as vírgulas do csv
+            int i = 0;          // Contador do loop para acessar os campos do array
+
+            // Loop que separa os campos da linha lida
+            while ((campo = strsep(&ptr, ",")) != NULL)
+            {
+                // Guarda a string num vetor de strings se essa não é nula
+                if (campo != 0)
+                {
+                    campos[i] = campo;
+                    i++;
+                }
+            }
+
+            // Guarda os dados lidos na struct DADO
+            DADO *RegTemp = dado_criar(0, 0, -1, str_to_int(campos[0]), str_to_int(campos[1]), str_to_float(campos[2]), campos[3], campos[4], campos[5], campos[6]);
+
+            quantRegDados++; // Incrementando a quantidade de registros no arquivo
+
+            // Escreve os registros no arquivo binario
+            dado_escrever(pontArqBin, RegTemp);
+            byteOffset += dado_get_tamReg(RegTemp) + 5; // Atualizando byteOffset
+            dado_apagar(&RegTemp);
+        }
+
+        /* ATUALIZANDO CAMPOS DO HEADER */
+        fseek(pontArqCSV, 0, SEEK_SET);
+        // Alterando o status do arquivo antes de fechá-lo
+        header_set_status(headerArq, '1');
+        header_set_nroRegArq(headerArq, quantRegDados);
+        header_set_proxByteOffset(headerArq, byteOffset);
+
+        /* ESCREVENDO HEADER ATUALIZADO NO ARQUIVO */
+        header_escrever(pontArqBin, headerArq, false); // Não precisamos escrever os campos semânticos novamente
+
+        /* DESALOCANDO MEMÓRIA E FECHANDO O ARQUIVO */
+        header_apagar(&headerArq); // Desalocando struct header
+        fclose(pontArqBin);        // Fechando o arquivo
+
+        binarioNaTela(nomeArqBin);
     }
 
-    // Configuração de valores do header
-    header_set_status(header, '1');
-    header_set_proxByteOffset(header, 1024);
-    header_set_nroRegArq(header, 42);
+    {
+        if (nomeArqBin == NULL)
+        { // Erro com nome do arquivo binário a ser aberto
+            printf("Falha no processamento do arquivo.\n");
+            return 0;
+        }
 
-    // Teste de header_get_nroRegArq
-    printf("Registros no arquivo: %d\n", header_get_nroRegArq(header));
+        FILE *pontArqBin = fopen(nomeArqBin, "rb"); // Abrindo arquivo binário no modo de leitura
+        if (pontArqBin == NULL)
+        { // Erro com a abertura do arquivo
+            printf("Falha no processamento do arquivo.\n");
+            return 0;
+        }
 
-    // Criação de registros de dados
-    DADO *dado1 = dado_criar(
-        0,          // removido
-        0,          // tamReg (será calculado)
-        -1,         // prox
-        1001,       // idAttack
-        2023,       // year
-        4.5,        // finLoss
-        "Brasil",   // country
-        "Phishing", // attackType
-        "Saude",    // targetInd
-        "Firewall"  // defMec
-    );
+        fseek(pontArqBin, 0, SEEK_SET); // Posiciona o ponteiro no início do arquivo
 
-    DADO *dado2 = dado_criar(
-        1,             // removido
-        0,             // tamReg (será calculado)
-        512,           // prox
-        -1,            // idAttack (inválido)
-        -1,            // year (inválido)
-        -1,            // finLoss (inválido)
-        NULL,          // country (teste de NULL)
-        "DDoS",        // attackType
-        "",            // targetInd (vazio)
-        "Criptografia" // defMec
-    );
+        HEADER *header = header_ler(pontArqBin, NULL); // Leitura do header do arquivo
 
-    // Impressão dos registros
-    printf("\n=== DADO 1 ===\n");
-    dado_imprimir(header, dado1);
+        int byteOffset = BYTEOFFSET_HEADER; // Inicializado com tamanho do header
+        DADO *dado = NULL;
 
-    printf("\n=== DADO 2 (campos invalidos) ===\n");
-    dado_imprimir(header, dado2);
+        int quantRegArq = header_get_nroRegArq(header); // Contador para loop de leitura de dados
+        if (quantRegArq == 0)
+        {
+            printf("Registro inexistente.\n");
+            return 0;
+        }
 
-    // Limpeza de memória
-    header_apagar(&header);
-    dado_apagar(&dado1);
-    dado_apagar(&dado2);
+        // Loop de leitura de dados
+        while (quantRegArq > 0)
+        {
+            dado = dado_ler(pontArqBin, dado, byteOffset);
+            // Imprimindo o dado somente se ele não estiver removido
+            if (dado_get_removido(dado) != '1')
+            {
+                dado_imprimir(header, dado);
+                printf("\n");
+            }
+
+            byteOffset += dado_get_tamReg(dado) + 5;
+            quantRegArq--;
+        }
+
+        dado_apagar(&dado);
+        header_apagar(&header);
+        fclose(pontArqBin);
+    }
 
     return 0;
 }

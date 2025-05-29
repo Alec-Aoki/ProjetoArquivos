@@ -135,3 +135,96 @@ char *header_get_descricao(HEADER *header, int campo)
         return NULL;
     }
 }
+
+HEADER *header_ler(FILE *pontArq, HEADER *header)
+{
+    if (pontArq == NULL)
+        return NULL; // Erro
+
+    // Criando uma nova struct do tipo header caso uma não seja fornecida
+    if (header == NULL)
+    {
+        ;
+        header = (HEADER *)malloc(sizeof(HEADER));
+        if (header == NULL)
+            return NULL;
+    }
+
+    fseek(pontArq, 0, SEEK_SET); // Posicionando ponteiro no início do arquivo
+
+    // Lendo campos que não são strings
+    fread(&(header->status), sizeof(char), 1, pontArq);
+    fread(&(header->topo), sizeof(long int), 1, pontArq);
+    fread(&(header->proxByteOffset), sizeof(long int), 1, pontArq);
+    fread(&(header->nroRegArq), sizeof(int), 1, pontArq);
+    fread(&(header->nroRegRem), sizeof(int), 1, pontArq);
+
+    // Lendo strings
+    fread(header->descreveIdentificador, sizeof(char), TAM_DESC_ID, pontArq);
+    fread(header->descreveYear, sizeof(char), TAM_DESC_YEAR, pontArq);
+    fread(header->descreveFinancialLoss, sizeof(char), TAM_DESC_FIN_LOSS, pontArq);
+    fread(&(header->codDescreveCountry), sizeof(char), 1, pontArq);
+    fread(header->descreveCountry, sizeof(char), TAM_DESC_COUNTRY, pontArq);
+    fread(&(header->codDescreveType), sizeof(char), 1, pontArq);
+    fread(header->descreveType, sizeof(char), TAM_DESC_TYPE, pontArq);
+    fread(&(header->codDescreveTargetIndustry), sizeof(char), 1, pontArq);
+    fread(header->descreveTargetIndustry, sizeof(char), TAM_DESC_TGT_IND, pontArq);
+    fread(&(header->codDescreveDefense), sizeof(char), 1, pontArq);
+    fread(header->descreveDefense, sizeof(char), TAM_DESC_DEF, pontArq);
+
+    return header;
+}
+
+void header_escrever(FILE *pontArq, HEADER *headerArq, bool semantico)
+{
+    if ((pontArq == NULL) || (headerArq == NULL))
+        return;
+
+    fseek(pontArq, 0, SEEK_SET); // Posicionando pontArq no início do arquivo
+
+    // Escrevendo os campos variáveis da struct header no arquivo
+    fwrite(&(headerArq->status), sizeof(char), 1, pontArq);
+    fwrite(&(headerArq->topo), sizeof(long int), 1, pontArq);
+    fwrite(&(headerArq->proxByteOffset), sizeof(long int), 1, pontArq);
+    fwrite(&(headerArq->nroRegArq), sizeof(int), 1, pontArq);
+    fwrite(&(headerArq->nroRegRem), sizeof(int), 1, pontArq);
+
+    // Escrevendo a parte semântica somente se necessário
+    if (semantico)
+    {
+        // descreveIdentificador: descrição do campo idAttack
+        fwrite(headerArq->descreveIdentificador, sizeof(char), TAM_DESC_ID, pontArq);
+
+        // descreveYear: descrição do campo year
+        fwrite(headerArq->descreveYear, sizeof(char), TAM_DESC_YEAR, pontArq);
+
+        // descreveFinancialLoss: descrição do campo financialLoss
+        fwrite(headerArq->descreveFinancialLoss, sizeof(char), TAM_DESC_FIN_LOSS, pontArq);
+
+        // codDescreveCountry: código da keyword que representa o campo country
+        fwrite(&(headerArq->codDescreveCountry), sizeof(char), 1, pontArq);
+
+        // descreveYear: descrição do campo country
+        fwrite(headerArq->descreveCountry, sizeof(char), TAM_DESC_COUNTRY, pontArq);
+
+        // codDescreveType: código da keyword que representa o campo type
+        fwrite(&(headerArq->codDescreveType), sizeof(char), 1, pontArq);
+
+        // descreveType: descrição do campo type
+        fwrite(headerArq->descreveType, sizeof(char), TAM_DESC_TYPE, pontArq);
+
+        // codDescreveTargetIndustry: código da keyword que representa o campo targetIndustry
+        fwrite(&(headerArq->codDescreveTargetIndustry), sizeof(char), 1, pontArq);
+
+        // descreveTargetIndustry: descrição do campo targetIndustry
+        fwrite(headerArq->descreveTargetIndustry, sizeof(char), TAM_DESC_TGT_IND, pontArq);
+
+        // codDescreveDefense: código da keyword que representa o campo defenseMechanism
+        fwrite(&(headerArq->codDescreveDefense), sizeof(char), 1, pontArq);
+
+        // descreveDefense: descrição do campo defenseMechanism
+        fwrite(headerArq->descreveDefense, sizeof(char), TAM_DESC_DEF, pontArq);
+    }
+
+    return;
+}

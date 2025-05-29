@@ -69,4 +69,17 @@ Retorna: ponteiro para string (NULL se não encontrado ou header nulo)
 */
 char *header_get_descricao(HEADER *header, int campo);
 
+/* header_ler():
+Lê os campos do header de um arquivo binário e guarda em uma struct do tipo HEADER
+Parâmetros: ponteiro para arquivo, ponteiro para header
+Retorna: ponteiro para header
+*/
+HEADER *header_ler(FILE *pontArq, HEADER *header);
+
+/* header_escrever():
+Escreve um header passado no arquivo binário
+Parâmetros: ponteiro para um arquivo, ponteiro para um header e valor booleano (true = escrever string semanticas, false = escrever somente struct)
+*/
+void header_escrever(FILE *pontArq, HEADER *header, bool semantico);
+
 #endif
