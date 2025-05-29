@@ -65,6 +65,13 @@ int header_get_nroRegArq(HEADER *header);
 /* header_get_descricao():
 Retorna a string "descreve" de um campo
 Parâmetros: ponteiro pra struct do tipo header, inteiro de 1 a 7 (campo)
+    1: descreveIdentificador
+    2: descreveYear
+    3: descreveFinancialLoss
+    4: descrevCountry
+    5: descreveType
+    6: descreveTargetIndustry
+    7: descreveDefense
 Retorna: ponteiro para string (NULL se não encontrado ou header nulo)
 */
 char *header_get_descricao(HEADER *header, int campo);

@@ -45,6 +45,10 @@ char dado_get_removido(DADO *dado);
 /* dado_get_string():
 Retorna a string de um campo
 Parâmetros: ponteiro pra struct do tipo dado, inteiro de 1 a 4 (campo)
+    1: country
+    2: attackType
+    3: targetIndustry
+    4: defenseMechanism
 Retorna: ponteiro para string (NULL se não encontrado ou dado nulo)
 */
 char *dado_get_string(DADO *dado, int campo);
