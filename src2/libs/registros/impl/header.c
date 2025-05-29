@@ -32,7 +32,8 @@ struct header_
 /* FUNÇÕES DO HEADER*/
 /* ------------------------------------------------------------------------------------- */
 
-HEADER *header_criar(char *descIdent, char *descYear, char *descFinLoss, char *descCountry, char *descType, char *descTargInd, char *descDef)
+HEADER *header_criar(char *descIdent, char *descYear, char *descFinLoss, char *descCountry,
+                     char *descType, char *descTargInd, char *descDef)
 {
     HEADER *novoHeader = (HEADER *)malloc(sizeof(HEADER)); // Alocando dinâmicamente uma struct do tipo HEADER
     if (novoHeader == NULL)
@@ -42,7 +43,7 @@ HEADER *header_criar(char *descIdent, char *descYear, char *descFinLoss, char *d
     // Campos de valor variável
     novoHeader->status = '0';
     novoHeader->topo = -1;
-    novoHeader->proxByteOffset = 0;
+    novoHeader->proxByteOffset = BYTEOFFSET_HEADER + 1;
     novoHeader->nroRegArq = 0;
     novoHeader->nroRegRem = 0;
 

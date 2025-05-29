@@ -37,12 +37,14 @@ char *formata_string_registro(char *string, char *id)
     {
         strcpy(strTemp, "NADA CONSTA");
     }
-
-    // Construção segura da string
-    strTemp[0] = '\0'; // Inicializa o buffer
-    strcat(strTemp, id);
-    strcat(strTemp, string);
-    strcat(strTemp, "|");
+    else
+    {
+        // Construção segura da string
+        strTemp[0] = '\0'; // Inicializa o buffer
+        strcat(strTemp, id);
+        strcat(strTemp, string);
+        strcat(strTemp, "|");
+    }
 
     return strTemp; // Retorna a string formatada
 }

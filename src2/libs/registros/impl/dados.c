@@ -43,13 +43,13 @@ void dado_set_tamReg(DADO *registro)
     int contadorBytes = 20; // Inicializa o contador com o tamanho dos campos fixos
 
     // Adiciona ao contador o tamanho dos campos variáveis
-    if (registro->country != NULL)
+    if (strcmp(registro->country, "NADA CONSTA") != 0)
         contadorBytes += strlen(registro->country);
-    if (registro->attackType != NULL)
+    if (strcmp(registro->attackType, "NADA CONSTA") != 0)
         contadorBytes += strlen(registro->attackType);
-    if (registro->targetIndustry != NULL)
+    if (strcmp(registro->targetIndustry, "NADA CONSTA") != 0)
         contadorBytes += strlen(registro->targetIndustry);
-    if (registro->defenseMechanism != NULL)
+    if (strcmp(registro->defenseMechanism, "NADA CONSTA") != 0)
         contadorBytes += strlen(registro->defenseMechanism);
 
     registro->tamanhoRegistro = contadorBytes;
@@ -236,13 +236,13 @@ void dado_escrever(FILE *pontArq, DADO *dado)
     fwrite(&(dado->financialLoss), sizeof(float), 1, pontArq);
 
     // Escrevendo as strings caso elas não sejam nulas
-    if (dado->country[0] != '$')
+    if (strcmp(dado->country, "NADA CONSTA") != 0)
         fwrite(dado->country, sizeof(char), strlen(dado->country), pontArq);
-    if (dado->attackType[0] != '$')
+    if (strcmp(dado->attackType, "NADA CONSTA") != 0)
         fwrite(dado->attackType, sizeof(char), strlen(dado->attackType), pontArq);
-    if (dado->targetIndustry[0] != '$')
+    if (strcmp(dado->targetIndustry, "NADA CONSTA") != 0)
         fwrite(dado->targetIndustry, sizeof(char), strlen(dado->targetIndustry), pontArq);
-    if (dado->defenseMechanism[0] != '$')
+    if (strcmp(dado->defenseMechanism, "NADA CONSTA") != 0)
         fwrite(dado->defenseMechanism, sizeof(char), strlen(dado->defenseMechanism), pontArq);
 
     return;
