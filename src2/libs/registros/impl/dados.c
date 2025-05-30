@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <stdbool.h>
+#include <string.h>
 
 #include "../../auxiliar/auxiliar.h"
 #include "../header.h"
@@ -24,10 +24,6 @@ struct dados_
     char targetIndustry[TAM_MAX_STR];   // Setor da indústria que sofreu o ataque
     char defenseMechanism[TAM_MAX_STR]; // Estratégia de defesa usada para resolver o problema
 };
-
-/* ------------------------------------------------------------------------------------- */
-/* FUNÇÕES DOS DADOS*/
-/* ------------------------------------------------------------------------------------- */
 
 // Função auxiliar
 /* dado_set_tamReg():
@@ -57,6 +53,11 @@ void dado_set_tamReg(DADO *registro)
     return;
 }
 
+/* dado_criar():
+Aloca memória para uma struct do tipo dado e inicializa seus campos
+Parâmetros: valores dos campos da struct
+Retorna: ponteiro para dado
+*/
 DADO *dado_criar(int removido, int tamReg, long int prox, int idAttack, int year, float finLoss,
                  char *country, char *attackType, char *targetInd, char *defMec)
 {
@@ -85,6 +86,10 @@ DADO *dado_criar(int removido, int tamReg, long int prox, int idAttack, int year
     return novoRegistro; // Retorna ponteiro para struct DADO
 }
 
+/* dado_apagar():
+Desaloca memória da struct e dos campos de tamanho variável
+Parâmetro: ponteiro para ponteiro da struct
+*/
 void dado_apagar(DADO **registro)
 {
     if (*registro == NULL)
@@ -95,6 +100,15 @@ void dado_apagar(DADO **registro)
     *registro = NULL;
 }
 
+/* dado_get_string():
+Retorna a string de um campo
+Parâmetros: ponteiro pra struct do tipo dado, inteiro de 1 a 4 (campo)
+    1: country
+    2: attackType
+    3: targetIndustry
+    4: defenseMechanism
+Retorna: ponteiro para string (NULL se não encontrado ou dado nulo)
+*/
 char *dado_get_string(DADO *dado, int campo)
 {
     if (dado == NULL)
@@ -115,6 +129,11 @@ char *dado_get_string(DADO *dado, int campo)
     }
 }
 
+/* dado_get_tamReg():
+Retorna o valor do campo tamReg de um dado
+Parâmetros: ponteiro pra struct do tipo dado
+Retorna: valor do campo (-1 se dado nulo)
+*/
 int dado_get_tamReg(DADO *dado)
 {
     if (dado == NULL)
@@ -123,6 +142,11 @@ int dado_get_tamReg(DADO *dado)
     return dado->tamanhoRegistro;
 }
 
+/* dado_get_removido():
+Retorna o valor do campo removido de um dado
+Parâmetros: ponteiro pra struct do tipo dado
+Retorna: valor do campo ('a' se dado nulo)
+*/
 char dado_get_removido(DADO *dado)
 {
     if (dado == NULL)
@@ -131,6 +155,10 @@ char dado_get_removido(DADO *dado)
     return dado->removido;
 }
 
+/* dado_imprimir():
+Imprime um dado usando as descrições semânticas do header
+Parâmetros: ponteiro para o header, ponteiro para o dado
+*/
 void dado_imprimir(HEADER *header, DADO *dado)
 {
     if ((header == NULL) || (dado == NULL))
@@ -174,6 +202,11 @@ void dado_imprimir(HEADER *header, DADO *dado)
     return;
 }
 
+/* dado_ler():
+Lê um registro do arquivo e guarda numa struct DADO
+Parâmetros: Ponteiro para arquivo, ponteiro para struct DADO, byteOffset do registro
+Retorna: Ponteiro para struct DADO
+*/
 DADO *dado_ler(FILE *pontArq, DADO *dado, int byteOffset)
 {
     if (pontArq == NULL)
@@ -221,6 +254,10 @@ DADO *dado_ler(FILE *pontArq, DADO *dado, int byteOffset)
     return dado;
 }
 
+/*dado_escrever():
+Escreve os campos de uma struct dado em um arquivo
+Parâmetros: ponteiro para arquivo, ponteiro para uma struct dado
+*/
 void dado_escrever(FILE *pontArq, DADO *dado)
 {
     // Verifica a corretude dos ponteiros

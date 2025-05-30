@@ -10,10 +10,6 @@ de tipo DADO
 
 typedef struct dados_ DADO;
 
-/* ------------------------------------------------------------------------------------- */
-/* FUNÇÕES DOS DADOS*/
-/* ------------------------------------------------------------------------------------- */
-
 /* dado_criar():
 Aloca memória para uma struct do tipo dado e inicializa seus campos
 Parâmetros: valores dos campos da struct

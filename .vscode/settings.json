@@ -4,6 +4,8 @@
         "stdbool.h": "c",
         "stdio.h": "c",
         "cabecalho.h": "c",
-        "auxiliar.h": "c"
+        "auxiliar.h": "c",
+        "arqcsv.h": "c",
+        "dados.h": "c"
     }
 }

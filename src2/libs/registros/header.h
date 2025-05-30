@@ -18,10 +18,6 @@ de tipo HEADER
 
 typedef struct header_ HEADER;
 
-/* ------------------------------------------------------------------------------------- */
-/* FUNÇÕES DO HEADER*/
-/* ------------------------------------------------------------------------------------- */
-
 /* header_criar():
 Cria uma struct do tipo HEADER e a inicializa
 Parâmetros: ponteiros para strings (descrições do header)

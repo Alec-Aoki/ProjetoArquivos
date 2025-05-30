@@ -1,10 +1,15 @@
 /*
-Contém funções auxilires que não utilizam ponteiros
-para arquivos ou structs do tipo HEADER ou DADO
+Contém funções auxilires que não se
+encaixam em nenhuma outra biblioteca
 */
 
 #ifndef AUXILIAR_H
 #define AUXILIAR_H
+
+/* mensagem_erro()
+Imprime a mensagem de erro: "Falha no processamento do arquivo."
+*/
+void mensagem_erro();
 
 /* str_to_int():
 A função converte uma string numérica para um inteiro
@@ -33,6 +38,12 @@ Parâmetro: ponteiro para ponteiro de char
 Retorna: uma string
 */
 char *separa_campo(char **pontStr, int id);
+
+/* ler_nome_arquivo()
+Lê uma string do usuário e atribui à string passada como parâmetro
+Parâmetro: ponteiro para char (string)
+*/
+void ler_nome_arquivo(char *nomeArquivo);
 
 /*FUNÇÃO FORNECIDA PARA CORREÇÃO*/
 void binarioNaTela(char *nomeArquivoBinario);

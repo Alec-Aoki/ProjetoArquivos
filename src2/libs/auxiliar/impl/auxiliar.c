@@ -1,9 +1,24 @@
 #include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
+#include <stdbool.h>
+#include <string.h>
 
 #include "../auxiliar.h"
 
+/* mensagem_erro()
+Imprime a mensagem de erro: "Falha no processamento do arquivo."
+*/
+void mensagem_erro()
+{
+    printf("Falha no processamento do arquivo.\n");
+    return;
+}
+
+/* str_to_int():
+A função converte uma string numérica para um inteiro
+Parâmetros: ponteiro para uma string
+Retorno : o inteiro correspondente, ou -1 caso a string seja nula
+*/
 int str_to_int(char *str)
 {
     if (str == NULL)
@@ -15,6 +30,11 @@ int str_to_int(char *str)
     return atoi(str);
 }
 
+/* str_to_float():
+A função converte uma string numérica para um float
+Parâmetros: ponteiro para uma string
+Retorno : o float correspondente, ou -1 caso a string seja nula
+*/
 float str_to_float(char *str)
 {
     if (str == NULL)
@@ -26,6 +46,11 @@ float str_to_float(char *str)
     return atof(str);
 }
 
+/* formata_string_registro():
+Aloca dinamicamente memória para uma string e adiciona delimitadores no inicio e final
+Parâmetros: dois ponteiros para string (um a string em si, a outra o id dessa string)
+Retorna: ponteiro para string formatada
+*/
 char *formata_string_registro(char *string, char *id)
 {
     // Aloca memória para a string
@@ -49,6 +74,11 @@ char *formata_string_registro(char *string, char *id)
     return strTemp; // Retorna a string formatada
 }
 
+/* separa_campo():
+A partir de um ponteiro que aponta para o inicio de uma string do registro, separa os campos dela
+Parâmetro: ponteiro para ponteiro de char
+Retorna: uma string
+*/
 char *separa_campo(char **pontStr, int id)
 {
     if (**pontStr != (id + '0'))
@@ -77,6 +107,22 @@ char *separa_campo(char **pontStr, int id)
 
     // retorna a string sem id nem delimitador
     return campo;
+}
+
+/* ler_nome_arquivo()
+Lê uma string do usuário e atribui à string passada como parâmetro
+Parâmetro: ponteiro para char (string)
+*/
+void ler_nome_arquivo(char *nomeArquivo)
+{
+    if (nomeArquivo == NULL)
+    {
+        mensagem_erro();
+        return;
+    }
+
+    scanf("%s", nomeArquivo);
+    return;
 }
 
 /*FUNÇÃO FORNECIDA PARA CORREÇÃO*/

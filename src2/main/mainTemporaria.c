@@ -3,9 +3,9 @@
 #include <string.h>
 #include <stdbool.h>
 
-#include "./libs/registros/header.h"
-#include "./libs/registros/dados.h"
-#include "./libs/auxiliar/auxiliar.h"
+#include "../libs/registros/header.h"
+#include "../libs/registros/dados.h"
+#include "../libs/auxiliar/auxiliar.h"
 
 int main(void)
 {
