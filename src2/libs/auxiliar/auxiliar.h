@@ -11,6 +11,11 @@ Imprime a mensagem de erro: "Falha no processamento do arquivo."
 */
 void mensagem_erro();
 
+/* mensagem_regInexistente()
+Imprime a mensagem: "Registro inexistente."
+*/
+void mensagem_regInexistente();
+
 /* str_to_int():
 A função converte uma string numérica para um inteiro
 Parâmetros: ponteiro para uma string

@@ -204,8 +204,8 @@ void dado_imprimir(HEADER *header, DADO *dado)
 
 /* dado_ler():
 Lê um registro do arquivo e guarda numa struct DADO
-Parâmetros: Ponteiro para arquivo, ponteiro para struct DADO, byteOffset do registro
-Retorna: Ponteiro para struct DADO
+Parâmetros: ponteiro para arquivo, ponteiro para struct DADO, byteOffset do registro
+Retorna: ponteiro para dado
 */
 DADO *dado_ler(FILE *pontArq, DADO *dado, int byteOffset)
 {

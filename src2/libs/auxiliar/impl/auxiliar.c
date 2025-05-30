@@ -14,6 +14,15 @@ void mensagem_erro()
     return;
 }
 
+/* mensagem_regInexistente()
+Imprime a mensagem: "Registro inexistente."
+*/
+void mensagem_regInexistente()
+{
+    printf("Registro inexistente.\n");
+    return;
+}
+
 /* str_to_int():
 A função converte uma string numérica para um inteiro
 Parâmetros: ponteiro para uma string

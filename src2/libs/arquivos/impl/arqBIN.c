@@ -8,24 +8,6 @@
 #include "../../auxiliar/auxiliar.h"
 #include "../arqBIN.h"
 
-/*arqBin_ler_header():
-Lê o header de um arquivo .bin e cria uma struct do tipo header com os dados lidos
-Parâmetro: ponteiro para arquivo
-Retorno: ponteiro para struct do tipo header (NULL se mal sucedido)
-*/
-HEADER *arqBIN_ler_header(FILE *pontArqBIN)
-{
-}
-
-/*arqBIN_ler_dado():
-Lê um dado de um arquivo .bin
-Parâmetro: ponteiro para arquivo
-Retorno: ponteiro para struct do tipo dado (NULL se mal sucedido)
-*/
-DADO *arqBIN_ler_dado(FILE *pontArqBIN)
-{
-}
-
 /*arqBin_escrever_header():
 Escreve uma struct do tipo header em um arquivo.bin
 Parâmetro: ponteiro para arquivo, ponteiro para header, valor booleano
@@ -56,6 +38,56 @@ void arqBIN_escrever_dado(FILE *pontArqBIN, DADO *dado)
     }
 
     dado_escrever(pontArqBIN, dado); // Escrevendo header no arquivo binário
+
+    return;
+}
+
+/*arqBIN_imprimir():
+Imprime um arquivo.bin
+Parâmetro: ponteiro para arquivo
+*/
+void arqBIN_imprimir(FILE *pontArqBIN)
+{
+    if (pontArqBIN == NULL)
+    {
+        mensagem_erro();
+        return;
+    }
+
+    HEADER *headerArq = header_ler(pontArqBIN, headerArq); // Leitura do header do arquivo
+    if (headerArq == NULL)
+    {
+        mensagem_erro();
+        return;
+    }
+
+    int byteOffset = BYTEOFFSET_HEADER; // Inicializado com tamanho do header
+    DADO *dadoTemp = NULL;
+
+    int quantRegArq = header_get_nroRegArq(headerArq); // Contador para loop de leitura de dados
+    if (quantRegArq == 0)
+    {
+        mensagem_regInexistente();
+        return;
+    }
+
+    // Loop de leitura de dados
+    while (quantRegArq > 0)
+    {
+        dadoTemp = dado_ler(pontArqBIN, dadoTemp, byteOffset);
+        // Imprimindo o dado somente se ele não estiver removido
+        if (dado_get_removido(dadoTemp) != '1')
+        {
+            dado_imprimir(headerArq, dadoTemp);
+            printf("\n");
+        }
+
+        byteOffset += dado_get_tamReg(dadoTemp) + 5;
+        quantRegArq--;
+    }
+
+    dado_apagar(&dadoTemp);
+    header_apagar(&headerArq);
 
     return;
 }

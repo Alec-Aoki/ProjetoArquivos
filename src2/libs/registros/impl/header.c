@@ -185,7 +185,6 @@ HEADER *header_ler(FILE *pontArq, HEADER *header)
     // Criando uma nova struct do tipo header caso uma não seja fornecida
     if (header == NULL)
     {
-        ;
         header = (HEADER *)malloc(sizeof(HEADER));
         if (header == NULL)
             return NULL;

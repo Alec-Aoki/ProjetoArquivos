@@ -48,7 +48,7 @@ void funcionalidade1()
     arqBIN_escrever_header(pontArqBin, headerCSV, true);
 
     // Lendo dados do .csv e escrevendo no .bin
-    DADO *dadoCSV;                                   // Ponteiro para dado (reutilizável)
+    DADO *dadoCSV = NULL;                            // Ponteiro para dado (reutilizável)
     int quantRegDados = 0;                           // Contador de dados
     long int byteOffsetPonteiro = BYTEOFFSET_HEADER; // Inicializado com o tamanho do header
     fseek(pontArqCSV, 1, SEEK_CUR);                  // Avança para a próxima linha (1º dado)
@@ -88,6 +88,22 @@ Imprime todo o conteúdo de um arquivo binário
 */
 void funcionalidade2()
 {
+    char nomeArqBin[TAM_MAX_STR];
+    ler_nome_arquivo(nomeArqBin);
+
+    FILE *pontArqBin = fopen(nomeArqBin, "rb"); // Abrindo arquivo binário no modo de leitura
+    if (pontArqBin == NULL)
+    {
+        mensagem_erro();
+        return;
+    }
+
+    fseek(pontArqBin, 0, SEEK_SET); // Posiciona o ponteiro no início do arquivo
+
+    arqBIN_imprimir(pontArqBin);
+
+    fclose(pontArqBin);
+    return;
 }
 
 /* funcionalidade3()
