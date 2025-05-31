@@ -77,3 +77,8 @@ char *separa_campo(char **pontStr, int id)
     // retorna a string sem id nem delimitador
     return campo;
 }
+
+void erro() {
+    printf("Falha no processamento do arquivo.\n");
+    return;
+}

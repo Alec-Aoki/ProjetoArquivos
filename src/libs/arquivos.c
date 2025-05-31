@@ -389,3 +389,248 @@ void arquivo_buscar(char *nomeArqBin, int quantBuscas)
     fclose(pontArqBin);
     return;
 }
+
+int registro_busca (char *nomeArqBin, int valorInt[2], float valorFloat, char valorStr[4][20],
+                    int quantCampos, int quaisCampos[quantCampos]) 
+{
+    if (nomeArqBin == NULL)
+        return;
+
+    FILE *pontArqBin = fopen(nomeArqBin, "rb"); // Abrindo arquivo binário no modo de leitura
+    if (pontArqBin == NULL)
+    { // Erro com a abertura do arquivo
+        erro();
+        return -1;
+    }
+
+    fseek(pontArqBin, 0, SEEK_SET); // Posiciona o ponteiro no início do arquivo
+
+    HEADER *header = header_ler(pontArqBin, NULL); // Leitura do header do arquivo
+    if (header == NULL)
+    { // Erro com a criação do header
+        erro();
+        return -1;
+    }
+
+    int byteOffset = BYTEOFFSET_HEADER; // Byteoffset inicial para leitura dos dados do arquivo
+    int quantRegArq = header_get_nroRegArq(header); // Variável para guardar a quantidade de registros no arquivo
+    DADO *dado = NULL;
+    bool dadoValido = true; // Flag para verificar se o dado lido obedece à busca requerida
+    bool respostaEncontrada = false; // Flag para verificar se alguma resposta foi encontrada
+    int resposta = -1; // Variável para guardar o número do registro encontrado
+
+    while (quantRegArq > 0)
+    {
+        dado = dado_ler(pontArqBin, dado, byteOffset); // Lendo dado do arquivo
+        if (dado == NULL)
+            break; // Erro
+
+        // Loop para verificar se todos os campos são obedecidos, percorrendo o vetor quaisCampos para isso
+        for (int k = 0; k < quantCampos; k++)
+        {
+            if (dado_get_removido(dado))
+            {
+                dadoValido = false; // Dado removido, não é válido
+                break;
+            }
+            
+            switch (quaisCampos[k])
+            {
+                // Caso algum dos campos não satisfaça a busca, a flag é settada para false
+                case 0: // idAttack
+                    if (dado_get_idAttacK(dado) != valorInt[0])
+                        dadoValido = false;
+                    break;
+                case 1: // year
+                    if (dado_get_year(dado) != valorInt[1])
+                        dadoValido = false;
+                    break;
+                case 2: // financialLoss
+                    if (dado_get_finLoss(dado) != valorFloat)
+                        dadoValido = false;
+                    break;
+                case 3: // country
+                    if (strcmp(dado_get_country(dado), valorStr[0]) != 0)
+                        dadoValido = false;
+                    break;
+                case 4: // attackType
+                    if (strcmp(dado_get_attackType(dado), valorStr[1]) != 0)
+                        dadoValido = false;
+                    break;
+                case 5: // targetIndustry
+                    if (strcmp(dado_get_targetIndustry(dado), valorStr[2]) != 0)
+                        dadoValido = false;
+                    break;
+                case 6: // defenseMechanism
+                    if (strcmp(dado_get_defenseMech(dado), valorStr[3]) != 0)
+                        dadoValido = false;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        if (dadoValido)
+        {
+            respostaEncontrada = true; // Encontrou um dado que obedece os campos de busca
+            resposta = byteOffset; // Guarda o byteOffset do dado encontrado
+            return resposta;
+        }
+
+        dadoValido = true; // Resettando a flag
+        byteOffset += dado_get_tamanho(dado) + 5; // Atualizando o byteOffset (indo para a leitura do próximo dado)
+        quantRegArq--; // Atualizando a quantidade de dados buscada
+    }
+
+    if (!respostaEncontrada){
+        return -1;
+    }
+
+    dado_apagar(&dado);
+    header_apagar(&header);
+    fclose(pontArqBin);
+}
+
+bool registro_deletar (char *nomeArqBin, int quantBuscas) 
+{
+    if (nomeArqBin == NULL)
+    return;
+
+    FILE *pontArqBin = fopen(nomeArqBin, "wb"); // Abrindo arquivo binário no modo de leitura
+    if (pontArqBin == NULL)
+    { // Erro com a abertura do arquivo
+        printf("Falha no processamento do arquivo.\n");
+        return;
+    }
+
+    fseek(pontArqBin, 0, SEEK_SET); // Posiciona o ponteiro no início do arquivo
+
+    HEADER *header = header_ler(pontArqBin, NULL); // Leitura do header do arquivo
+    if (header == NULL)
+    { // Erro com a criação do header
+        printf("Falha no processamento do arquivo.\n");
+        return;
+    }
+
+    char buffer[256];                   // Buffer para leitura de strings
+    int byteOffset = BYTEOFFSET_HEADER; // Byteoffset inicial para leitura dos dados do arquivo
+    char *ptr;
+
+    /*Variáveis auxiliares para guardar os valores dos campos a serem pesquisados*/
+    int valorInt[2];      // idAttack ou year
+    float valorFloat;     // financialLoss
+    char valorStr[4][20]; // country, attackType, targetIndustry ou defenseMechanism
+
+    int quantRespostas; // Quantidade de dados a serem imprimidos
+    int quantCampos;    // Quantidade de campos que deverão ser consultados
+    int flag;           // Indicador de qual campo deve ser buscado
+    int j;              // Contador para quantCampos
+
+    DADO *dado = NULL;
+    int quantRegArq; // Variável para guardar a quantidade de registros no arquivo
+
+    /*Loop de buscas*/
+    for (int i = 0; i < quantBuscas; i++)
+    {
+        quantCampos = 0; // Inicializando a quantidade de campos a serem buscados
+        flag = -1;       // Inicializando qual campo deve ser buscado
+        j = 0;           // Inicializando o contador para quantCampos
+
+        scanf("%d", &quantCampos);    // Recebendo do usuário quantas respostas (dados) devemos imprimir
+        int quaisCampos[quantCampos]; // Vetor para sabermos quais campos buscarmos
+
+        // Lendo string contendo os campos a serem buscados e seus valores
+        fgets(buffer, sizeof(buffer), stdin);
+        buffer[strcspn(buffer, "\n")] = '\0';
+        ptr = buffer;
+
+        /*Lendo qual campo devemos buscar, salvando essa informação no vetor quais campos
+        e guardando seus valores nas variáveis auxiliares corretas*/
+        char *tok = strsep(&ptr, " ");
+        while ((tok = strsep(&ptr, " ")) != NULL && j < quantCampos)
+        { // Loop enquanto não chegarmos ao fim da string ou da quantidade de campos
+            // Determina qual campo deve ser buscado
+            if (strcmp(tok, "idAttack") == 0)
+                flag = 0;
+            else if (strcmp(tok, "year") == 0)
+                flag = 1;
+            else if (strcmp(tok, "financialLoss") == 0)
+                flag = 2;
+            else if (strcmp(tok, "country") == 0)
+                flag = 3;
+            else if (strcmp(tok, "attackType") == 0)
+                flag = 4;
+            else if (strcmp(tok, "targetIndustry") == 0)
+                flag = 5;
+            else if (strcmp(tok, "defenseMechanism") == 0)
+                flag = 6;
+
+            quaisCampos[j] = flag; // Guardando esse campo no vetor
+
+            // Avançando o ponteiro na string
+            tok = strsep(&ptr, " "); // Tok aponta para o valor do campo que acaba de ser guardado
+            if (tok == NULL)
+                break; // Caso tenhamos chegado ao final da string
+
+            // Atribuindo esse valor para a variável auxilar correta
+            if (flag == 0 || flag == 1)
+                valorInt[flag] = str_to_int(tok);
+            else if (flag == 2)
+                valorFloat = str_to_float(tok);
+            else if (flag > 2 && flag <= 6)
+            {
+                int tamStr = strlen(tok) - 2;
+                strncpy(valorStr[flag - 3], tok + 1, tamStr);
+                valorStr[flag - 3][tamStr] = '\0';
+            }
+
+            j++; // Avançando o contador para a quantidade de campos e voltando ao início do while
+        }
+        
+        int byteOffset = registro_busca(nomeArqBin, valorInt, valorFloat, valorStr,
+                                        quantCampos, quaisCampos);
+        
+        if (byteOffset == -1)
+        {
+            printf("Registro inexistente.\n");
+            printf("**********\n");
+            continue; // Não encontrou o registro, continua para a próxima busca
+        } else {
+
+            DADO *dado = dado_ler(pontArqBin, dado, byteOffset);
+            if (dado == NULL)
+            {
+                erro();
+                return false; // Erro ao ler o dado
+            }
+            
+            long int topo = header_get_topo(header); // Pega o topo do arquivo
+            long int prox = dado_get_proxByteOffset(dado); // Pega o próximo byte offset do dado
+            dado_set_removido(dado, '1'); // Marca o dado como removido
+            
+            if (topo == -1)
+            {
+                header_set_topo(header, byteOffset); // Atualiza o topo do arquivo
+            } else {
+                dado_set_proxByteOffset(dado, topo); // Atualiza o próximo byte offset do dado
+                header_set_topo(header, byteOffset); // Atualiza o topo do arquivo
+            }
+            
+        }
+    }
+
+    // Atualizando o header no arquivo
+    fseek(pontArqBin, 0, SEEK_SET); // Volta o ponteiro para o início do arquivo
+    header_escrever(pontArqBin, header, false); // Escreve o header atualizado no arquivo
+    
+    // Escrever o dado atualizado
+    fseek(pontArqBin, byteOffset, SEEK_SET); // Volta o ponteiro para o byte offset do dado
+    dado_escrever(pontArqBin, dado); // Escreve o dado atualizado no arquivo
+    
+    // Desaloca a memória utilizada
+    dado_apagar(&dado); // Desaloca o dado
+    header_apagar(&header); // Desaloca o header
+    fclose(pontArqBin); // Fecha o arquivo binário
+    
+    return true; // Retorna true se o registro foi deletado com sucesso
+}

@@ -174,4 +174,9 @@ Parâmetros: ponteiro para struct dado
 Retorno: NULL caso a struct seja nula, caso contrário um ponteio para a string guardada no campo defenseMechanism
 */
 char *dado_get_defenseMech(DADO *dado);
+
+/* erro():
+Imprime uma mensagem de erro
+*/
+void erro();
 #endif
