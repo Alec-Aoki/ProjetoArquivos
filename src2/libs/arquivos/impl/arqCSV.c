@@ -99,7 +99,7 @@ DADO *arqCSV_ler_dado(FILE *pontArqCSV)
     }
 
     // Guarda os dados lidos na struct DADO
-    DADO *dadoArq = dado_criar(0, 0, -1, str_to_int(campos[0]), str_to_int(campos[1]), str_to_float(campos[2]), campos[3], campos[4], campos[5], campos[6]);
+    DADO *dadoArq = dado_set(NULL, 0, 0, -1, str_to_int(campos[0]), str_to_int(campos[1]), str_to_float(campos[2]), campos[3], campos[4], campos[5], campos[6]);
     if (dadoArq == NULL)
     {
         mensagem_erro();

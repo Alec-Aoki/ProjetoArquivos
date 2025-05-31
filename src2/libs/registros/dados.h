@@ -6,17 +6,21 @@ de tipo DADO
 #ifndef DADOS_H
 #define DADOS_H
 
-#define TAM_MAX_STR 256
-
 typedef struct dados_ DADO;
 
 /* dado_criar():
 Aloca memória para uma struct do tipo dado e inicializa seus campos
-Parâmetros: valores dos campos da struct
 Retorna: ponteiro para dado
 */
-DADO *dado_criar(int removido, int tamReg, long int prox, int idAttack, int year, float finLoss,
-                 char *country, char *attackType, char *targetInd, char *defMec);
+DADO *dado_criar();
+
+/* dado_set():
+Define campos de uma struct dado. Caso uma struct não seja fornecida, cria uma
+Parâmetros: ponteiro para dado valores dos campos da struct
+Retorna: ponteiro para dado
+*/
+DADO *dado_set(DADO *dado, int removido, int tamReg, long int prox, int idAttack, int year, float finLoss,
+               char *country, char *attackType, char *targetInd, char *defMec);
 
 /* dado_apagar():
 Desaloca memória da struct e dos campos de tamanho variável

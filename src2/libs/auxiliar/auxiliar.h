@@ -6,6 +6,8 @@ encaixam em nenhuma outra biblioteca
 #ifndef AUXILIAR_H
 #define AUXILIAR_H
 
+#define TAM_MAX_STR 256
+
 /* mensagem_erro()
 Imprime a mensagem de erro: "Falha no processamento do arquivo."
 */

@@ -111,4 +111,13 @@ Imprime na tela a quantidade requisitada de dados que satisfazer os campos de bu
 */
 void funcionalidade3()
 {
+    char nomeArqBin[TAM_MAX_STR];
+    ler_nome_arquivo(nomeArqBin);
+
+    FILE *pontArqBin = fopen(nomeArqBin, "rb"); // Abrindo arquivo binário no modo de leitura
+    if (pontArqBin == NULL)
+    {
+        mensagem_erro();
+        return;
+    }
 }

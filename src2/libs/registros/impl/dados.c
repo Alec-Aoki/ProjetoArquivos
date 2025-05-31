@@ -26,12 +26,12 @@ struct dados_
 };
 
 // Função auxiliar
-/* dado_set_tamReg():
+/* dado_atualizar_tamReg():
 Calcula o número de bytes do registro e atualiza na struct
 Parâmetros: Ponteiro para struct
 Retorna:
 */
-void dado_set_tamReg(DADO *registro)
+void dado_atualizar_tamReg(DADO *registro)
 {
     if (registro == NULL)
         return;
@@ -55,11 +55,9 @@ void dado_set_tamReg(DADO *registro)
 
 /* dado_criar():
 Aloca memória para uma struct do tipo dado e inicializa seus campos
-Parâmetros: valores dos campos da struct
 Retorna: ponteiro para dado
 */
-DADO *dado_criar(int removido, int tamReg, long int prox, int idAttack, int year, float finLoss,
-                 char *country, char *attackType, char *targetInd, char *defMec)
+DADO *dado_criar()
 {
     // Alocando memória na heap para a struct
     DADO *novoRegistro = (DADO *)malloc(sizeof(DADO));
@@ -68,22 +66,64 @@ DADO *dado_criar(int removido, int tamReg, long int prox, int idAttack, int year
 
     /* INICIALIZANDO A STRUCT */
     // Campos de tamanho fixo
-    novoRegistro->removido = removido + '0'; // Conversão int -> char
-    novoRegistro->tamanhoRegistro = tamReg;
-    novoRegistro->prox = prox;
-    novoRegistro->idAttack = idAttack;
-    novoRegistro->year = year;
-    novoRegistro->financialLoss = finLoss;
+    novoRegistro->removido = 'a';
+    novoRegistro->tamanhoRegistro = -1;
+    novoRegistro->prox = -1;
+    novoRegistro->idAttack = -1;
+    novoRegistro->year = -1;
+    novoRegistro->financialLoss = -1;
 
     // Campos de tamanho variável, COM delimitadores
-    strcpy(novoRegistro->country, formata_string_registro(country, "1"));
-    strcpy(novoRegistro->attackType, formata_string_registro(attackType, "2"));
-    strcpy(novoRegistro->targetIndustry, formata_string_registro(targetInd, "3"));
-    strcpy(novoRegistro->defenseMechanism, formata_string_registro(defMec, "4"));
+    strcpy(novoRegistro->country, "NADA CONSTA");
+    strcpy(novoRegistro->attackType, "NADA CONSTA");
+    strcpy(novoRegistro->targetIndustry, "NADA CONSTA");
+    strcpy(novoRegistro->defenseMechanism, "NADA CONSTA");
 
-    dado_set_tamReg(novoRegistro); // Atualizando tamanho do registro
+    dado_atualizar_tamReg(novoRegistro); // Atualizando tamanho do registro
 
     return novoRegistro; // Retorna ponteiro para struct DADO
+}
+
+/* dado_set():
+Define campos de uma struct dado. Caso uma struct não seja fornecida, cria uma
+Parâmetros: ponteiro para dado valores dos campos da struct
+Retorna: ponteiro para dado
+*/
+DADO *dado_set(DADO *dado, int removido, int tamReg, long int prox, int idAttack, int year, float finLoss,
+               char *country, char *attackType, char *targetInd, char *defMec)
+{
+    // Alocando memória na heap para a struct
+    if (dado == NULL)
+        dado = dado_criar();
+
+    /* INICIALIZANDO A STRUCT */
+    // Campos de tamanho fixo
+    if (removido != -1)
+        dado->removido = removido + '0'; // Conversão int -> char
+    if (tamReg != -1)
+        dado->tamanhoRegistro = tamReg;
+    if (prox != -1)
+        dado->prox = prox;
+    if (idAttack != -1)
+        dado->idAttack = idAttack;
+    if (year != -1)
+        dado->year = year;
+    if (finLoss != -1)
+        dado->financialLoss = finLoss;
+
+    // Campos de tamanho variável, COM delimitadores
+    if (country != NULL)
+        strcpy(dado->country, formata_string_registro(country, "1"));
+    if (attackType != NULL)
+        strcpy(dado->attackType, formata_string_registro(attackType, "2"));
+    if (targetInd != NULL)
+        strcpy(dado->targetIndustry, formata_string_registro(targetInd, "3"));
+    if (defMec != NULL)
+        strcpy(dado->defenseMechanism, formata_string_registro(defMec, "4"));
+
+    dado_atualizar_tamReg(dado); // Atualizando tamanho do registro
+
+    return dado; // Retorna ponteiro para struct DADO
 }
 
 /* dado_apagar():
@@ -150,7 +190,7 @@ Retorna: valor do campo ('a' se dado nulo)
 char dado_get_removido(DADO *dado)
 {
     if (dado == NULL)
-        return 'a';
+        return 'a'; // Erro
 
     return dado->removido;
 }

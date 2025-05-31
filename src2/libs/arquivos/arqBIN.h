@@ -17,6 +17,12 @@ Parâmetro: ponteiro para arquivo, ponteiro para dado
 */
 void arqBIN_escrever_dado(FILE *pontArqBIN, DADO *dado);
 
+/*arqBIN_procurar_dado():
+Procura um dado que satisfaz os campos num arquivo .bin
+Parâmetro: ponteiro para arquivo
+*/
+// void arqBIN_procurar_dado(FILE *pontArqBIN);
+
 /*arqBIN_imprimir():
 Imprime um arquivo.bin
 Parâmetro: ponteiro para arquivo
