@@ -607,7 +607,8 @@ bool registro_deletar (char *nomeArqBin, int quantBuscas)
             long int topo = header_get_topo(header); // Pega o topo do arquivo
             long int prox = dado_get_proxByteOffset(dado); // Pega o próximo byte offset do dado
             dado_set_removido(dado, '1'); // Marca o dado como removido
-            
+            header_set_nroRegArq(header, header_get_nroRegArq(header) - 1); // Decrementa o número de registros no arquivo
+
             if (topo == -1)
             {
                 header_set_topo(header, byteOffset); // Atualiza o topo do arquivo
@@ -616,6 +617,7 @@ bool registro_deletar (char *nomeArqBin, int quantBuscas)
                 header_set_topo(header, byteOffset); // Atualiza o topo do arquivo
             }
             
+            header_set_nroRegRemovidos(header, header_get_nroRegRemovidos(header) + 1); // Incrementa o número de registros removidos
         }
     }
 
