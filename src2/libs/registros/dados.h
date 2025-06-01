@@ -53,6 +53,22 @@ Retorna: ponteiro para string (NULL se não encontrado ou dado nulo)
 */
 char *dado_get_string(DADO *dado, int campo);
 
+/* dado_get_int():
+Retorna o valor de um campo do tipo int
+Parâmetros: ponteiro pra struct do tipo dado, inteiro de 1 a 2 (campo)
+    1: idAttack
+    2: year
+Retorna: valor do campo (-1 se mal sucedido)
+*/
+int dado_get_int(DADO *dado, int campo);
+
+/* dado_get_finLoss():
+Retorna o valor do campo financialLoss
+Parâmetros: ponteiro pra struct do tipo dado
+Retorna: valor do campo (-1 se mal sucedido)
+*/
+float dado_get_finLoss(DADO *dado);
+
 /* dado_imprimir():
 Imprime um dado usando as descrições semânticas do header
 Parâmetros: ponteiro para o header, ponteiro para o dado

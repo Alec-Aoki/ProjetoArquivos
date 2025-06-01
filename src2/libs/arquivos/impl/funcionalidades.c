@@ -5,6 +5,7 @@
 
 #include "../../registros/header.h"
 #include "../../registros/dados.h"
+#include "../../registros/busca.h"
 #include "../../auxiliar/auxiliar.h"
 #include "../arqCSV.h"
 #include "../arqBIN.h"
@@ -120,4 +121,29 @@ void funcionalidade3()
         mensagem_erro();
         return;
     }
+
+    int quantBuscas;
+    scanf("%d", &quantBuscas);
+
+    BUSCA *busca = NULL;
+    HEADER *headerArq = NULL;
+    bool respostaEncontrada = false;
+
+    headerArq = header_ler(pontArqBin, headerArq);
+
+    for (int i = 0; i < quantBuscas; i++)
+    {
+        busca = busca_ler(busca); // Lendo parâmetros da busca
+
+        if (!arqBIN_buscar_dado(pontArqBin, busca)) // Buscando dados no arquivo .bin
+            mensagem_regInexistente();              // Não foi encontrado um dado que obedece os campos de busca
+
+        printf("**********\n");
+
+        busca_apagar(&busca);
+    }
+
+    header_apagar(&headerArq);
+    fclose(pontArqBin);
+    return;
 }

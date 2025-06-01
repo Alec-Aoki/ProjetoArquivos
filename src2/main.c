@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#include "../libs/arquivos/funcionalidades.h"
+#include "./libs/arquivos/funcionalidades.h"
 
 /*
 ALEC CAMPOS AOKI - 15436800

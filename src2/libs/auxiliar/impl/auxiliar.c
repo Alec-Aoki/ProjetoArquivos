@@ -19,7 +19,7 @@ Imprime a mensagem: "Registro inexistente."
 */
 void mensagem_regInexistente()
 {
-    printf("Registro inexistente.\n");
+    printf("Registro inexistente.\n\n");
     return;
 }
 

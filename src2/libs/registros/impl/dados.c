@@ -169,6 +169,42 @@ char *dado_get_string(DADO *dado, int campo)
     }
 }
 
+/* dado_get_int():
+Retorna o valor de um campo do tipo int
+Parâmetros: ponteiro pra struct do tipo dado, inteiro de 1 a 2 (campo)
+    1: idAttack
+    2: year
+Retorna: valor do campo (-1 se mal sucedido)
+*/
+int dado_get_int(DADO *dado, int campo)
+{
+    if (dado == NULL)
+        return -1;
+
+    switch (campo)
+    {
+    case 1:
+        return dado->idAttack;
+    case 2:
+        return dado->year;
+    default:
+        return -1;
+    }
+}
+
+/* dado_get_finLoss():
+Retorna o valor do campo financialLoss
+Parâmetros: ponteiro pra struct do tipo dado
+Retorna: valor do campo (-1 se mal sucedido)
+*/
+float dado_get_finLoss(DADO *dado)
+{
+    if (dado == NULL)
+        return -1;
+
+    return dado->financialLoss;
+}
+
 /* dado_get_tamReg():
 Retorna o valor do campo tamReg de um dado
 Parâmetros: ponteiro pra struct do tipo dado
@@ -254,11 +290,7 @@ DADO *dado_ler(FILE *pontArq, DADO *dado, int byteOffset)
 
     // Criando uma nova struct do tipo dado caso uma não seja fornecida
     if (dado == NULL)
-    {
-        dado = (DADO *)malloc(sizeof(DADO));
-        if (dado == NULL)
-            return NULL;
-    }
+        dado = dado_criar();
 
     // Posiciona na posição pós header
     fseek(pontArq, byteOffset, BYTEOFFSET_HEADER);

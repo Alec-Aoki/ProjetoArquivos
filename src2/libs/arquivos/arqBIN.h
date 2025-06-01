@@ -29,4 +29,11 @@ Parâmetro: ponteiro para arquivo
 */
 void arqBIN_imprimir(FILE *pontArqBIN);
 
+/*arqBIN_buscar_dado():
+Faz uma busca num arquivo .bin de acordo com a struct busca passada
+Parâmetro: ponteiro para arquivo, ponteiro para struct busca
+Retorna: booleano (true se encontrado, falso senão)
+*/
+bool arqBIN_buscar_dado(FILE *pontArqBIN, BUSCA *busca);
+
 #endif
