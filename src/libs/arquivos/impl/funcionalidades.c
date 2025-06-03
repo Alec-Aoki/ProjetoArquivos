@@ -221,6 +221,7 @@ void funcionalidade5()
     int quantRegArq = header_get_nroRegArq(headerArq);
     int quantRegRem = header_get_nroRegRem(headerArq);
 
+    /* Tentarei transferir para uma função no arqBIN*/
     for(int i = 0; i < quantDados; i++)
     {
         char **entrada = ler_entrada_insert(); // Lê a entrada do usuário
