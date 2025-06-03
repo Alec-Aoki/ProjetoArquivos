@@ -42,6 +42,27 @@ Retorna: valor do campo ('a' se dado nulo)
 */
 char dado_get_removido(DADO *dado);
 
+/* dado_set_removido():
+Define o valor do campo removido de um dado
+Parâmetros: ponteiro pra struct do tipo dado, char removido
+Retorna: void
+*/
+void dado_set_removido(DADO *dado, char removido);
+
+/* dado_get_prox():
+Retorna o valor do campo prox de um dado
+Parâmetros: ponteiro pra struct do tipo dado
+Retorna: valor do campo (-1 se dado nulo)
+*/
+long int dado_get_prox(DADO *dado);
+
+/* dado_set_prox():
+Define o valor do campo prox de um dado
+Parâmetros: ponteiro pra struct do tipo dado, long int prox
+Retorna: void
+*/
+void dado_set_prox(DADO *dado, long int prox);
+
 /* dado_get_string():
 Retorna a string de um campo
 Parâmetros: ponteiro pra struct do tipo dado, inteiro de 1 a 4 (campo)

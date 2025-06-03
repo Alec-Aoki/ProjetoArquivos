@@ -134,6 +134,82 @@ void ler_nome_arquivo(char *nomeArquivo)
     return;
 }
 
+/* ler_entrada_insert()
+Lê a entrada do usuário para inserir um novo registro
+Parâmetro: nenhum
+Retorna: um ponteiro para um vetor de strings (cada string representa um campo do registro)
+*/
+char ** ler_entrada_insert()
+{
+    char **entrada = (char **)malloc(7 * sizeof(char *));
+
+    if (entrada == NULL)
+    {
+        mensagem_erro();
+        return NULL;
+    }
+
+    for (int i = 0; i < 7; i++)
+    {
+        entrada[i] = (char *)malloc(TAM_MAX_STR * sizeof(char)); // Aloca memória para cada string
+        
+        if (entrada[i] == NULL)
+        {
+            mensagem_erro();
+            for (int j = 0; j < i; j++)
+            {
+                free(entrada[j]);
+            }
+            free(entrada);
+            return NULL;
+        }
+        
+        scanf("%s", entrada[i]); // Lê a string do usuário
+        entrada[i] = tira_aspas(entrada[i]); // Remove aspas se existirem
+        if (strcmp(entrada[i], "NULO") == 0)
+        {
+            entrada[i] = NULL;
+        }
+    }
+    return entrada;
+}
+
+/* tira_aspas()
+Remove aspas do início e do fim de uma string, se existirem
+Parâmetro: ponteiro para char (string)
+Retorna: ponteiro para a nova string sem aspas ou a string original se não tiver aspas
+*/
+char *tira_aspas(char *str)
+{
+    if (str == NULL) 
+    {
+        mensagem_erro();
+        return;
+    }
+
+    // Verifica se a string começa e termina com aspas
+    size_t len = strlen(str);
+
+    if (len > 1 && str[0] == '"' && str[len - 1] == '"')
+    {
+        char *temp = (char *)malloc(len - 1); // Aloca memória para a nova string sem aspas
+    
+        if (temp == NULL)
+        {
+            mensagem_erro();
+            return;
+        }
+
+        // Copia a string sem as aspas
+        strncpy(temp, str + 1, len - 2);
+        temp[len - 2] = '\0'; // Adiciona o terminador nulo
+        return temp;
+    }
+
+    return str; // Retorna a string original se não tiver aspas
+
+}
+
 /*FUNÇÃO FORNECIDA PARA CORREÇÃO*/
 void binarioNaTela(char *nomeArquivoBinario)
 { /* Você não precisa entender o código dessa função. */

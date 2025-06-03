@@ -52,6 +52,20 @@ Parâmetro: ponteiro para char (string)
 */
 void ler_nome_arquivo(char *nomeArquivo);
 
+/* ler_entrada_insert()
+Lê a entrada do usuário para inserir um novo registro
+Parâmetro: nenhum
+Retorna: um ponteiro para um vetor de strings (cada string representa um campo do registro)
+*/
+char ** ler_entrada_insert();
+
+/* tira_aspas()
+Remove aspas do início e do fim de uma string, se existirem
+Parâmetro: ponteiro para char (string)
+Retorna: ponteiro para a nova string sem aspas ou a string original se não tiver aspas
+*/
+char *tira_aspas(char *str);
+
 /*FUNÇÃO FORNECIDA PARA CORREÇÃO*/
 void binarioNaTela(char *nomeArquivoBinario);
 

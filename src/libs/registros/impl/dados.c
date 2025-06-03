@@ -231,6 +231,45 @@ char dado_get_removido(DADO *dado)
     return dado->removido;
 }
 
+/* dado_set_removido():
+Define o valor do campo removido de um dado
+Parâmetros: ponteiro pra struct do tipo dado, char removido
+Retorna: void
+*/
+void dado_set_removido(DADO *dado, char removido)
+{
+    if (dado == NULL)
+        return;
+
+    dado->removido = removido;
+}
+
+/* dado_get_prox():
+Retorna o valor do campo prox de um dado
+Parâmetros: ponteiro pra struct do tipo dado
+Retorna: valor do campo (-1 se dado nulo)
+*/
+long int dado_get_prox(DADO *dado)
+{
+    if (dado == NULL)
+        return -1;
+
+    return dado->prox;
+}
+
+/* dado_set_prox():
+Define o valor do campo prox de um dado
+Parâmetros: ponteiro pra struct do tipo dado, long int prox
+Retorna: void
+*/
+void dado_set_prox(DADO *dado, long int prox)
+{
+    if (dado == NULL)
+        return;
+
+    dado->prox = prox;
+}
+
 /* dado_imprimir():
 Imprime um dado usando as descrições semânticas do header
 Parâmetros: ponteiro para o header, ponteiro para o dado

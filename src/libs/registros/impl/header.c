@@ -134,6 +134,58 @@ int header_get_nroRegArq(HEADER *header)
     return header->nroRegArq;
 }
 
+/* header_get_topo():
+Retorna o valor do campo topo de uma struct header
+Parâmetros: ponteiro para struct do tipo header
+Retorna: valor do campo topo da struct (-1 se header == NULL)
+*/
+long int header_get_topo(HEADER *header)
+{
+    if (header == NULL)
+        return -1;
+
+    return header->topo;
+}
+
+/* header_set_topo():
+Define o campo topo de um header pré-existente
+Parâmetros: ponteiro para o header, valor do topo a ser definido
+*/
+void header_set_topo(HEADER *header, long int topo)
+{
+    if (header == NULL)
+        return;
+
+    header->topo = topo;
+    return;
+}
+
+/* header_get_nroRegRem():
+Retorna o valor do campo nroRegRem de uma struct header
+Parâmetros: ponteiro para struct do tipo header
+Retorna: valor do campo nroRegRem da struct (-1 se header == NULL)
+*/
+int header_get_nroRegRem(HEADER *header)
+{
+    if (header == NULL)
+        return -1;
+
+    return header->nroRegRem;
+}
+
+/* header_set_nroRegRem():
+Define o campo nroRegRem de um header pré-existente
+Parâmetros: ponteiro para o header, quantidade de registros removidos a ser definida
+*/
+void header_set_nroRegRem(HEADER *header, int nroRegRem)
+{
+    if (header == NULL)
+        return;
+
+    header->nroRegRem = nroRegRem;
+    return;
+}
+
 /* header_get_descricao():
 Retorna a string "descreve" de um campo
 Parâmetros: ponteiro pra struct do tipo header, inteiro de 1 a 7 (campo)
