@@ -41,14 +41,14 @@ Busca um dado que satisfaz os campos num arquivo .bin e o remove logicamente
 Parâmetro: ponteiro para arquivo, ponteiro para struct busca
 Retorna: o byteOffset do dado encontrado ou -1 se não encontrado
 */
-long int arqBIN_buscar_byteOffset(FILE *pontArqBIN, BUSCA *busca);
+long int arqBIN_buscar_byteOffset(FILE *pontArqBIN, BUSCA *busca, HEADER *headerArq);
 
 /* arqBIN_delete_dado():
 Remove logicamente um dado de um arquivo .bin
 Parâmetro: ponteiro para arquivo, ponteiro para struct busca
 Retorna: booleano (true se removido, falso senão)
 */
-bool arqBIN_delete_dado(FILE *pontArqBIN, BUSCA *busca);
+bool arqBIN_delete_dado(FILE *pontArqBIN, BUSCA *busca, HEADER *headerArq);
 
 /* arqBIN_insert_dado():
 Insere um dado no arquivo binário, utilizando estratégia de inserção First Fit.

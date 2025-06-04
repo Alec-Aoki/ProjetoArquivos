@@ -335,3 +335,20 @@ void header_escrever(FILE *pontArq, HEADER *headerArq, bool semantico)
 
     return;
 }
+
+void print_header (HEADER *header)
+{
+    if (header == NULL)
+    {
+        printf("Header is NULL\n");
+        return;
+    }
+
+    printf("\n");
+    printf("Status: %c\n", header->status);
+    printf("Topo: %ld\n", header->topo);
+    printf("Próximo Byte Offset: %ld\n", header->proxByteOffset);
+    printf("Número de Registros no Arquivo: %d\n", header->nroRegArq);
+    printf("Número de Registros Removidos: %d\n", header->nroRegRem);
+    printf("\n");   
+}

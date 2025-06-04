@@ -118,4 +118,6 @@ Parâmetros: ponteiro para um arquivo, ponteiro para um header e valor booleano 
 */
 void header_escrever(FILE *pontArq, HEADER *header, bool semantico);
 
+void print_header (HEADER *header);
+
 #endif

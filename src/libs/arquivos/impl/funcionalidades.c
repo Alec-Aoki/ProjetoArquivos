@@ -169,14 +169,22 @@ void funcionalidade4()
 
     BUSCA *busca = NULL;
     HEADER *headerArq = NULL;
-
+    fseek(pontArqBin, 0, SEEK_SET); // Posiciona o ponteiro no início do arquivo
     headerArq = header_ler(pontArqBin, headerArq);
+    
+    if (headerArq == NULL)
+    {
+        mensagem_erro();
+        fclose(pontArqBin);
+        return;
+    }
     
     for (int i = 0; i < quantBuscas; i++)
     {
         busca = busca_ler(busca); // Lendo parâmetros da busca
+        printf("busca realizado\n");
 
-        if (!arqBIN_delete_dado(pontArqBin, busca))
+        if (!arqBIN_delete_dado(pontArqBin, busca, headerArq))
         {
             mensagem_regInexistente();
         }
@@ -184,6 +192,9 @@ void funcionalidade4()
         busca_apagar(&busca);
     }
 
+    print_header(headerArq); // Imprime o header atualizado
+    fseek(pontArqBin, 0, SEEK_SET); // Posiciona o ponteiro no início do arquivo
+    header_escrever(pontArqBin, headerArq, false); // Escreve o header atualizado no arquivo binário
     header_apagar(&headerArq);
     fclose(pontArqBin);
     return;

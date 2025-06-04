@@ -362,6 +362,7 @@ DADO *dado_ler(FILE *pontArq, DADO *dado, int byteOffset)
     char *buffer = (char *)malloc(bytesRestantes + 1);
     fread(buffer, sizeof(char), bytesRestantes, pontArq);
     buffer[bytesRestantes] = '\0';
+    printf("Buffer lido: %s\n", buffer); // Debug: imprime o buffer lido
 
     // Ponteiro que aponta para o início do buffer
     char *pontCampo = buffer;
