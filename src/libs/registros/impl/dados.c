@@ -275,11 +275,11 @@ Define o valor do campo tamReg de um dado
 Parâmetros: ponteiro pra struct do tipo dado, inteiro tamReg
 Retorna: void
 */
-void dado_set_tamReg (DADO *dado, int tamReg)
+void dado_set_tamReg(DADO *dado, int tamReg)
 {
     if (dado == NULL)
         return;
-    
+
     dado->tamanhoRegistro = tamReg;
 }
 
@@ -345,7 +345,7 @@ DADO *dado_ler(FILE *pontArq, DADO *dado, int byteOffset)
         dado = dado_criar();
 
     // Posiciona na posição pós header
-    fseek(pontArq, byteOffset, BYTEOFFSET_HEADER);
+    fseek(pontArq, byteOffset, SEEK_SET);
 
     // Lê o campo removida do arquivo e guarda na struct
     fread(&(dado)->removido, sizeof(char), 1, pontArq);
@@ -362,7 +362,6 @@ DADO *dado_ler(FILE *pontArq, DADO *dado, int byteOffset)
     char *buffer = (char *)malloc(bytesRestantes + 1);
     fread(buffer, sizeof(char), bytesRestantes, pontArq);
     buffer[bytesRestantes] = '\0';
-    printf("Buffer lido: %s\n", buffer); // Debug: imprime o buffer lido
 
     // Ponteiro que aponta para o início do buffer
     char *pontCampo = buffer;
@@ -420,7 +419,7 @@ void dado_escrever_lixo(FILE *pontArq, DADO *dado, int lixo)
     // Verifica a corretude dos ponteiros
     if ((pontArq == NULL) || (dado == NULL))
         return;
- 
+
     dado_escrever(pontArq, dado);
 
     // Escreve o lixo no arquivo binário
@@ -429,5 +428,4 @@ void dado_escrever_lixo(FILE *pontArq, DADO *dado, int lixo)
         char lixoChar = '$';
         fwrite(&lixoChar, sizeof(char), 1, pontArq);
     }
-
 }

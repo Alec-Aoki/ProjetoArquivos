@@ -166,40 +166,31 @@ long int arqBIN_buscar_byteOffset(FILE *pontArqBIN, BUSCA *busca, HEADER *header
         return -1;
     }
 
-    printf("Iniciando busca pelo byteOffset...\n");
     int quantRegArq = header_get_nroRegArq(headerArq);
 
     long int byteOffset = BYTEOFFSET_HEADER; // Inicializado com o tamanho do header
 
     DADO *dado = NULL;
-    long int byteOffsetEncontrado = -1; // Inicializado com -1 (não encontrado)
-    
+
     // Loop para ler e verificar dados até que o arquivo ou a quantidade de respostas acabe
     while (quantRegArq > 0)
     {
         dado = dado_ler(pontArqBIN, dado, byteOffset); // Lendo dado do arquivo
-        printf("dado lido\n");
-        dado_imprimir(headerArq, dado); // Imprimindo o dado lido (opcional, para debug)
         if (dado == NULL)
         {
-            printf("Erro ao ler o dado no byteOffset: %ld\n", byteOffset);
             break;
         }
-        
+
         //------------------------------------------ FUNCIONANDO ATÉ AQUI ------------------------------------------------------------------------
-        
+
         if (busca_comparar(busca, dado))
-        {
-            byteOffsetEncontrado = byteOffset;
-            printf("Registro encontrado no byteOffset: %ld\n", byteOffsetEncontrado);
-            break;
-        }
-        
+            return byteOffset;
+
         byteOffset += dado_get_tamReg(dado) + 5; // Atualizando o byteOffset (indo para a leitura do próximo dado)
-        quantRegArq--; // Atualizando a quantidade de dados buscada
+        quantRegArq--;                           // Atualizando a quantidade de dados buscada
     }
 
-    return byteOffsetEncontrado;
+    return -1;
 }
 
 /* arqBIN_delete_dado():
@@ -226,28 +217,23 @@ bool arqBIN_delete_dado(FILE *pontArqBIN, BUSCA *busca, HEADER *headerArq)
     int quantRegArq = header_get_nroRegArq(headerArq);
     int quantRegRem = header_get_nroRegRem(headerArq);
 
-    printf("Variaveis inicializadas\n");
-
     // buscar registro que satisfaz os campos de busca
     long int byteOffset = arqBIN_buscar_byteOffset(pontArqBIN, busca, headerArq);
 
-    printf("Buscou byteOffset: %ld\n", byteOffset);
-    
     if (byteOffset == -1)
     {
         // registro não encontrado
-        //header_apagar(&headerArq);
+        // header_apagar(&headerArq);
         return false;
     }
 
     // guardar o byteOffset do registro encontrado
-    DADO *dado = NULL; 
+    DADO *dado = NULL;
     dado = dado_ler(pontArqBIN, dado, byteOffset);
-    printf("Leu dado\n");
 
     if (dado == NULL)
     {
-        //header_apagar(&headerArq);
+        // header_apagar(&headerArq);
         return false;
     }
 
@@ -256,19 +242,17 @@ bool arqBIN_delete_dado(FILE *pontArqBIN, BUSCA *busca, HEADER *headerArq)
     quantRegArq--; // decrementa o número de registros no arquivo
     quantRegRem++; // incrementa o número de registros removidos
 
-    printf("Registro removido\n");
-    
     if (topo == -1)
     {
         // se o topo for -1, significa que não há registros removidos
-        topo = byteOffset; // define o topo como o byteOffset do registro removido
+        topo = byteOffset;       // define o topo como o byteOffset do registro removido
         dado_set_prox(dado, -1); // define o próximo como -1
     }
-    else 
+    else
     {
         // se o topo não for -1, significa que há registros removidos
         dado_set_prox(dado, topo); // define o próximo como o topo atual
-        topo = byteOffset; // atualiza o topo para o byteOffset do registro removido
+        topo = byteOffset;         // atualiza o topo para o byteOffset do registro removido
     }
 
     // atualizar os campos do header e do dado
@@ -278,10 +262,10 @@ bool arqBIN_delete_dado(FILE *pontArqBIN, BUSCA *busca, HEADER *headerArq)
 
     // escrever o dado e o header atualizados no arquivo
     fseek(pontArqBIN, byteOffset, SEEK_SET); // posiciona o ponteiro do arquivo no byteOffset do registro removido
-    arqBIN_escrever_dado(pontArqBIN, dado); // escreve o dado atualizado no arquivo
+    arqBIN_escrever_dado(pontArqBIN, dado);  // escreve o dado atualizado no arquivo
 
     dado_apagar(&dado);
-    return true; 
+    return true;
 }
 
 /* arqBIN_insert_dado():
@@ -301,11 +285,10 @@ bool arqBIN_insert_dado(FILE *pontArqBIN, char **entrada)
     HEADER *headerArq = NULL;
     headerArq = header_ler(pontArqBIN, headerArq);
 
-
     DADO *dado = NULL;
     dado = dado_set(dado, 0, 0, -1, str_to_int(entrada[0]), str_to_int(entrada[1]),
                     str_to_float(entrada[2]), entrada[3], entrada[4], entrada[5], entrada[6]);
-        
+
     // Inicializando variáveis necessárias
     int tamReg = dado_get_tamReg(dado);
     int nroRegArq = header_get_nroRegArq(headerArq);
@@ -320,7 +303,7 @@ bool arqBIN_insert_dado(FILE *pontArqBIN, char **entrada)
         fseek(pontArqBIN, proxByteOffset, SEEK_SET); // trocar por proxByteOffset
         arqBIN_escrever_dado(pontArqBIN, dado);
 
-        proxByteOffset += tamReg + 5; // Atualiza o próximo byte offset
+        proxByteOffset += tamReg + 5;                         // Atualiza o próximo byte offset
         header_set_proxByteOffset(headerArq, proxByteOffset); // Atualiza o próximo byte offset no header
 
         nroRegArq++;
@@ -341,17 +324,17 @@ bool arqBIN_insert_dado(FILE *pontArqBIN, char **entrada)
                     // Se o tamanho do registro couber no registro removido, insere o dado e preenche com lixo($)
                     int nroLixo = dado_get_tamReg(dadoRem) - tamReg;
                     dado_set_tamReg(dado, dado_get_tamReg(dadoRem));
-                    
-                    // inserir o dado e preencher com lixo 
+
+                    // inserir o dado e preencher com lixo
                     dado_escrever_lixo(pontArqBIN, dado, nroLixo);
 
-                    dado_set_removido(dado, '0'); // Define o dado como não removido
+                    dado_set_removido(dado, '0');                // Define o dado como não removido
                     dado_set_prox(dado, dado_get_prox(dadoRem)); // Define o próximo do dado como o próximo do dado removido
-                
+
                     // Atualiza o topo para o próximo do dado removido
                     topo = dado_get_prox(dadoRem);
 
-                    // Atualiza o número de registros 
+                    // Atualiza o número de registros
                     nroRegArq++;
                     nroRegRem--;
                     inserido = true; // marca que o dado foi inserido
@@ -363,7 +346,6 @@ bool arqBIN_insert_dado(FILE *pontArqBIN, char **entrada)
             byteOffset = dado_get_prox(dadoRem);
             dado_apagar(&dadoRem);
         }
- 
     }
 
     if (!inserido)
@@ -373,13 +355,12 @@ bool arqBIN_insert_dado(FILE *pontArqBIN, char **entrada)
         fseek(pontArqBIN, proxByteOffset, SEEK_SET); // trocar por proxByteOffset
         arqBIN_escrever_dado(pontArqBIN, dado);
 
-        proxByteOffset += tamReg + 5; // Atualiza o próximo byte offset
+        proxByteOffset += tamReg + 5;                         // Atualiza o próximo byte offset
         header_set_proxByteOffset(headerArq, proxByteOffset); // Atualiza o próximo byte offset no header
 
         nroRegArq++;
         inserido = true;
     }
-
 
     // Atualizando o header
     header_set_nroRegArq(headerArq, nroRegArq);

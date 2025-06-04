@@ -171,18 +171,17 @@ void funcionalidade4()
     HEADER *headerArq = NULL;
     fseek(pontArqBin, 0, SEEK_SET); // Posiciona o ponteiro no início do arquivo
     headerArq = header_ler(pontArqBin, headerArq);
-    
+
     if (headerArq == NULL)
     {
         mensagem_erro();
         fclose(pontArqBin);
         return;
     }
-    
+
     for (int i = 0; i < quantBuscas; i++)
     {
         busca = busca_ler(busca); // Lendo parâmetros da busca
-        printf("busca realizado\n");
 
         if (!arqBIN_delete_dado(pontArqBin, busca, headerArq))
         {
@@ -192,11 +191,13 @@ void funcionalidade4()
         busca_apagar(&busca);
     }
 
-    print_header(headerArq); // Imprime o header atualizado
-    fseek(pontArqBin, 0, SEEK_SET); // Posiciona o ponteiro no início do arquivo
+    fseek(pontArqBin, 0, SEEK_SET);                // Posiciona o ponteiro no início do arquivo
     header_escrever(pontArqBin, headerArq, false); // Escreve o header atualizado no arquivo binário
     header_apagar(&headerArq);
     fclose(pontArqBin);
+
+    // binarioNaTela(nomeArqBin);
+
     return;
 }
 
@@ -220,11 +221,11 @@ void funcionalidade5()
     }
 
     char **entrada = NULL;
-    
+
     for (int i = 0; i < quantDados; i++)
     {
         entrada = ler_entrada_insert(); // Lê a entrada do usuário para inserir um novo registro
-        
+
         if (entrada == NULL)
         {
             mensagem_erro();
