@@ -24,6 +24,12 @@ int main(void)
     case '3': // Funcionalidade 3
         funcionalidade3();
         break;
+    case '4': // Funcionalidade 4
+        funcionalidade4();
+        break;
+    case '5': // Funcionalidade 5
+        funcionalidade5();
+        break;
     }
 
     return 0;

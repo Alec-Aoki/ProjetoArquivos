@@ -36,7 +36,7 @@ Retorna: booleano (true se encontrado, falso senão)
 */
 bool arqBIN_buscar_dado(FILE *pontArqBIN, BUSCA *busca);
 
-/* arqBIN_delete_dado():
+/* arqBIN_buscar_byteOffset():
 Busca um dado que satisfaz os campos num arquivo .bin e o remove logicamente
 Parâmetro: ponteiro para arquivo, ponteiro para struct busca
 Retorna: o byteOffset do dado encontrado ou -1 se não encontrado
@@ -49,5 +49,12 @@ Parâmetro: ponteiro para arquivo, ponteiro para struct busca
 Retorna: booleano (true se removido, falso senão)
 */
 bool arqBIN_delete_dado(FILE *pontArqBIN, BUSCA *busca);
+
+/* arqBIN_insert_dado():
+Insere um dado no arquivo binário, utilizando estratégia de inserção First Fit.
+Parâmetro: ponteiro para arquivo, ponteiro para array de strings (entrada)
+Retorna: booleano (true se inserido, false se erro)
+*/
+bool arqBIN_insert_dado(FILE *pontArqBIN, char **entrada);
 
 #endif

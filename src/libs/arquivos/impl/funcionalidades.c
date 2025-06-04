@@ -165,7 +165,7 @@ void funcionalidade4()
     }
 
     int quantBuscas;
-    scanf("%d", &quantBuscas);
+    scanf(" %d", &quantBuscas);
 
     BUSCA *busca = NULL;
     HEADER *headerArq = NULL;
@@ -208,24 +208,12 @@ void funcionalidade5()
         return;
     }
 
-    DADO *dado = NULL;
-    HEADER *headerArq = NULL;
-    headerArq = header_ler(pontArqBin, headerArq);
-    if (headerArq == NULL)
+    char **entrada = NULL;
+    
+    for (int i = 0; i < quantDados; i++)
     {
-        mensagem_erro();
-        fclose(pontArqBin);
-        return;
-    }
-
-    int quantRegArq = header_get_nroRegArq(headerArq);
-    int quantRegRem = header_get_nroRegRem(headerArq);
-
-    /* Tentarei transferir para uma função no arqBIN*/
-    for(int i = 0; i < quantDados; i++)
-    {
-        char **entrada = ler_entrada_insert(); // Lê a entrada do usuário
-
+        entrada = ler_entrada_insert(); // Lê a entrada do usuário para inserir um novo registro
+        
         if (entrada == NULL)
         {
             mensagem_erro();
@@ -233,46 +221,16 @@ void funcionalidade5()
             return;
         }
 
-        dado = dado_set(dado, 0, 0, -1, str_to_int(entrada[0]), str_to_int(entrada[1]),
-                        str_to_float(entrada[2]), entrada[3], entrada[4], entrada[5], entrada[6]);
-
-        int tamReg = dado_get_tamReg(dado);
-
-        long int topo = header_get_topo(headerArq);
-
-        if (topo == -1 )
+        if (!arqBIN_insert_dado(pontArqBin, entrada))
         {
-            // Se o topo for -1, significa que não há regitros logicamente removidos, logo insere-se no final do arquivo
-            fseek(pontArqBin, 0, SEEK_END); // Posiciona o ponteiro no final do arquivo
-            arqBIN_escrever_dado(pontArqBin, dado); // Escreve o dado no arquivo binário
-            quantRegArq++;
+            mensagem_erro();
+            apaga_entrada(&entrada);
+            fclose(pontArqBin);
+            return;
         }
-        else 
-        {
-            // Se o topo não for -1, significa que há registros logicamente removidos
-            long int byteOffset = topo; // O byteOffset do registro a ser inserido é o topo
-            while (byteOffset != -1) // Percorre a lista de registros removidos
-            {
-                dado = dado_ler(pontArqBin, dado, byteOffset); // Lê o dado no byteOffset atual
 
-                if (dado_get_removido(dado) == '1')
-                {
-                    if (tamReg <= dado_get_tamReg(dado)) // Verifica se o tamanho do registro a ser inserido cabe no espaço do registro removido, estratégia First Fit
-                    {
-                        int numLixo = dado_get_tamReg(dado) - tamReg; // Calcula o número de bytes de lixo que sobrará após a inserção
-                        // Inserir o dado no arquivo binário e preencher o espaço restante com lixo($)
-
-                        quantRegArq++;
-                        quantRegRem--;
-                    }
-                    else 
-                    {
-                        // Se o tamanho do registro a ser inserido não couber, continua para o próximo registro removido
-                        byteOffset = dado_get_prox(dado); // Atualiza o byteOffset para o próximo registro removido
-                    }
-                }
-            }
-        }
-        
+        apaga_entrada(&entrada); // Libera a memória alocada para a entrada
     }
+
+    fclose(pontArqBin);
 }

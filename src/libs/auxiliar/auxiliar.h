@@ -59,6 +59,13 @@ Retorna: um ponteiro para um vetor de strings (cada string representa um campo d
 */
 char ** ler_entrada_insert();
 
+/* apaga_entrada():
+Desaloca a memória alocada para a entrada e define o ponteiro para NULL
+Parâmetro: ponteiro para ponteiro de ponteiro de char (entrada) 
+Retorna: nenhum
+*/
+void apaga_entrada(char ***entrada);
+
 /* tira_aspas()
 Remove aspas do início e do fim de uma string, se existirem
 Parâmetro: ponteiro para char (string)

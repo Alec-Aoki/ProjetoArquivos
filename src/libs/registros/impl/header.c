@@ -186,6 +186,19 @@ void header_set_nroRegRem(HEADER *header, int nroRegRem)
     return;
 }
 
+/* header_get_proxByteOffset():
+Retorna o valor do campo proxByteOffset de uma struct header
+Parâmetros: ponteiro para struct do tipo header
+Retorna: valor do campo proxByteOffset da struct (-1 se header == NULL)
+*/
+long int header_get_proxByteOffset(HEADER *header)
+{
+    if (header == NULL)
+        return -1;
+
+    return header->proxByteOffset;
+}
+
 /* header_get_descricao():
 Retorna a string "descreve" de um campo
 Parâmetros: ponteiro pra struct do tipo header, inteiro de 1 a 7 (campo)

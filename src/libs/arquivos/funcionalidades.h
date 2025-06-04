@@ -22,4 +22,14 @@ Imprime na tela a quantidade requisitada de dados que satisfazer os campos de bu
 */
 void funcionalidade3();
 
+/* funcionalidade4()
+Remove logicamente um dado do arquivo binário
+*/
+void funcionalidade4();
+
+/* funcionalidade5()
+Insere um dado no arquivo binário
+*/
+void funcionalidade5();
+
 #endif

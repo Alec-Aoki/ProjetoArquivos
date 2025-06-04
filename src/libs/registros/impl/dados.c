@@ -270,6 +270,19 @@ void dado_set_prox(DADO *dado, long int prox)
     dado->prox = prox;
 }
 
+/* dado_set_tamReg():
+Define o valor do campo tamReg de um dado
+Parâmetros: ponteiro pra struct do tipo dado, inteiro tamReg
+Retorna: void
+*/
+void dado_set_tamReg (DADO *dado, int tamReg)
+{
+    if (dado == NULL)
+        return;
+    
+    dado->tamanhoRegistro = tamReg;
+}
+
 /* dado_imprimir():
 Imprime um dado usando as descrições semânticas do header
 Parâmetros: ponteiro para o header, ponteiro para o dado
@@ -394,4 +407,26 @@ void dado_escrever(FILE *pontArq, DADO *dado)
         fwrite(dado->defenseMechanism, sizeof(char), strlen(dado->defenseMechanism), pontArq);
 
     return;
+}
+
+/* dado_escrever_lixo():
+Escreve um dado em um arquivo, mas com dados inválidos ou lixo
+Parâmetros: ponteiro para arquivo, ponteiro para uma struct dado, inteiro que indica a quantidade de lixo a ser escrito
+Retorna: void
+*/
+void dado_escrever_lixo(FILE *pontArq, DADO *dado, int lixo)
+{
+    // Verifica a corretude dos ponteiros
+    if ((pontArq == NULL) || (dado == NULL))
+        return;
+ 
+    dado_escrever(pontArq, dado);
+
+    // Escreve o lixo no arquivo binário
+    for (int i = 0; i < lixo; i++)
+    {
+        char lixoChar = '$';
+        fwrite(&lixoChar, sizeof(char), 1, pontArq);
+    }
+
 }

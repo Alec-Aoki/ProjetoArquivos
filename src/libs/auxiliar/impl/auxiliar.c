@@ -36,6 +36,9 @@ int str_to_int(char *str)
     if (strcmp(str, "") == 0)
         return -1; // Erro
 
+    if (strcmp(str, "NULO") == 0)
+        return -1; // Erro
+
     return atoi(str);
 }
 
@@ -50,6 +53,9 @@ float str_to_float(char *str)
         return -1; // Erro
 
     if (strcmp(str, "") == 0)
+        return -1; // Erro
+
+    if (strcmp(str, "NULO") == 0)
         return -1; // Erro
 
     return atof(str);
@@ -174,6 +180,30 @@ char ** ler_entrada_insert()
     return entrada;
 }
 
+/* apaga_entrada():
+Desaloca a memória alocada para a entrada e define o ponteiro para NULL
+Parâmetro: ponteiro para ponteiro de ponteiro de char (entrada) 
+Retorna: nenhum
+*/
+void apaga_entrada(char ***entrada)
+{
+    if (*entrada == NULL)
+    {
+        return;
+    }
+
+    for (int i = 0; i < 7; i++)
+    {
+        if ((*entrada)[i] != NULL)
+        {
+            free((*entrada)[i]);
+        }
+    }
+
+    free(*entrada);
+    *entrada = NULL;
+}
+
 /* tira_aspas()
 Remove aspas do início e do fim de uma string, se existirem
 Parâmetro: ponteiro para char (string)
@@ -184,7 +214,7 @@ char *tira_aspas(char *str)
     if (str == NULL) 
     {
         mensagem_erro();
-        return;
+        return NULL;
     }
 
     // Verifica se a string começa e termina com aspas
@@ -197,7 +227,7 @@ char *tira_aspas(char *str)
         if (temp == NULL)
         {
             mensagem_erro();
-            return;
+            return NULL;
         }
 
         // Copia a string sem as aspas

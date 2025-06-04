@@ -84,6 +84,13 @@ Parâmetros: ponteiro para o header, quantidade de registros removidos a ser def
 */
 void header_set_nroRegRem(HEADER *header, int nroRegRem);
 
+/* header_get_proxByteOffset():
+Retorna o valor do campo proxByteOffset de uma struct header
+Parâmetros: ponteiro para struct do tipo header
+Retorna: valor do campo proxByteOffset da struct (-1 se header == NULL)
+*/
+long int header_get_proxByteOffset(HEADER *header);
+
 /* header_get_descricao():
 Retorna a string "descreve" de um campo
 Parâmetros: ponteiro pra struct do tipo header, inteiro de 1 a 7 (campo)

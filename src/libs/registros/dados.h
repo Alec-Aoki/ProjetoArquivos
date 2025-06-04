@@ -63,6 +63,13 @@ Retorna: void
 */
 void dado_set_prox(DADO *dado, long int prox);
 
+/* dado_set_tamReg():
+Define o valor do campo tamReg de um dado
+Parâmetros: ponteiro pra struct do tipo dado, inteiro tamReg
+Retorna: void
+*/
+void dado_set_tamReg(DADO *dado, int tamReg);
+
 /* dado_get_string():
 Retorna a string de um campo
 Parâmetros: ponteiro pra struct do tipo dado, inteiro de 1 a 4 (campo)
@@ -108,5 +115,13 @@ Escreve os campos de uma struct dado em um arquivo
 Parâmetros: ponteiro para arquivo, ponteiro para uma struct dado
 */
 void dado_escrever(FILE *pontArqBin, DADO *dado);
+
+/* dado_escrever_lixo():
+Escreve um dado em um arquivo, mas com dados inválidos ou lixo
+Parâmetros: ponteiro para arquivo, ponteiro para uma struct dado, inteiro que indica a quantidade de lixo a ser escrito
+Retorna: void
+*/
+void dado_escrever_lixo(FILE *pontArqBin, DADO *dado, int lixo);
+
 
 #endif
