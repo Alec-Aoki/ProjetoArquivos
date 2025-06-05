@@ -18,7 +18,8 @@ Imprime todo o conteúdo de um arquivo binário
 void funcionalidade2();
 
 /* funcionalidade3()
-Imprime na tela a quantidade requisitada de dados que satisfazer os campos de busca
+Imprime na tela a quantidade requisitada de dados
+que satisfazer os campos de busca
 */
 void funcionalidade3();
 

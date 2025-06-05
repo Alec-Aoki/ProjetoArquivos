@@ -17,10 +17,11 @@ DADO *dado_criar();
 /* dado_set():
 Define campos de uma struct dado. Caso uma struct não seja fornecida, cria uma
 Caso -2 ou NULL seja fornecido, não altera o campo da struct.
-Parâmetros: ponteiro para dado valores dos campos da struct
+Parâmetros: valores dos campos da struct
 Retorna: ponteiro para dado
 */
-DADO *dado_set(DADO *dado, int removido, int tamReg, long int prox, int idAttack, int year, float finLoss,
+DADO *dado_set(DADO *dado, int removido, int tamReg,
+               long int prox, int idAttack, int year, float finLoss,
                char *country, char *attackType, char *targetInd, char *defMec);
 
 /* dado_apagar():
@@ -79,7 +80,8 @@ void dado_imprimir(HEADER *header, DADO *dado);
 
 /* dado_ler():
 Lê um registro do arquivo e guarda numa struct DADO
-Parâmetros: Ponteiro para arquivo, ponteiro para struct DADO, byteOffset do registro
+Parâmetros: Ponteiro para arquivo, ponteiro para struct
+DADO, byteOffset do registro
 Retorna: ponteiro para dado
 */
 DADO *dado_ler(FILE *pontArq, DADO *dado, int byteOffset);

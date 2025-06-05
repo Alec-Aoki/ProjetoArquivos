@@ -74,15 +74,18 @@ BUSCA *busca_ler(BUSCA *busca)
     if (busca == NULL)
         busca = busca_criar();
 
-    char buffer[256];                   // Buffer para leitura de strings
-    int byteOffset = BYTEOFFSET_HEADER; // Byteoffset inicial para leitura dos dados do arquivo
+    // Buffer para leitura de strings
+    char buffer[256];
+    // Byteoffset inicial para leitura dos dados do arquivo
+    int byteOffset = BYTEOFFSET_HEADER;
     char *ptr;
 
     int flag = -1;  // Indicador de qual campo deve ser buscado
     int j = 0;      // Contador para quantCampos
     int tamStr = 0; // Auxiliar
 
-    scanf("%d", &(busca->quantCampos)); // Recebendo do usuário quantas respostas (dados) devemos imprimir
+    // Recebendo do usuário quantas respostas (dados) devemos imprimir
+    scanf("%d", &(busca->quantCampos));
 
     // Lendo string contendo os campos a serem buscados e seus valores
     fgets(buffer, sizeof(buffer), stdin);
@@ -150,8 +153,8 @@ BUSCA *busca_ler(BUSCA *busca)
             busca->defenseMechanism[tamStr] = '\0';
             break;
         }
-
-        j++; // Avançando o contador para a quantidade de campos e voltando ao início do while
+        // Avançando o contador para a quantidade de campos e voltando ao início do while
+        j++;
     }
 
     return busca;
@@ -169,7 +172,8 @@ bool busca_comparar(BUSCA *busca, DADO *dado)
 
     bool dadoValido = true;
 
-    // Loop para verificar se todos os campos são obedecidos, percorrendo o vetor quaisCampos para isso
+    // Loop para verificar se todos os campos são obedecidos,
+    // percorrendo o vetor quaisCampos para isso
     for (int k = 0; k < busca->quantCampos; k++)
     {
         switch (busca->quaisCampos[k])

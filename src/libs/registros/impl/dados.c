@@ -87,7 +87,7 @@ DADO *dado_criar()
 /* dado_set():
 Define campos de uma struct dado. Caso uma struct não seja fornecida, cria uma
 Caso -2 ou NULL seja fornecido, não altera o campo da struct.
-Parâmetros: ponteiro para dado valores dos campos da struct
+Parâmetros: valores dos campos da struct
 Retorna: ponteiro para dado
 */
 DADO *dado_set(DADO *dado, int removido, int tamReg, long int prox, int idAttack, int year, float finLoss,

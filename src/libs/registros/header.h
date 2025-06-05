@@ -19,12 +19,24 @@ de tipo HEADER
 typedef struct header_ HEADER;
 
 /* header_criar():
-Cria uma struct do tipo HEADER e a inicializa
-Parâmetros: ponteiros para strings (descrições do header)
+Aloca memória para uma struct do tipo HEADER e a inicializa
 Retorna: ponteiro para a struct do tipo header
 */
-HEADER *header_criar(char *descIdent, char *descYear, char *descFinLoss, char *descCountry,
-                     char *descType, char *descTargInd, char *descDef);
+HEADER *header_criar();
+
+/* header_set():
+Define os campos de uma struct do tipo header.
+Se uma struct não for fornecida, cria uma.
+Caso -2 ou NULL seja fornecido, não altera o campo da struct.
+Parâmetros: valores para os campos do header
+Retorna: ponteiro para a struct do tipo header
+*/
+HEADER *header_set(HEADER *header, int status, long int topo,
+                   long int proxByteOffset, int nroRegArq,
+                   int nroRegRem, char *descIdent,
+                   char *descYear, char *descFinLoss,
+                   char *descCountry, char *descType,
+                   char *descTargInd, char *descDef);
 
 /* header_apagar():
 Desaloca uma struct do tipo header e define seu ponteiro para NULL
@@ -32,64 +44,23 @@ Parâmetros: ponteiro de ponteiro para a struct a ser desalocada
 */
 void header_apagar(HEADER **header);
 
-/* header_set_status():
-Define o campo de status de um header pré-existente
-Parâmetros: ponteiro para o header, status a ser definido
+/* header_get_int():
+Retorna o valor de um campo int
+Parâmetros: ponteiro pra struct do tipo header, inteiro de 1 a 2 (campo)
+    1: nroRegArq
+    2: nroRegRem
+Retorna: valor do campo (-1 se não encontrado ou header nulo)
 */
-void header_set_status(HEADER *header, char status);
+int header_get_int(HEADER *header, int campo);
 
-/* header_set_proxByteOffset()
-Define o campo proxByteOffset de um header
-Parâmetros: ponteiro para header, valor do próximo byte offset livre
+/* header_get_longint():
+Retorna o valor de um campo long int
+Parâmetros: ponteiro pra struct do tipo header, inteiro de 1 a 2 (campo)
+    1: topo
+    2: proxByteOffset
+Retorna: valor do campo (-1 se não encontrado ou header nulo)
 */
-void header_set_proxByteOffset(HEADER *header, long int proxByOff);
-
-/* header_set_nroRegArq()
-Define o campo nroRegArq de um header
-Parâmetros: ponteiro para header, quantidade de registros no arquivos
-Retorno: false se header nulo, true caso contrário
-*/
-void header_set_nroRegArq(HEADER *header, int nroRegAq);
-
-/* header_get_nroRegArq()
-Retorna o valor do campo nroRegArq de uma struct header
-Parâmetros: ponteiro para struct do tipo header
-Retorna: valor do campo nroRegArq da struct (-1 se header == NULL)
-*/
-int header_get_nroRegArq(HEADER *header);
-
-/* header_get_topo():
-Retorna o valor do campo topo de uma struct header
-Parâmetros: ponteiro para struct do tipo header
-Retorna: valor do campo topo da struct (-1 se header == NULL)
-*/
-long int header_get_topo(HEADER *header);
-
-/* header_set_topo():
-Define o campo topo de um header pré-existente
-Parâmetros: ponteiro para o header, valor do topo a ser definido
-*/
-void header_set_topo(HEADER *header, long int topo);
-
-/* header_get_nroRegRem():
-Retorna o valor do campo nroRegRem de uma struct header
-Parâmetros: ponteiro para struct do tipo header
-Retorna: valor do campo nroRegRem da struct (-1 se header == NULL)
-*/
-int header_get_nroRegRem(HEADER *header);
-
-/* header_set_nroRegRem():
-Define o campo nroRegRem de um header pré-existente
-Parâmetros: ponteiro para o header, quantidade de registros removidos a ser definida
-*/
-void header_set_nroRegRem(HEADER *header, int nroRegRem);
-
-/* header_get_proxByteOffset():
-Retorna o valor do campo proxByteOffset de uma struct header
-Parâmetros: ponteiro para struct do tipo header
-Retorna: valor do campo proxByteOffset da struct (-1 se header == NULL)
-*/
-long int header_get_proxByteOffset(HEADER *header);
+long int header_get_longint(HEADER *header, int campo);
 
 /* header_get_descricao():
 Retorna a string "descreve" de um campo
@@ -114,10 +85,15 @@ HEADER *header_ler(FILE *pontArq, HEADER *header);
 
 /* header_escrever():
 Escreve um header passado no arquivo binário
-Parâmetros: ponteiro para um arquivo, ponteiro para um header e valor booleano (true = escrever string semanticas, false = escrever somente struct)
+Parâmetros: ponteiro para um arquivo, ponteiro para um header e valor booleano
+(true = escrever string semanticas, false = escrever somente struct)
 */
 void header_escrever(FILE *pontArq, HEADER *header, bool semantico);
 
-void print_header (HEADER *header);
+/* print_header():
+Imprime os campos variáveis de uma struct header
+Parâmetros: ponteiro para header
+*/
+void print_header(HEADER *header);
 
 #endif

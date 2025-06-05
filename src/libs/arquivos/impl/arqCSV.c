@@ -21,13 +21,18 @@ HEADER *arqCSV_ler_header(FILE *pontArqCSV)
         return NULL;
     }
     /* LEITURA DOS CAMPOS DO HEADER */
-    char *campos[7];       // Vetor de ponteiros de strings para guardar os campos do header e dos dados
-    char buffer[256] = ""; // Buffer para leitura do header e dos campos do .csv
+    // Vetor de ponteiros de strings para guardar os campos do header e dos dados
+    char *campos[7];
+    // Buffer para leitura do header e dos campos do .csv
+    char buffer[256] = "";
 
-    fseek(pontArqCSV, 0, SEEK_SET); // Posiciona o ponteiro no inicio do arquivo
+    // Posiciona o ponteiro no inicio do arquivo
+    fseek(pontArqCSV, 0, SEEK_SET);
 
-    fread(buffer, 253, 1, pontArqCSV); // Lê a primeira linha do .csv (descrições semânticas do header)
-    buffer[253] = '\0';                // Substituindo '\n' por '\0' no buffer, por segurança
+    // Lê a primeira linha do .csv (descrições semânticas do header)
+    fread(buffer, 253, 1, pontArqCSV);
+    // Substituindo '\n' por '\0' no buffer, por segurança
+    buffer[253] = '\0';
 
     // Vamos utilizar o strtok para separar a string no buffer nas ',' e evitar alocar espaço para as strings do header
     char *tok = strtok(buffer, ",");
@@ -41,8 +46,10 @@ HEADER *arqCSV_ler_header(FILE *pontArqCSV)
     }
 
     // Criando struct header com os campos semânticos do header do .csv
-    HEADER *headerArq = header_criar(campos[0], campos[1], campos[2], campos[3],
-                                     campos[4], campos[5], campos[6]);
+    HEADER *headerArq = NULL;
+    headerArq = header_set(headerArq, -2, -2, -2, -2, -2, campos[0],
+                           campos[1], campos[2], campos[3],
+                           campos[4], campos[5], campos[6]);
     if (headerArq == NULL)
     {
         mensagem_erro();
@@ -66,8 +73,10 @@ DADO *arqCSV_ler_dado(FILE *pontArqCSV)
     }
 
     /* LEITURA DOS DADOS */
-    char *campos[7];       // Vetor de ponteiros de strings para guardar os campos do header e dos dados
-    char buffer[256] = ""; // Buffer para leitura do header e dos campos do .csv
+    // Vetor de ponteiros de strings para guardar os campos do header e dos dados
+    char *campos[7];
+    // Buffer para leitura do header e dos campos do .csv
+    char buffer[256] = "";
 
     if (fgets(buffer, sizeof(buffer), pontArqCSV) == NULL)
         return NULL;
@@ -83,9 +92,12 @@ DADO *arqCSV_ler_dado(FILE *pontArqCSV)
     }
 
     // Variáveis necessárias para a leitura do arquivo
-    char *ptr = buffer; // Ponteiro de char que aponta para o início da string armazenada do buffer
-    char *campo;        // Ponteiro de char que receberá as strings entre as vírgulas do csv
-    int i = 0;          // Contador do loop para acessar os campos do array
+    // Ponteiro de char que aponta para o início da string armazenada do buffer
+    char *ptr = buffer;
+    // Ponteiro de char que receberá as strings entre as vírgulas do csv
+    char *campo;
+    // Contador do loop para acessar os campos do array
+    int i = 0;
 
     // Loop que separa os campos da linha lida
     while ((campo = strsep(&ptr, ",")) != NULL)
@@ -99,7 +111,8 @@ DADO *arqCSV_ler_dado(FILE *pontArqCSV)
     }
 
     // Guarda os dados lidos na struct DADO
-    DADO *dadoArq = dado_set(NULL, 0, 0, -1, str_to_int(campos[0]), str_to_int(campos[1]), str_to_float(campos[2]), campos[3], campos[4], campos[5], campos[6]);
+    DADO *dadoArq = dado_set(NULL, 0, 0, -1, str_to_int(campos[0]), str_to_int(campos[1]),
+                             str_to_float(campos[2]), campos[3], campos[4], campos[5], campos[6]);
     if (dadoArq == NULL)
     {
         mensagem_erro();

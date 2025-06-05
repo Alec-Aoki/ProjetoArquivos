@@ -22,12 +22,16 @@ void funcionalidade1()
     ler_nome_arquivo(nomeArqCSV);
     ler_nome_arquivo(nomeArqBin);
 
+    /*Abrindo arquivos CSV e BIN*/
+    // Modo de leitura
     FILE *pontArqCSV = fopen(nomeArqCSV, "r");
     if (pontArqCSV == NULL)
     {
         mensagem_erro();
         return;
     }
+
+    // Modo de escrita (binário)
     FILE *pontArqBin = fopen(nomeArqBin, "wb");
     if (pontArqBin == NULL)
     {
@@ -45,7 +49,10 @@ void funcionalidade1()
 
     // Escrevendo o header  no arquivo binário
     fseek(pontArqBin, 0, SEEK_SET);
-    header_set_status(headerCSV, '0'); // Inconsistente
+
+    // Definindo status como inconsistente (0)
+    headerCSV = header_set(headerCSV, 0, -2, -2, -2, -2,
+                           NULL, NULL, NULL, NULL, NULL, NULL, NULL);
     arqBIN_escrever_header(pontArqBin, headerCSV, true);
 
     // Lendo dados do .csv e escrevendo no .bin
@@ -56,25 +63,29 @@ void funcionalidade1()
 
     while (true)
     {
+        // Lê uma linha do csv
         dadoCSV = arqCSV_ler_dado(pontArqCSV);
         if (dadoCSV == NULL)
             break;
 
+        // Escreve a linha no .bin
         arqBIN_escrever_dado(pontArqBin, dadoCSV);
+        // Atualizando quantidade de dados e ponteiro
         quantRegDados++;
         byteOffsetPonteiro += dado_get_int(dadoCSV, 3) + 5;
 
+        // Resetando a struct
         dado_apagar(&dadoCSV);
     }
     // Atualizando campos do header
-    header_set_nroRegArq(headerCSV, quantRegDados);
-    header_set_proxByteOffset(headerCSV, byteOffsetPonteiro);
-    header_set_status(headerCSV, '1'); // Consistente
+    headerCSV = header_set(headerCSV, 1, -2, byteOffsetPonteiro, quantRegDados, -2,
+                           NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
     // Escrevendo o header no arquivo binário
     fseek(pontArqBin, 0, SEEK_SET);
     arqBIN_escrever_header(pontArqBin, headerCSV, false);
 
+    // Apagando structs e fechando os arquivos
     header_apagar(&headerCSV);
     fclose(pontArqCSV);
     fclose(pontArqBin);
@@ -92,14 +103,16 @@ void funcionalidade2()
     char nomeArqBin[TAM_MAX_STR];
     ler_nome_arquivo(nomeArqBin);
 
-    FILE *pontArqBin = fopen(nomeArqBin, "rb"); // Abrindo arquivo binário no modo de leitura
+    // Abrindo arquivo binário no modo de leitura
+    FILE *pontArqBin = fopen(nomeArqBin, "rb");
     if (pontArqBin == NULL)
     {
         mensagem_erro();
         return;
     }
 
-    fseek(pontArqBin, 0, SEEK_SET); // Posiciona o ponteiro no início do arquivo
+    // Posiciona o ponteiro no início do arquivo
+    fseek(pontArqBin, 0, SEEK_SET);
 
     arqBIN_imprimir(pontArqBin);
 
@@ -115,42 +128,52 @@ void funcionalidade3()
     char nomeArqBin[TAM_MAX_STR];
     ler_nome_arquivo(nomeArqBin);
 
-    FILE *pontArqBin = fopen(nomeArqBin, "rb"); // Abrindo arquivo binário no modo de leitura
+    // Abrindo arquivo binário no modo de leitura
+    FILE *pontArqBin = fopen(nomeArqBin, "rb");
     if (pontArqBin == NULL)
     {
         mensagem_erro();
         return;
     }
 
+    // Lendo quantidade de buscas a serem feitas
     int quantBuscas;
     scanf("%d", &quantBuscas);
 
-    BUSCA *busca = NULL;
-    HEADER *headerArq = NULL;
-    long int byteOffsetEncontrado = -1;
-    DADO *dadoEncontrado = NULL;
+    BUSCA *busca = NULL;                // Ponteiro para struct busca (reutilizável)
+    HEADER *headerArq = NULL;           // Ponteiro para header do arq. bin.
+    long int byteOffsetEncontrado = -1; // Reutilizável
+    DADO *dadoEncontrado = NULL;        // Reutilizável
 
+    // Lendo header do arquivo
     headerArq = header_ler(pontArqBin, headerArq);
 
+    // Lendo cada busca do usuário e efetuando-a
     for (int i = 0; i < quantBuscas; i++)
     {
         busca = busca_ler(busca); // Lendo parâmetros da busca
 
+        // Buscando no arq. .bin
         byteOffsetEncontrado = arqBIN_buscar_byteOffset(pontArqBin, busca, headerArq);
-        if (byteOffsetEncontrado == -1) // Buscando dados no arquivo .bin
-            mensagem_regInexistente();  // Não foi encontrado um dado que obedece os campos de busca
+        if (byteOffsetEncontrado == -1)
+            mensagem_regInexistente(); // Não foi encontrado um dado que obedece os campos de busca
         else
         {
+            // Lê o dado no byteOffset encontrado
             dadoEncontrado = dado_ler(pontArqBin, dadoEncontrado, byteOffsetEncontrado);
+            // Imprime-o
             dado_imprimir(headerArq, dadoEncontrado);
+            // Reseta a struct
             dado_apagar(&dadoEncontrado);
         }
 
-        printf("**********\n");
+        printf("\n**********\n");
 
+        // Reseta a struct
         busca_apagar(&busca);
     }
 
+    // Apagando header e fechando arquivo
     header_apagar(&headerArq);
     fclose(pontArqBin);
     return;
@@ -164,47 +187,57 @@ void funcionalidade4()
     char nomeArqBin[TAM_MAX_STR];
     ler_nome_arquivo(nomeArqBin);
 
-    FILE *pontArqBin = fopen(nomeArqBin, "rb+"); // Abrindo o arquivo binário no modo de leitura e escrita
-
+    // Abrindo o arquivo binário no modo de leitura e escrita
+    FILE *pontArqBin = fopen(nomeArqBin, "rb+");
     if (pontArqBin == NULL)
     {
         mensagem_erro();
         return;
     }
 
+    // Lendo quant. de buscas a serem feitas
     int quantBuscas;
     scanf(" %d", &quantBuscas);
 
-    BUSCA *busca = NULL;
-    HEADER *headerArq = NULL;
-    fseek(pontArqBin, 0, SEEK_SET); // Posiciona o ponteiro no início do arquivo
-    headerArq = header_ler(pontArqBin, headerArq);
+    BUSCA *busca = NULL;      // Reutilizável
+    HEADER *headerArq = NULL; // Header do arq. bin.
 
-    if (headerArq == NULL)
+    // Posiciona o ponteiro no início do arquivo
+    fseek(pontArqBin, 0, SEEK_SET);
+    // Lê o header
+    headerArq = header_ler(pontArqBin, headerArq);
+    if (headerArq == NULL) // Erro
     {
         mensagem_erro();
         fclose(pontArqBin);
         return;
     }
 
+    // Lendo e realizando cada busca
     for (int i = 0; i < quantBuscas; i++)
     {
         busca = busca_ler(busca); // Lendo parâmetros da busca
 
+        // Deletando o dado caso ele seja encontrdo
         if (!arqBIN_delete_dado(pontArqBin, busca, headerArq))
         {
-            mensagem_regInexistente();
+            mensagem_regInexistente(); // Dado não encontrado
         }
 
+        // Resetando struct
         busca_apagar(&busca);
     }
 
-    fseek(pontArqBin, 0, SEEK_SET);                // Posiciona o ponteiro no início do arquivo
-    header_escrever(pontArqBin, headerArq, false); // Escreve o header atualizado no arquivo binário
+    // Posiciona o ponteiro no início do arquivo
+    fseek(pontArqBin, 0, SEEK_SET);
+
+    // Escreve o header atualizado no arquivo binário
+    header_escrever(pontArqBin, headerArq, false);
+
     header_apagar(&headerArq);
     fclose(pontArqBin);
 
-    // binarioNaTela(nomeArqBin);
+    binarioNaTela(nomeArqBin);
 
     return;
 }
@@ -217,11 +250,12 @@ void funcionalidade5()
     char nomeArqBin[TAM_MAX_STR];
     ler_nome_arquivo(nomeArqBin);
 
+    // Quantidade de dados a serem inseridos
     int quantDados;
     scanf("%d", &quantDados);
 
-    FILE *pontArqBin = fopen(nomeArqBin, "rb+"); // Abrindo o arquivo binário no modo de leitura e escrita
-
+    // Abrindo o arquivo binário no modo de leitura e escrita
+    FILE *pontArqBin = fopen(nomeArqBin, "rb+");
     if (pontArqBin == NULL)
     {
         mensagem_erro();
@@ -232,7 +266,8 @@ void funcionalidade5()
 
     for (int i = 0; i < quantDados; i++)
     {
-        entrada = ler_entrada_insert(); // Lê a entrada do usuário para inserir um novo registro
+        // Lê a entrada do usuário para inserir um novo registro
+        entrada = ler_entrada_insert();
 
         if (entrada == NULL)
         {
@@ -249,7 +284,8 @@ void funcionalidade5()
             return;
         }
 
-        apaga_entrada(&entrada); // Libera a memória alocada para a entrada
+        // Libera a memória alocada para a entrada
+        apaga_entrada(&entrada);
     }
 
     fclose(pontArqBin);

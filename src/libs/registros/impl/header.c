@@ -29,12 +29,10 @@ struct header_
 };
 
 /* header_criar():
-Cria uma struct do tipo HEADER e a inicializa
-Parâmetros: ponteiros para strings (descrições do header)
+Aloca memória para uma struct do tipo HEADER e a inicializa
 Retorna: ponteiro para a struct do tipo header
 */
-HEADER *header_criar(char *descIdent, char *descYear, char *descFinLoss, char *descCountry,
-                     char *descType, char *descTargInd, char *descDef)
+HEADER *header_criar()
 {
     HEADER *novoHeader = (HEADER *)malloc(sizeof(HEADER)); // Alocando dinâmicamente uma struct do tipo HEADER
     if (novoHeader == NULL)
@@ -55,15 +53,62 @@ HEADER *header_criar(char *descIdent, char *descYear, char *descFinLoss, char *d
     novoHeader->codDescreveDefense = '4';
 
     // Strings
-    strncpy(novoHeader->descreveIdentificador, descIdent, TAM_DESC_ID);
-    strncpy(novoHeader->descreveYear, descYear, TAM_DESC_YEAR);
-    strncpy(novoHeader->descreveFinancialLoss, descFinLoss, TAM_DESC_FIN_LOSS);
-    strncpy(novoHeader->descreveCountry, descCountry, TAM_DESC_COUNTRY);
-    strncpy(novoHeader->descreveType, descType, TAM_DESC_TYPE);
-    strncpy(novoHeader->descreveTargetIndustry, descTargInd, TAM_DESC_TGT_IND);
-    strncpy(novoHeader->descreveDefense, descDef, TAM_DESC_DEF);
+    strcpy(novoHeader->descreveIdentificador, "NADA CONSTA");
+    strcpy(novoHeader->descreveYear, "NADA CONSTA");
+    strcpy(novoHeader->descreveFinancialLoss, "NADA CONSTA");
+    strcpy(novoHeader->descreveCountry, "NADA CONSTA");
+    strcpy(novoHeader->descreveType, "NADA CONSTA");
+    strcpy(novoHeader->descreveTargetIndustry, "NADA CONSTA");
+    strcpy(novoHeader->descreveDefense, "NADA CONSTA");
 
     return novoHeader; // Retornando ponteiro para HEADER
+}
+
+/* header_set():
+Define os campos de uma struct do tipo header. Se uma struct não for fornecida, cria uma.
+Parâmetros: valores para os campos do header
+Retorna: ponteiro para a struct do tipo header
+*/
+HEADER *header_set(HEADER *header, int status, long int topo,
+                   long int proxByteOffset, int nroRegArq,
+                   int nroRegRem, char *descIdent,
+                   char *descYear, char *descFinLoss,
+                   char *descCountry, char *descType,
+                   char *descTargInd, char *descDef)
+{
+    if (header == NULL)
+        header = header_criar();
+
+    /* INICIALIZANDO O HEADER */
+    // Campos de valor variável
+    if (status != -2)
+        header->status = status + '0'; // Conversão int -> char
+    if (topo != -2)
+        header->topo = topo;
+    if (proxByteOffset != -2)
+        header->proxByteOffset = proxByteOffset;
+    if (nroRegArq != -2)
+        header->nroRegArq = nroRegArq;
+    if (nroRegRem != -2)
+        header->nroRegRem = nroRegRem;
+
+    // Strings
+    if (descIdent != NULL)
+        strncpy(header->descreveIdentificador, descIdent, TAM_DESC_ID);
+    if (descYear != NULL)
+        strncpy(header->descreveYear, descYear, TAM_DESC_YEAR);
+    if (descFinLoss != NULL)
+        strncpy(header->descreveFinancialLoss, descFinLoss, TAM_DESC_FIN_LOSS);
+    if (descCountry != NULL)
+        strncpy(header->descreveCountry, descCountry, TAM_DESC_COUNTRY);
+    if (descType != NULL)
+        strncpy(header->descreveType, descType, TAM_DESC_TYPE);
+    if (descTargInd != NULL)
+        strncpy(header->descreveTargetIndustry, descTargInd, TAM_DESC_TGT_IND);
+    if (descDef != NULL)
+        strncpy(header->descreveDefense, descDef, TAM_DESC_DEF);
+
+    return header; // Retornando ponteiro para HEADER
 }
 
 /* header_apagar():
@@ -81,122 +126,54 @@ void header_apagar(HEADER **header)
     return;
 }
 
-/* header_set_status():
-Define o campo de status de um header pré-existente
-Parâmetros: ponteiro para o header, status a ser definido
+/* header_get_int():
+Retorna o valor de um campo int
+Parâmetros: ponteiro pra struct do tipo header, inteiro de 1 a 2 (campo)
+    1: nroRegArq
+    2: nroRegRem
+Retorna: valor do campo (-1 se não encontrado ou header nulo)
 */
-void header_set_status(HEADER *header, char status)
-{
-    if (header == NULL)
-        return;
-
-    header->status = status; // Definindo o novo status
-    return;
-}
-
-/* header_set_proxByteOffset()
-Define o campo proxByteOffset de um header
-Parâmetros: ponteiro para header, valor do próximo byte offset livre
-*/
-void header_set_proxByteOffset(HEADER *header, long int proxByOff)
-{
-    if (header == NULL)
-        return;
-
-    header->proxByteOffset = proxByOff;
-    return;
-}
-
-/* header_set_nroRegArq()
-Define o campo nroRegArq de um header
-Parâmetros: ponteiro para header, quantidade de registros no arquivos
-Retorno: false se header nulo, true caso contrário
-*/
-void header_set_nroRegArq(HEADER *header, int nroRegAq)
-{
-    if (header == NULL)
-        return;
-
-    header->nroRegArq = nroRegAq;
-    return;
-}
-
-/* header_get_nroRegArq()
-Retorna o valor do campo nroRegArq de uma struct header
-Parâmetros: ponteiro para struct do tipo header
-Retorna: valor do campo nroRegArq da struct (-1 se header == NULL)
-*/
-int header_get_nroRegArq(HEADER *header)
+int header_get_int(HEADER *header, int campo)
 {
     if (header == NULL)
         return -1;
 
-    return header->nroRegArq;
+    switch (campo)
+    {
+    case 1:
+        return header->nroRegArq;
+    case 2:
+        return header->nroRegRem;
+    default:
+        break;
+    }
+
+    return -1;
 }
 
-/* header_get_topo():
-Retorna o valor do campo topo de uma struct header
-Parâmetros: ponteiro para struct do tipo header
-Retorna: valor do campo topo da struct (-1 se header == NULL)
+/* header_get_longint():
+Retorna o valor de um campo long int
+Parâmetros: ponteiro pra struct do tipo header, inteiro de 1 a 2 (campo)
+    1: topo
+    2: proxByteOffset
+Retorna: valor do campo (-1 se não encontrado ou header nulo)
 */
-long int header_get_topo(HEADER *header)
+long int header_get_longint(HEADER *header, int campo)
 {
     if (header == NULL)
         return -1;
 
-    return header->topo;
-}
+    switch (campo)
+    {
+    case 1:
+        return header->topo;
+    case 2:
+        return header->proxByteOffset;
+    default:
+        break;
+    }
 
-/* header_set_topo():
-Define o campo topo de um header pré-existente
-Parâmetros: ponteiro para o header, valor do topo a ser definido
-*/
-void header_set_topo(HEADER *header, long int topo)
-{
-    if (header == NULL)
-        return;
-
-    header->topo = topo;
-    return;
-}
-
-/* header_get_nroRegRem():
-Retorna o valor do campo nroRegRem de uma struct header
-Parâmetros: ponteiro para struct do tipo header
-Retorna: valor do campo nroRegRem da struct (-1 se header == NULL)
-*/
-int header_get_nroRegRem(HEADER *header)
-{
-    if (header == NULL)
-        return -1;
-
-    return header->nroRegRem;
-}
-
-/* header_set_nroRegRem():
-Define o campo nroRegRem de um header pré-existente
-Parâmetros: ponteiro para o header, quantidade de registros removidos a ser definida
-*/
-void header_set_nroRegRem(HEADER *header, int nroRegRem)
-{
-    if (header == NULL)
-        return;
-
-    header->nroRegRem = nroRegRem;
-    return;
-}
-
-/* header_get_proxByteOffset():
-Retorna o valor do campo proxByteOffset de uma struct header
-Parâmetros: ponteiro para struct do tipo header
-Retorna: valor do campo proxByteOffset da struct (-1 se header == NULL)
-*/
-long int header_get_proxByteOffset(HEADER *header)
-{
-    if (header == NULL)
-        return -1;
-
-    return header->proxByteOffset;
+    return -1;
 }
 
 /* header_get_descricao():
@@ -282,7 +259,8 @@ HEADER *header_ler(FILE *pontArq, HEADER *header)
 
 /* header_escrever():
 Escreve um header passado no arquivo binário
-Parâmetros: ponteiro para um arquivo, ponteiro para um header e valor booleano (true = escrever string semanticas, false = escrever somente struct)
+Parâmetros: ponteiro para um arquivo, ponteiro para um header e valor booleano
+(true = escrever string semanticas, false = escrever somente struct)
 */
 void header_escrever(FILE *pontArq, HEADER *headerArq, bool semantico)
 {
@@ -336,7 +314,11 @@ void header_escrever(FILE *pontArq, HEADER *headerArq, bool semantico)
     return;
 }
 
-void print_header (HEADER *header)
+/* print_header():
+Imprime os campos variáveis de uma struct header
+Parâmetros: ponteiro para header
+*/
+void print_header(HEADER *header)
 {
     if (header == NULL)
     {
@@ -350,5 +332,5 @@ void print_header (HEADER *header)
     printf("Próximo Byte Offset: %ld\n", header->proxByteOffset);
     printf("Número de Registros no Arquivo: %d\n", header->nroRegArq);
     printf("Número de Registros Removidos: %d\n", header->nroRegRem);
-    printf("\n");   
+    printf("\n");
 }

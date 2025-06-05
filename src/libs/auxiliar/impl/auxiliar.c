@@ -143,9 +143,10 @@ void ler_nome_arquivo(char *nomeArquivo)
 /* ler_entrada_insert()
 Lê a entrada do usuário para inserir um novo registro
 Parâmetro: nenhum
-Retorna: um ponteiro para um vetor de strings (cada string representa um campo do registro)
+Retorna: um ponteiro para um vetor de strings
+(cada string representa um campo do registro)
 */
-char ** ler_entrada_insert()
+char **ler_entrada_insert()
 {
     char **entrada = (char **)malloc(7 * sizeof(char *));
 
@@ -157,8 +158,9 @@ char ** ler_entrada_insert()
 
     for (int i = 0; i < 7; i++)
     {
-        entrada[i] = (char *)malloc(TAM_MAX_STR * sizeof(char)); // Aloca memória para cada string
-        
+        // Aloca memória para cada string
+        entrada[i] = (char *)malloc(TAM_MAX_STR * sizeof(char));
+
         if (entrada[i] == NULL)
         {
             mensagem_erro();
@@ -169,9 +171,11 @@ char ** ler_entrada_insert()
             free(entrada);
             return NULL;
         }
-        
-        scanf("%s", entrada[i]); // Lê a string do usuário
-        entrada[i] = tira_aspas(entrada[i]); // Remove aspas se existirem
+
+        // Lê a string do usuário
+        scanf("%s", entrada[i]);
+        // Remove aspas se existirem
+        entrada[i] = tira_aspas(entrada[i]);
         if (strcmp(entrada[i], "NULO") == 0)
         {
             entrada[i] = NULL;
@@ -182,7 +186,7 @@ char ** ler_entrada_insert()
 
 /* apaga_entrada():
 Desaloca a memória alocada para a entrada e define o ponteiro para NULL
-Parâmetro: ponteiro para ponteiro de ponteiro de char (entrada) 
+Parâmetro: ponteiro para ponteiro de ponteiro de char (entrada)
 Retorna: nenhum
 */
 void apaga_entrada(char ***entrada)
@@ -207,11 +211,12 @@ void apaga_entrada(char ***entrada)
 /* tira_aspas()
 Remove aspas do início e do fim de uma string, se existirem
 Parâmetro: ponteiro para char (string)
-Retorna: ponteiro para a nova string sem aspas ou a string original se não tiver aspas
+Retorna: ponteiro para a nova string sem aspas ou
+a string original se não tiver aspas
 */
 char *tira_aspas(char *str)
 {
-    if (str == NULL) 
+    if (str == NULL)
     {
         mensagem_erro();
         return NULL;
@@ -222,8 +227,9 @@ char *tira_aspas(char *str)
 
     if (len > 1 && str[0] == '"' && str[len - 1] == '"')
     {
-        char *temp = (char *)malloc(len - 1); // Aloca memória para a nova string sem aspas
-    
+        // Aloca memória para a nova string sem aspas
+        char *temp = (char *)malloc(len - 1);
+
         if (temp == NULL)
         {
             mensagem_erro();
@@ -237,7 +243,6 @@ char *tira_aspas(char *str)
     }
 
     return str; // Retorna a string original se não tiver aspas
-
 }
 
 /*FUNÇÃO FORNECIDA PARA CORREÇÃO*/

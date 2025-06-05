@@ -20,7 +20,8 @@ Parâmetro: ponteiro duplo para struct do tipo busca
 void busca_apagar(BUSCA **busca);
 
 /* busca_ler():
-Lê um input do usuário e preenche uma struct busca. Se a struct não existir, cria uma
+Lê um input do usuário e preenche uma struct busca.
+Se a struct não existir, cria uma
 Parâmetros: ponteiro para struct busca
 Retorna: ponteiro para struct busca (NULL se mal sucedido)
 */
