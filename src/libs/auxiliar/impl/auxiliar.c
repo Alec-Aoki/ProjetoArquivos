@@ -140,17 +140,15 @@ void ler_nome_arquivo(char *nomeArquivo)
     return;
 }
 
-/* ler_entrada_insert()
-Lê a entrada do usuário para inserir um novo registro
+/* aloca_array_string()
+Aloca memória para um vetor de strings, onde cada string tem tamanho TAM_MAX_STR
 Parâmetro: nenhum
-Retorna: um ponteiro para um vetor de strings
-(cada string representa um campo do registro)
+Retorna: um ponteiro para o vetor de strings alocado ou NULL se falhar
 */
-char **ler_entrada_insert()
+char ** aloca_array_string ()
 {
-    char **entrada = (char **)malloc(7 * sizeof(char *));
-
-    if (entrada == NULL)
+    char **array = (char **)malloc(sizeof(char *) * 7);
+    if (array == NULL)
     {
         mensagem_erro();
         return NULL;
@@ -158,29 +156,55 @@ char **ler_entrada_insert()
 
     for (int i = 0; i < 7; i++)
     {
-        // Aloca memória para cada string
-        entrada[i] = (char *)malloc(TAM_MAX_STR * sizeof(char));
-
-        if (entrada[i] == NULL)
+        array[i] = (char *)malloc(sizeof(char) * TAM_MAX_STR);
+        if (array[i] == NULL)
         {
             mensagem_erro();
-            for (int j = 0; j < i; j++)
-            {
-                free(entrada[j]);
-            }
-            free(entrada);
             return NULL;
         }
-
-        // Lê a string do usuário
-        scanf("%s", entrada[i]);
-        // Remove aspas se existirem
-        entrada[i] = tira_aspas(entrada[i]);
-        if (strcmp(entrada[i], "NULO") == 0)
-        {
-            entrada[i] = NULL;
-        }
     }
+
+    return array;
+}
+
+/* ler_entrada_insert()
+Lê a entrada do usuário para inserir um novo registro
+Parâmetro: nenhum
+Retorna: um ponteiro para um vetor de strings (cada string representa um campo do registro)
+*/
+char ** ler_entrada_insert()
+{
+    getchar();
+    char **entrada = aloca_array_string();
+    if (entrada == NULL)
+    {
+        mensagem_erro();
+        return NULL; // Erro ao alocar memória
+    }
+    
+    char buffer[TAM_MAX_STR];
+    char *ptr;
+
+    fgets(buffer, sizeof(buffer), stdin);
+    buffer[strcspn(buffer, "\n")] = '\0';
+    ptr = buffer;
+
+    char *tok = strsep(&ptr, " ");
+    int j = 0; // Contador para os campos
+    while (tok != NULL && j < 7)
+    {
+        if (strcmp(tok, "NULO") == 0)
+        {
+            entrada[j] = NULL; // Define como NULL se for "NULO"
+        }
+        else
+        {
+            strcpy(entrada[j], tira_aspas(tok)); // Remove aspas e copia para o campo
+        }
+        j++;
+        tok = strsep(&ptr, " ");
+    }
+
     return entrada;
 }
 

@@ -250,9 +250,6 @@ void funcionalidade5()
     char nomeArqBin[TAM_MAX_STR];
     ler_nome_arquivo(nomeArqBin);
 
-    // Quantidade de dados a serem inseridos
-    int quantDados;
-    scanf("%d", &quantDados);
 
     // Abrindo o arquivo binário no modo de leitura e escrita
     FILE *pontArqBin = fopen(nomeArqBin, "rb+");
@@ -261,6 +258,10 @@ void funcionalidade5()
         mensagem_erro();
         return;
     }
+
+    // Quantidade de dados a serem inseridos
+    int quantDados;
+    scanf("%d", &quantDados);
 
     char **entrada = NULL;
 

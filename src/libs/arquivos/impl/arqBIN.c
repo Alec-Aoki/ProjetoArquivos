@@ -342,6 +342,5 @@ bool arqBIN_insert_dado(FILE *pontArqBIN, char **entrada)
 
     dado_apagar(&dado);
     header_apagar(&headerArq);
-    fclose(pontArqBIN);
     return inserido; // Retorna true se o dado foi inserido, false caso contrário
 }
