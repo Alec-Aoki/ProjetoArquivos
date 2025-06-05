@@ -209,9 +209,6 @@ void funcionalidade5()
     char nomeArqBin[TAM_MAX_STR];
     ler_nome_arquivo(nomeArqBin);
 
-    int quantDados;
-    scanf("%d", &quantDados);
-
     FILE *pontArqBin = fopen(nomeArqBin, "rb+"); // Abrindo o arquivo binário no modo de leitura e escrita
 
     if (pontArqBin == NULL)
@@ -220,11 +217,17 @@ void funcionalidade5()
         return;
     }
 
+    int quantDados;
+    scanf(" %d", &quantDados);
+
     char **entrada = NULL;
 
     for (int i = 0; i < quantDados; i++)
     {
+        
         entrada = ler_entrada_insert(); // Lê a entrada do usuário para inserir um novo registro
+
+        printf("Entrada lida\n");
 
         if (entrada == NULL)
         {
@@ -237,10 +240,12 @@ void funcionalidade5()
         {
             mensagem_erro();
             apaga_entrada(&entrada);
+            entrada = NULL;
             fclose(pontArqBin);
             return;
         }
 
+        printf("Dado inserido com sucesso!\n");
         apaga_entrada(&entrada); // Libera a memória alocada para a entrada
     }
 

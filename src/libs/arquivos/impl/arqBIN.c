@@ -282,6 +282,7 @@ bool arqBIN_insert_dado(FILE *pontArqBIN, char **entrada)
         return false;
     }
 
+    fseek(pontArqBIN, 0, SEEK_SET); // Posiciona o ponteiro no início do arquivo
     HEADER *headerArq = NULL;
     headerArq = header_ler(pontArqBIN, headerArq);
 
@@ -370,6 +371,5 @@ bool arqBIN_insert_dado(FILE *pontArqBIN, char **entrada)
 
     dado_apagar(&dado);
     header_apagar(&headerArq);
-    fclose(pontArqBIN);
     return inserido; // Retorna true se o dado foi inserido, false caso contrário
 }
