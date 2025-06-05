@@ -66,7 +66,7 @@ DADO *dado_criar()
 
     /* INICIALIZANDO A STRUCT */
     // Campos de tamanho fixo
-    novoRegistro->removido = 'a';
+    novoRegistro->removido = 0 + '0';
     novoRegistro->tamanhoRegistro = -1;
     novoRegistro->prox = -1;
     novoRegistro->idAttack = -1;
@@ -86,6 +86,7 @@ DADO *dado_criar()
 
 /* dado_set():
 Define campos de uma struct dado. Caso uma struct não seja fornecida, cria uma
+Caso -2 ou NULL seja fornecido, não altera o campo da struct.
 Parâmetros: ponteiro para dado valores dos campos da struct
 Retorna: ponteiro para dado
 */
@@ -93,22 +94,26 @@ DADO *dado_set(DADO *dado, int removido, int tamReg, long int prox, int idAttack
                char *country, char *attackType, char *targetInd, char *defMec)
 {
     // Alocando memória na heap para a struct
+    bool dadoNovo = false;
     if (dado == NULL)
+    {
+        dadoNovo = true;
         dado = dado_criar();
+    }
 
     /* INICIALIZANDO A STRUCT */
     // Campos de tamanho fixo
-    if (removido != -1)
+    if (removido != -2)
         dado->removido = removido + '0'; // Conversão int -> char
-    if (tamReg != -1)
+    if (tamReg != -2)
         dado->tamanhoRegistro = tamReg;
-    if (prox != -1)
+    if (prox != -2)
         dado->prox = prox;
-    if (idAttack != -1)
+    if (idAttack != -2)
         dado->idAttack = idAttack;
-    if (year != -1)
+    if (year != -2)
         dado->year = year;
-    if (finLoss != -1)
+    if (finLoss != -2)
         dado->financialLoss = finLoss;
 
     // Campos de tamanho variável, COM delimitadores
@@ -121,7 +126,8 @@ DADO *dado_set(DADO *dado, int removido, int tamReg, long int prox, int idAttack
     if (defMec != NULL)
         strcpy(dado->defenseMechanism, formata_string_registro(defMec, "4"));
 
-    dado_atualizar_tamReg(dado); // Atualizando tamanho do registro
+    if (dadoNovo)
+        dado_atualizar_tamReg(dado); // Atualizando tamanho do registro somente se ele  acabou de ser criado
 
     return dado; // Retorna ponteiro para struct DADO
 }
@@ -138,6 +144,19 @@ void dado_apagar(DADO **registro)
     // Desaloca memória da estrututa DADO e define ponteiro para NULL
     free(*registro);
     *registro = NULL;
+}
+
+/* dado_get_prox():
+Retorna o valor do campo prox de um dado
+Parâmetros: ponteiro pra struct do tipo dado
+Retorna: valor do campo (-1 se dado nulo)
+*/
+long int dado_get_prox(DADO *dado)
+{
+    if (dado == NULL)
+        return -1;
+
+    return dado->prox;
 }
 
 /* dado_get_string():
@@ -171,9 +190,10 @@ char *dado_get_string(DADO *dado, int campo)
 
 /* dado_get_int():
 Retorna o valor de um campo do tipo int
-Parâmetros: ponteiro pra struct do tipo dado, inteiro de 1 a 2 (campo)
+Parâmetros: ponteiro pra struct do tipo dado, inteiro de 1 a 3 (campo)
     1: idAttack
     2: year
+    3: tamanhoRegistro
 Retorna: valor do campo (-1 se mal sucedido)
 */
 int dado_get_int(DADO *dado, int campo)
@@ -187,6 +207,8 @@ int dado_get_int(DADO *dado, int campo)
         return dado->idAttack;
     case 2:
         return dado->year;
+    case 3:
+        return dado->tamanhoRegistro;
     default:
         return -1;
     }
@@ -205,19 +227,6 @@ float dado_get_finLoss(DADO *dado)
     return dado->financialLoss;
 }
 
-/* dado_get_tamReg():
-Retorna o valor do campo tamReg de um dado
-Parâmetros: ponteiro pra struct do tipo dado
-Retorna: valor do campo (-1 se dado nulo)
-*/
-int dado_get_tamReg(DADO *dado)
-{
-    if (dado == NULL)
-        return -1;
-
-    return dado->tamanhoRegistro;
-}
-
 /* dado_get_removido():
 Retorna o valor do campo removido de um dado
 Parâmetros: ponteiro pra struct do tipo dado
@@ -229,58 +238,6 @@ char dado_get_removido(DADO *dado)
         return 'a'; // Erro
 
     return dado->removido;
-}
-
-/* dado_set_removido():
-Define o valor do campo removido de um dado
-Parâmetros: ponteiro pra struct do tipo dado, char removido
-Retorna: void
-*/
-void dado_set_removido(DADO *dado, char removido)
-{
-    if (dado == NULL)
-        return;
-
-    dado->removido = removido;
-}
-
-/* dado_get_prox():
-Retorna o valor do campo prox de um dado
-Parâmetros: ponteiro pra struct do tipo dado
-Retorna: valor do campo (-1 se dado nulo)
-*/
-long int dado_get_prox(DADO *dado)
-{
-    if (dado == NULL)
-        return -1;
-
-    return dado->prox;
-}
-
-/* dado_set_prox():
-Define o valor do campo prox de um dado
-Parâmetros: ponteiro pra struct do tipo dado, long int prox
-Retorna: void
-*/
-void dado_set_prox(DADO *dado, long int prox)
-{
-    if (dado == NULL)
-        return;
-
-    dado->prox = prox;
-}
-
-/* dado_set_tamReg():
-Define o valor do campo tamReg de um dado
-Parâmetros: ponteiro pra struct do tipo dado, inteiro tamReg
-Retorna: void
-*/
-void dado_set_tamReg(DADO *dado, int tamReg)
-{
-    if (dado == NULL)
-        return;
-
-    dado->tamanhoRegistro = tamReg;
 }
 
 /* dado_imprimir():
@@ -379,10 +336,11 @@ DADO *dado_ler(FILE *pontArq, DADO *dado, int byteOffset)
 }
 
 /*dado_escrever():
-Escreve os campos de uma struct dado em um arquivo
-Parâmetros: ponteiro para arquivo, ponteiro para uma struct dado
+Escreve os campos de uma struct dado em um arquivo.
+Caso lixo > 0, escreve aquela quantidade de lixo em seguida
+Parâmetros: ponteiro para arquivo, ponteiro para uma struct dado, inteiro
 */
-void dado_escrever(FILE *pontArq, DADO *dado)
+void dado_escrever(FILE *pontArq, DADO *dado, int lixo)
 {
     // Verifica a corretude dos ponteiros
     if ((pontArq == NULL) || (dado == NULL))
@@ -406,26 +364,12 @@ void dado_escrever(FILE *pontArq, DADO *dado)
     if (strcmp(dado->defenseMechanism, "NADA CONSTA") != 0)
         fwrite(dado->defenseMechanism, sizeof(char), strlen(dado->defenseMechanism), pontArq);
 
-    return;
-}
-
-/* dado_escrever_lixo():
-Escreve um dado em um arquivo, mas com dados inválidos ou lixo
-Parâmetros: ponteiro para arquivo, ponteiro para uma struct dado, inteiro que indica a quantidade de lixo a ser escrito
-Retorna: void
-*/
-void dado_escrever_lixo(FILE *pontArq, DADO *dado, int lixo)
-{
-    // Verifica a corretude dos ponteiros
-    if ((pontArq == NULL) || (dado == NULL))
-        return;
-
-    dado_escrever(pontArq, dado);
-
     // Escreve o lixo no arquivo binário
     for (int i = 0; i < lixo; i++)
     {
         char lixoChar = '$';
         fwrite(&lixoChar, sizeof(char), 1, pontArq);
     }
+
+    return;
 }

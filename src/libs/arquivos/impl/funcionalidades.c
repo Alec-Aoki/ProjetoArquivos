@@ -62,7 +62,7 @@ void funcionalidade1()
 
         arqBIN_escrever_dado(pontArqBin, dadoCSV);
         quantRegDados++;
-        byteOffsetPonteiro += dado_get_tamReg(dadoCSV) + 5;
+        byteOffsetPonteiro += dado_get_int(dadoCSV, 3) + 5;
 
         dado_apagar(&dadoCSV);
     }
@@ -127,7 +127,8 @@ void funcionalidade3()
 
     BUSCA *busca = NULL;
     HEADER *headerArq = NULL;
-    bool respostaEncontrada = false;
+    long int byteOffsetEncontrado = -1;
+    DADO *dadoEncontrado = NULL;
 
     headerArq = header_ler(pontArqBin, headerArq);
 
@@ -135,8 +136,15 @@ void funcionalidade3()
     {
         busca = busca_ler(busca); // Lendo parâmetros da busca
 
-        if (!arqBIN_buscar_dado(pontArqBin, busca)) // Buscando dados no arquivo .bin
-            mensagem_regInexistente();              // Não foi encontrado um dado que obedece os campos de busca
+        byteOffsetEncontrado = arqBIN_buscar_byteOffset(pontArqBin, busca, headerArq);
+        if (byteOffsetEncontrado == -1) // Buscando dados no arquivo .bin
+            mensagem_regInexistente();  // Não foi encontrado um dado que obedece os campos de busca
+        else
+        {
+            dadoEncontrado = dado_ler(pontArqBin, dadoEncontrado, byteOffsetEncontrado);
+            dado_imprimir(headerArq, dadoEncontrado);
+            dado_apagar(&dadoEncontrado);
+        }
 
         printf("**********\n");
 
