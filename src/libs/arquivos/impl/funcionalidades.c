@@ -140,36 +140,49 @@ void funcionalidade3()
     int quantBuscas;
     scanf("%d", &quantBuscas);
 
-    BUSCA *busca = NULL;                // Ponteiro para struct busca (reutilizável)
-    HEADER *headerArq = NULL;           // Ponteiro para header do arq. bin.
-    long int byteOffsetEncontrado = -1; // Reutilizável
-    DADO *dadoEncontrado = NULL;        // Reutilizável
+    BUSCA *busca = NULL;           // Ponteiro para struct busca (reutilizável)
+    HEADER *headerArq = NULL;      // Ponteiro para header do arq. bin.
+    long int byteOffsetEncontrado; // Reutilizável
+    DADO *dadoEncontrado = NULL;   // Reutilizável
 
     // Lendo header do arquivo
     headerArq = header_ler(pontArqBin, headerArq);
+    long int byteOffsetFimArq = header_get_longint(headerArq, 2);
 
     // Lendo cada busca do usuário e efetuando-a
     for (int i = 0; i < quantBuscas; i++)
     {
+        byteOffsetEncontrado = -1;
         busca = busca_ler(busca); // Lendo parâmetros da busca
 
         // Buscando no arq. .bin
-        byteOffsetEncontrado = arqBIN_buscar_byteOffset(pontArqBin, busca, headerArq);
-        if (byteOffsetEncontrado == -1)
-            mensagem_regInexistente(); // Não foi encontrado um dado que obedece os campos de busca
-        else
+        while (byteOffsetEncontrado < byteOffsetFimArq)
         {
-            // Lê o dado no byteOffset encontrado
-            dadoEncontrado = dado_ler(pontArqBin, dadoEncontrado, byteOffsetEncontrado);
-            // Imprime-o
-            dado_imprimir(headerArq, dadoEncontrado);
-            // Reseta a struct
-            dado_apagar(&dadoEncontrado);
+
+            byteOffsetEncontrado = arqBIN_buscar_byteOffset(pontArqBin, busca, headerArq, byteOffsetEncontrado);
+            if (byteOffsetEncontrado == -1)
+            {
+                mensagem_regInexistente(); // Não foi encontrado um dado que obedece os campos de busca
+                break;
+            }
+            else if (byteOffsetEncontrado == -2 || byteOffsetEncontrado == -3)
+                break; // A busca chegou ao fim do arq.
+            else
+            {
+                // Lê o dado no byteOffset encontrado
+                dadoEncontrado = dado_ler(pontArqBin, dadoEncontrado, byteOffsetEncontrado);
+                // Atualizando (avançando no arq.) com o tam. do dado
+                byteOffsetEncontrado += dado_get_int(dadoEncontrado, 3) + 5;
+                // Imprime o dado encontrado
+                dado_imprimir(headerArq, dadoEncontrado);
+                printf("\n");
+                // Reseta a struct
+                dado_apagar(&dadoEncontrado);
+            }
         }
+        printf("**********\n");
 
-        printf("\n**********\n");
-
-        // Reseta a struct
+        // Reseta a struct busca
         busca_apagar(&busca);
     }
 
@@ -249,7 +262,6 @@ void funcionalidade5()
 {
     char nomeArqBin[TAM_MAX_STR];
     ler_nome_arquivo(nomeArqBin);
-
 
     // Abrindo o arquivo binário no modo de leitura e escrita
     FILE *pontArqBin = fopen(nomeArqBin, "rb+");

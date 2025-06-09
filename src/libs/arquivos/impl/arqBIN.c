@@ -107,11 +107,18 @@ void arqBIN_imprimir(FILE *pontArqBIN)
 }
 
 /* arqBIN_buscar_byteOffset():
-Busca um dado que satisfaz os campos num arquivo .bin e o remove logicamente
-Parâmetro: ponteiro para arquivo, ponteiro para struct busca
-Retorna: o byteOffset do dado encontrado ou -1 se não encontrado
+Busca um dado que satisfaz os campos num arquivo .bin
+a partir do byteOffset passado. Caso o byteOffset não
+seja válido, busca do começo do arquivo.
+Parâmetro: ponteiro para arquivo, ponteiro para struct busca,
+byteOffset do qual a busca deverá iniciar
+Retorna: o byteOffset do dado encontrado ou
+-1 caso não tenha sido encontrado no arq. inteiro
+-2 caso não tenha sido encontrado a partir do byteOffset fornecido
+-3 caso o byteOffset passado tenha sido maior que o arq.
 */
-long int arqBIN_buscar_byteOffset(FILE *pontArqBIN, BUSCA *busca, HEADER *headerArq)
+long int arqBIN_buscar_byteOffset(FILE *pontArqBIN, BUSCA *busca,
+                                  HEADER *headerArq, long int byteOffset)
 {
     if (pontArqBIN == NULL || busca == NULL)
     {
@@ -125,14 +132,23 @@ long int arqBIN_buscar_byteOffset(FILE *pontArqBIN, BUSCA *busca, HEADER *header
         return -1;
     }
 
+    bool buscaInicio = false; // Flag para mandar a mensagem de erro correta
     int quantRegArq = header_get_int(headerArq, 1);
+    // Campo proxByteOffset do header
+    long int byteOffsetFimArq = header_get_longint(headerArq, 2);
+    if (byteOffset > byteOffsetFimArq)
+        return -3; // Erro -3 (Tentou buscar após o fim do arquivo)
 
-    // Inicializado com o tamanho do header
-    long int byteOffset = BYTEOFFSET_HEADER;
+    // Caso não seja fornecido, começa do início do arquivo
+    if (byteOffset < 0)
+    {
+        byteOffset = BYTEOFFSET_HEADER;
+        buscaInicio = true;
+    }
     DADO *dado = NULL; // Reutilizável
 
     // Loop para ler e verificar dados até que o arquivo ou a quantidade de respostas acabe
-    while (quantRegArq > 0)
+    while ((quantRegArq > 0) && (byteOffset < byteOffsetFimArq))
     {
         dado = dado_ler(pontArqBIN, dado, byteOffset); // Lendo dado do arquivo
         if (dado == NULL)
@@ -150,7 +166,10 @@ long int arqBIN_buscar_byteOffset(FILE *pontArqBIN, BUSCA *busca, HEADER *header
         quantRegArq--;
     }
 
-    return -1;
+    if (buscaInicio)
+        return -1; // Erro -1 (Não encontrou no arquivo inteiro)
+                   // Else
+    return -2;     // Erro -2 (Não encontrou a partir do byteOffset fornecido)
 }
 
 /* arqBIN_delete_dado():
@@ -178,7 +197,7 @@ bool arqBIN_delete_dado(FILE *pontArqBIN, BUSCA *busca, HEADER *headerArq)
     int quantRegRem = header_get_int(headerArq, 2);
 
     // Buscar registro que satisfaz os campos de busca
-    long int byteOffset = arqBIN_buscar_byteOffset(pontArqBIN, busca, headerArq);
+    long int byteOffset = arqBIN_buscar_byteOffset(pontArqBIN, busca, headerArq, -1);
 
     if (byteOffset == -1)
     {
