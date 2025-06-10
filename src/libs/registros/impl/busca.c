@@ -64,6 +64,20 @@ void busca_apagar(BUSCA **busca)
     return;
 }
 
+/* busca_get_quaisCampos():
+Retorna o valor de um campo do vetor quaisCampos
+de uma struct busca
+Parâmetros: ponteiro para struct, inteiro (campo)
+Retorna: inteiro
+*/
+int busca_get_quaisCampos(BUSCA *busca, int campo)
+{
+    if (busca == NULL)
+        return -2;
+
+    return busca->quaisCampos[campo];
+}
+
 /* busca_ler():
 Lê um input do usuário e preenche uma struct busca. Se a struct não existir, cria uma
 Parâmetros: ponteiro para struct busca

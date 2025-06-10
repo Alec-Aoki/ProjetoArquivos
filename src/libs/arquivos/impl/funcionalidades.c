@@ -178,6 +178,10 @@ void funcionalidade3()
                 printf("\n");
                 // Reseta a struct
                 dado_apagar(&dadoEncontrado);
+
+                // Busca pelo campo idAttack e foi encontrado, para a busca
+                if (busca_get_quaisCampos(busca, 0) == 1)
+                    break;
             }
         }
         printf("**********\n");
