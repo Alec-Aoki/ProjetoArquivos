@@ -236,10 +236,7 @@ void funcionalidade4()
         busca = busca_ler(busca); // Lendo parâmetros da busca
 
         // Deletando o dado caso ele seja encontrdo
-        if (!arqBIN_delete_dado(pontArqBin, busca, headerArq))
-        {
-            mensagem_regInexistente(); // Dado não encontrado
-        }
+        arqBIN_delete_dado(pontArqBin, busca, headerArq);
 
         // Resetando struct
         busca_apagar(&busca);
@@ -306,4 +303,6 @@ void funcionalidade5()
     }
 
     fclose(pontArqBin);
+
+    binarioNaTela(nomeArqBin);
 }
