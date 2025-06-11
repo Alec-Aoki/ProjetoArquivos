@@ -41,10 +41,10 @@ BUSCA *busca_criar()
     novaBusca->idAttack = -1;
     novaBusca->year = -1;
     novaBusca->finLoss = -1;
-    strcpy(novaBusca->country, "$");
-    strcpy(novaBusca->attackType, "$");
-    strcpy(novaBusca->targetIndustry, "$");
-    strcpy(novaBusca->defenseMechanism, "$");
+    strcpy(novaBusca->country, "NULO");
+    strcpy(novaBusca->attackType, "NULO");
+    strcpy(novaBusca->targetIndustry, "NULO");
+    strcpy(novaBusca->defenseMechanism, "NULO");
 
     return novaBusca;
 }
@@ -88,7 +88,7 @@ BUSCA *busca_ler(BUSCA *busca)
     if (busca == NULL)
         busca = busca_criar();
 
-    // Buffer para leitura de strings
+    // Buffer para leitura de strings$
     char buffer[256];
     // Byteoffset inicial para leitura dos dados do arquivo
     int byteOffset = BYTEOFFSET_HEADER;
@@ -98,7 +98,7 @@ BUSCA *busca_ler(BUSCA *busca)
     int j = 0;      // Contador para quantCampos
     int tamStr = 0; // Auxiliar
 
-    // Recebendo do usuário quantas respostas (dados) devemos imprimir
+    // Recebendo do usuário quantas campos teremos na busca
     scanf("%d", &(busca->quantCampos));
 
     // Lendo string contendo os campos a serem buscados e seus valores
@@ -147,24 +147,40 @@ BUSCA *busca_ler(BUSCA *busca)
             busca->finLoss = str_to_float(tok);
             break;
         case 3:
-            tamStr = strlen(tok) - 2;
-            strncpy(busca->country, tok + 1, tamStr);
-            busca->country[tamStr] = '\0';
+            if (strcmp(tok, "NULO") == 0)
+                strcpy(busca->country, "NULO");
+            else
+            {
+                tamStr = strlen(tok) - 2;
+                strncpy(busca->country, tok + 1, tamStr);
+            }
             break;
         case 4:
-            tamStr = strlen(tok) - 2;
-            strncpy(busca->attackType, tok + 1, tamStr);
-            busca->attackType[tamStr] = '\0';
+            if (strcmp(tok, "NULO") == 0)
+                strcpy(busca->attackType, "NULO");
+            else
+            {
+                tamStr = strlen(tok) - 2;
+                strncpy(busca->attackType, tok + 1, tamStr);
+            }
             break;
         case 5:
-            tamStr = strlen(tok) - 2;
-            strncpy(busca->targetIndustry, tok + 1, tamStr);
-            busca->targetIndustry[tamStr] = '\0';
+            if (strcmp(tok, "NULO") == 0)
+                strcpy(busca->targetIndustry, "NULO");
+            else
+            {
+                tamStr = strlen(tok) - 2;
+                strncpy(busca->targetIndustry, tok + 1, tamStr);
+            }
             break;
         case 6:
-            tamStr = strlen(tok) - 2;
-            strncpy(busca->defenseMechanism, tok + 1, tamStr);
-            busca->defenseMechanism[tamStr] = '\0';
+            if (strcmp(tok, "NULO") == 0)
+                strcpy(busca->defenseMechanism, "NULO");
+            else
+            {
+                tamStr = strlen(tok) - 2;
+                strncpy(busca->defenseMechanism, tok + 1, tamStr);
+            }
             break;
         }
         // Avançando o contador para a quantidade de campos e voltando ao início do while
@@ -227,4 +243,24 @@ bool busca_comparar(BUSCA *busca, DADO *dado)
     }
 
     return dadoValido;
+}
+
+/*print_busca():
+Imprime todos os campos de uma struct busca
+Parâmetro: ponteiro para busca
+*/
+void print_busca(BUSCA *busca)
+{
+    if (busca == NULL)
+        return;
+
+    printf("idAttack: %d\n", busca->idAttack);
+    printf("year: %d\n", busca->year);
+    printf("finLoss: %.2f\n", busca->finLoss);
+    printf("country: %s\n", busca->country);
+    printf("attackType: %s\n", busca->attackType);
+    printf("targetInd: %s\n", busca->targetIndustry);
+    printf("defMec: %s\n", busca->defenseMechanism);
+
+    return;
 }

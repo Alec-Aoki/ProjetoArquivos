@@ -30,6 +30,9 @@ int main(void)
     case '5': // Funcionalidade 5
         funcionalidade5();
         break;
+    case '6': // Funcionalidade 6
+        funcionalidade6();
+        break;
     }
 
     return 0;

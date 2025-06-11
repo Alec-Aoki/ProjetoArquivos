@@ -33,4 +33,9 @@ Insere um dado no arquivo binário
 */
 void funcionalidade5();
 
+/* funcionalidade6()
+Atualiza um dado no arquivo binário
+*/
+void funcionalidade6();
+
 #endif

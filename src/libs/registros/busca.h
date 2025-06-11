@@ -42,4 +42,10 @@ Retorna: booleano (true se forem iguais, falso se não)
 */
 bool busca_comparar(BUSCA *busca, DADO *dado);
 
+/*print_busca():
+Imprime todos os campos de uma struct busca
+Parâmetro: ponteiro para busca
+*/
+void print_busca(BUSCA *busca);
+
 #endif
