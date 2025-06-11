@@ -8,6 +8,12 @@ de tipo DADO
 
 typedef struct dados_ DADO;
 
+/* dado_atualizar_tamReg():
+Calcula o número de bytes do registro e atualiza na struct
+Parâmetros: Ponteiro para struct
+*/
+void dado_atualizar_tamReg(DADO *registro);
+
 /* dado_criar():
 Aloca memória para uma struct do tipo dado e inicializa seus campos
 Retorna: ponteiro para dado
@@ -92,5 +98,12 @@ Caso lixo > 0, escreve aquela quantidade de lixo em seguida
 Parâmetros: ponteiro para arquivo, ponteiro para uma struct dado, inteiro
 */
 void dado_escrever(FILE *pontArqBin, DADO *dado, int lixo);
+
+/*dado_remover():
+Remove um dado num arq. bin. no byteOffset indicado
+Parâmetro: ponteiro para arquivo, header do arq., byteOffset do dado
+Retorna: true se bem sucedido, mal senão
+*/
+bool dado_remover(FILE *pontArq, HEADER *headerArq, long int byteOffset);
 
 #endif

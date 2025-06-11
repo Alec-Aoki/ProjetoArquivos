@@ -25,11 +25,9 @@ struct dados_
     char defenseMechanism[TAM_MAX_STR]; // Estratégia de defesa usada para resolver o problema
 };
 
-// Função auxiliar
 /* dado_atualizar_tamReg():
 Calcula o número de bytes do registro e atualiza na struct
 Parâmetros: Ponteiro para struct
-Retorna:
 */
 void dado_atualizar_tamReg(DADO *registro)
 {
@@ -117,14 +115,35 @@ DADO *dado_set(DADO *dado, int removido, int tamReg, long int prox, int idAttack
         dado->financialLoss = finLoss;
 
     // Campos de tamanho variável, COM delimitadores
-    if (country != NULL)
-        strcpy(dado->country, formata_string_registro(country, "1"));
-    if (attackType != NULL)
-        strcpy(dado->attackType, formata_string_registro(attackType, "2"));
-    if (targetInd != NULL)
-        strcpy(dado->targetIndustry, formata_string_registro(targetInd, "3"));
-    if (defMec != NULL)
-        strcpy(dado->defenseMechanism, formata_string_registro(defMec, "4"));
+
+    if (country != NULL && strcmp(country, "$") != 0)
+    {
+        if (strcmp(country, "NULO") == 0)
+            strcpy(dado->country, "NADA CONSTA");
+        else
+            strcpy(dado->country, formata_string_registro(country, "1"));
+    }
+    if (attackType != NULL && strcmp(attackType, "$") != 0)
+    {
+        if (strcmp(attackType, "NULO") == 0)
+            strcpy(dado->attackType, "NADA CONSTA");
+        else
+            strcpy(dado->attackType, formata_string_registro(attackType, "2"));
+    }
+    if (targetInd != NULL && strcmp(targetInd, "$") != 0)
+    {
+        if (strcmp(targetInd, "NULO") == 0)
+            strcpy(dado->targetIndustry, "NADA CONSTA");
+        else
+            strcpy(dado->targetIndustry, formata_string_registro(targetInd, "3"));
+    }
+    if (defMec != NULL && strcmp(defMec, "$") != 0)
+    {
+        if (strcmp(defMec, "NULO") == 0)
+            strcpy(dado->defenseMechanism, "NADA CONSTA");
+        else
+            strcpy(dado->defenseMechanism, formata_string_registro(defMec, "4"));
+    }
 
     if (dadoNovo)
         dado_atualizar_tamReg(dado); // Atualizando tamanho do registro somente se ele  acabou de ser criado
@@ -372,4 +391,65 @@ void dado_escrever(FILE *pontArq, DADO *dado, int lixo)
     }
 
     return;
+}
+
+/*dado_remover():
+Remove um dado num arq. bin. no byteOffset indicado
+Parâmetro: ponteiro para arquivo, byteOffset do dado
+Retorna: true se bem sucedido, mal senão
+*/
+bool dado_remover(FILE *pontArq, HEADER *headerArq, long int byteOffset)
+{
+    if (pontArq == NULL || byteOffset < BYTEOFFSET_HEADER)
+        return false; // Erro
+
+    // Lendo header do arquivo caso um não seja fornecido
+    if (headerArq == NULL)
+    {
+        // Posicionando ponteiro do arq. no início
+        fseek(pontArq, 0, SEEK_SET);
+        headerArq = header_ler(pontArq, headerArq);
+    }
+
+    // Campos do header
+    long int topo = header_get_longint(headerArq, 1);
+    long int prox = -1;
+    int quantRegArq = header_get_int(headerArq, 1);
+    int quantRegRem = header_get_int(headerArq, 2);
+
+    // Lendo dado a ser removido
+    DADO *dado = NULL;
+    dado = dado_ler(pontArq, dado, byteOffset);
+    if (dado == NULL)
+    {
+        header_apagar(&headerArq);
+        return false;
+    }
+
+    dado = dado_set(dado, 1, -2, topo, -2, -2, -2,
+                    NULL, NULL, NULL, NULL);
+    // Atualiza o topo para o byteOffset do registro removido
+    topo = byteOffset;
+
+    // Atualizando campos do header
+    quantRegArq--; // Decrementa o número de registros no arquivo
+    quantRegRem++; // Incrementa o número de registros removidos
+    headerArq = header_set(headerArq, 0, topo, -2, quantRegArq, quantRegRem,
+                           NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+
+    // Escrever o dado atualizado no arquivo
+    // Posiciona o ponteiro do arquivo no byteOffset do registro removido
+    fseek(pontArq, byteOffset, SEEK_SET);
+    // Escreve o dado atualizado no arquivo
+    dado_escrever(pontArq, dado, 0);
+
+    // Escreve o header atualizado no arquivo
+    fseek(pontArq, 0, SEEK_SET);
+    headerArq = header_set(headerArq, 1, -2, -2, -2, -2,
+                           NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+    header_escrever(pontArq, headerArq, false);
+
+    dado_apagar(&dado);
+
+    return true;
 }

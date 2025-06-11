@@ -92,11 +92,11 @@ void arqBIN_imprimir(FILE *pontArqBIN)
         {
             dado_imprimir(headerArq, dadoTemp);
             printf("\n");
+            quantRegArq--;
         }
 
         // Atualizando valores
         byteOffset += dado_get_int(dadoTemp, 3) + 5;
-        quantRegArq--;
     }
 
     // Apaga struct reutilizável e header
@@ -175,83 +175,6 @@ long int arqBIN_buscar_byteOffset(FILE *pontArqBIN, BUSCA *busca,
         return -1; // Erro -1 (Não encontrou no arquivo inteiro)
                    // Else
     return -2;     // Erro -2 (Não encontrou a partir do byteOffset fornecido)
-}
-
-/* arqBIN_delete_dado():
-Remove logicamente um dado de um arquivo .bin
-Parâmetro: ponteiro para arquivo, ponteiro para struct busca
-Retorna: booleano (true se removido, falso senão)
-*/
-bool arqBIN_delete_dado(FILE *pontArqBIN, BUSCA *busca, HEADER *headerArq)
-{
-    if (pontArqBIN == NULL || busca == NULL)
-    {
-        mensagem_erro();
-        return false;
-    }
-
-    if (headerArq == NULL)
-    {
-        mensagem_erro();
-        return false;
-    }
-
-    long int topo = header_get_longint(headerArq, 1);
-    long int prox = -1;
-    int quantRegArq = header_get_int(headerArq, 1);
-    int quantRegRem = header_get_int(headerArq, 2);
-
-    // Buscar registro que satisfaz os campos de busca
-    long int byteOffset = arqBIN_buscar_byteOffset(pontArqBIN, busca, headerArq, -1);
-
-    if (byteOffset == -1)
-    {
-        // Registro não encontrado
-        // Header_apagar(&headerArq);
-        return false;
-    }
-
-    // Guardar o byteOffset do registro encontrado
-    DADO *dado = NULL;
-    dado = dado_ler(pontArqBIN, dado, byteOffset);
-    if (dado == NULL)
-    {
-        // Header_apagar(&headerArq);
-        return false;
-    }
-
-    // Remover logicamente o dado
-    dado = dado_set(dado, 1, -2, -2, -2, -2, -2,
-                    NULL, NULL, NULL, NULL);
-    quantRegArq--; // Decrementa o número de registros no arquivo
-    quantRegRem++; // Incrementa o número de registros removidos
-
-    if (topo == -1)
-    {
-        // se o topo for -1, significa que não há registros removidos
-        topo = byteOffset; // define o topo como o byteOffset do registro removido
-        dado = dado_set(dado, -2, -2, -1, -2, -2, -2,
-                        NULL, NULL, NULL, NULL);
-    }
-    else
-    {
-        // se o topo não for -1, significa que há registros removidos
-        dado = dado_set(dado, -2, -2, topo, -2, -2, -2,
-                        NULL, NULL, NULL, NULL);
-        topo = byteOffset; // atualiza o topo para o byteOffset do registro removido
-    }
-
-    // Atualiza os campos do header e do dado
-    headerArq = header_set(headerArq, -2, topo, -2, quantRegArq, quantRegRem,
-                           NULL, NULL, NULL, NULL, NULL, NULL, NULL);
-
-    // escrever o dado e o header atualizados no arquivo
-    fseek(pontArqBIN, byteOffset, SEEK_SET); // posiciona o ponteiro do arquivo no byteOffset do registro removido
-    arqBIN_escrever_dado(pontArqBIN, dado);  // escreve o dado atualizado no arquivo
-
-    dado_apagar(&dado);
-
-    return true;
 }
 
 /* arqBIN_insert_dado():

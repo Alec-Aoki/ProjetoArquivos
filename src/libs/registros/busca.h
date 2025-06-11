@@ -42,6 +42,13 @@ Retorna: booleano (true se forem iguais, falso se não)
 */
 bool busca_comparar(BUSCA *busca, DADO *dado);
 
+/*busca_atualizar_dado():
+Atualiza uma struct dado pré-existente com os campos de uma struct busca
+Parâmetros: ponteiro para struct busca, ponteiro para struct dado
+Retorna: ponteiro para dado
+*/
+DADO *busca_atualizar_dado(BUSCA *busca, DADO *dado);
+
 /*print_busca():
 Imprime todos os campos de uma struct busca
 Parâmetro: ponteiro para busca

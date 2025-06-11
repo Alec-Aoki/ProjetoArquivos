@@ -38,13 +38,13 @@ BUSCA *busca_criar()
         novaBusca->quaisCampos[i] = -1;
     }
 
-    novaBusca->idAttack = -1;
-    novaBusca->year = -1;
-    novaBusca->finLoss = -1;
-    strcpy(novaBusca->country, "NULO");
-    strcpy(novaBusca->attackType, "NULO");
-    strcpy(novaBusca->targetIndustry, "NULO");
-    strcpy(novaBusca->defenseMechanism, "NULO");
+    novaBusca->idAttack = -2;
+    novaBusca->year = -2;
+    novaBusca->finLoss = -2;
+    strcpy(novaBusca->country, "$");
+    strcpy(novaBusca->attackType, "$");
+    strcpy(novaBusca->targetIndustry, "$");
+    strcpy(novaBusca->defenseMechanism, "$");
 
     return novaBusca;
 }
@@ -243,6 +243,24 @@ bool busca_comparar(BUSCA *busca, DADO *dado)
     }
 
     return dadoValido;
+}
+
+/*busca_atualizar_dado():
+Atualiza uma struct dado pré-existente com os campos de uma struct busca
+Parâmetros: ponteiro para struct busca, ponteiro para struct dado
+Retorna: ponteiro para dado
+*/
+DADO *busca_atualizar_dado(BUSCA *busca, DADO *dado)
+{
+    if (busca == NULL || dado == NULL)
+        return NULL;
+
+    dado = dado_set(dado, -2, -2, -2, busca->idAttack, busca->year, busca->finLoss, busca->country,
+                    busca->attackType, busca->targetIndustry, busca->defenseMechanism);
+
+    dado_atualizar_tamReg(dado);
+
+    return dado;
 }
 
 /*print_busca():

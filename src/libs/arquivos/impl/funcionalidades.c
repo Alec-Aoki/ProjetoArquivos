@@ -204,6 +204,10 @@ void funcionalidade4()
     char nomeArqBin[TAM_MAX_STR];
     ler_nome_arquivo(nomeArqBin);
 
+    // Lendo quant. de buscas a serem feitas
+    int quantBuscas;
+    scanf(" %d", &quantBuscas);
+
     // Abrindo o arquivo binário no modo de leitura e escrita
     FILE *pontArqBin = fopen(nomeArqBin, "rb+");
     if (pontArqBin == NULL)
@@ -212,41 +216,36 @@ void funcionalidade4()
         return;
     }
 
-    // Lendo quant. de buscas a serem feitas
-    int quantBuscas;
-    scanf(" %d", &quantBuscas);
-
-    BUSCA *busca = NULL;      // Reutilizável
-    HEADER *headerArq = NULL; // Header do arq. bin.
-
-    // Posiciona o ponteiro no início do arquivo
-    fseek(pontArqBin, 0, SEEK_SET);
-    // Lê o header
+    BUSCA *busca = NULL; // Reutilizável
+    HEADER *headerArq = NULL;
     headerArq = header_ler(pontArqBin, headerArq);
-    if (headerArq == NULL) // Erro
+    if (headerArq == NULL)
     {
         mensagem_erro();
-        fclose(pontArqBin);
         return;
     }
+
+    long int byteOffsetEncontrado = -1;
+    long int byteOffsetFimArq = header_get_longint(headerArq, 2);
 
     // Lendo e realizando cada busca
     for (int i = 0; i < quantBuscas; i++)
     {
         busca = busca_ler(busca); // Lendo parâmetros da busca
 
-        // Deletando o dado caso ele seja encontrdo
-        arqBIN_delete_dado(pontArqBin, busca, headerArq);
+        // Buscar registro que satisfaz os campos de busca
+        while (byteOffsetEncontrado < byteOffsetFimArq)
+        {
+            byteOffsetEncontrado = arqBIN_buscar_byteOffset(pontArqBin, busca, headerArq, byteOffsetEncontrado);
+            if (byteOffsetEncontrado < 0)
+                break; // Não foi encontrado um dado que obedece os campos de busca
+            else
+                dado_remover(pontArqBin, headerArq, byteOffsetEncontrado);
+        }
 
         // Resetando struct
         busca_apagar(&busca);
     }
-
-    // Posiciona o ponteiro no início do arquivo
-    fseek(pontArqBin, 0, SEEK_SET);
-
-    // Escreve o header atualizado no arquivo binário
-    header_escrever(pontArqBin, headerArq, false);
 
     header_apagar(&headerArq);
     fclose(pontArqBin);
@@ -312,64 +311,74 @@ Atualiza um dado no arquivo binário
 */
 void funcionalidade6()
 {
-    BUSCA *busca = NULL;
-    busca = busca_ler(busca);
+    char nomeArqBin[TAM_MAX_STR];
+    ler_nome_arquivo(nomeArqBin);
 
-    print_busca(busca);
+    // Abrindo o arquivo binário no modo de leitura e escrita
+    FILE *pontArqBin = fopen(nomeArqBin, "rb+");
+    if (pontArqBin == NULL)
+    {
+        mensagem_erro();
+        return;
+    }
+
+    // Quantidade de atualizações a serem feitas
+    int quantAtualiz;
+    scanf("%d", &quantAtualiz);
+
+    BUSCA *busca = NULL;                // Reutilizável
+    BUSCA *camposAtualizados = NULL;    // Reutilizável
+    DADO *dado = NULL;                  // Reutilizável
+    DADO *dadoAtualizado = NULL;        // Reutilizável
+    HEADER *headerArq = NULL;           // Header do arq. bin.
+    long int byteOffsetEncontrado = -1; // ByteOffset para a busca
+
+    // Posiciona o ponteiro no início do arquivo
+    fseek(pontArqBin, 0, SEEK_SET);
+    // Lê o header
+    headerArq = header_ler(pontArqBin, headerArq);
+    if (headerArq == NULL) // Erro
+    {
+        mensagem_erro();
+        fclose(pontArqBin);
+        return;
+    }
+
+    for (int i = 0; i < quantAtualiz; i++)
+    {
+        byteOffsetEncontrado = -1;
+
+        // Lendo a busca a ser feita
+        busca = busca_ler(busca);
+        // Lendo os parâmetros a serem atualizados
+        camposAtualizados = busca_ler(camposAtualizados);
+
+        byteOffsetEncontrado = arqBIN_buscar_byteOffset(pontArqBin, busca, headerArq, byteOffsetEncontrado);
+
+        // Se encontramos o dado
+        if (byteOffsetEncontrado >= BYTEOFFSET_HEADER)
+        {
+            // Lendo o dado encontrado nas duas structs dado
+            dado = dado_ler(pontArqBin, dado, byteOffsetEncontrado);
+            dadoAtualizado = dado_ler(pontArqBin, dadoAtualizado, byteOffsetEncontrado);
+            if (dado == NULL || dadoAtualizado == NULL)
+                continue; // Erro, continua para a próxima iteração
+
+            // Atualizando somente uma struct dado
+            dadoAtualizado = busca_atualizar_dado(camposAtualizados, dadoAtualizado);
+
+            // Dado atualizado maior que dado original
+            if (dado_get_int(dadoAtualizado, 3) > dado_get_int(dado, 3))
+            {
+                /*REMOÇÃO POR BYTE OFFFSET*/
+            }
+        }
+
+        busca_apagar(&busca);
+        busca_apagar(&camposAtualizados);
+        dado_apagar(&dado);
+        dado_apagar(&dadoAtualizado);
+    }
 
     return;
-    /*
-        char nomeArqBin[TAM_MAX_STR];
-        ler_nome_arquivo(nomeArqBin);
-
-        // Abrindo o arquivo binário no modo de leitura e escrita
-        FILE *pontArqBin = fopen(nomeArqBin, "rb+");
-        if (pontArqBin == NULL)
-        {
-            mensagem_erro();
-            return;
-        }
-
-        // Quantidade de atualizações a serem feitas
-        int quantAtualiz;
-        scanf("%d", &quantAtualiz);
-
-        BUSCA *busca = NULL;                // Reutilizável
-        HEADER *headerArq = NULL;           // Header do arq. bin.
-        long int byteOffsetEncontrado = -1; // ByteOffset para a busca
-        DADO *dado = NULL;                  // Reutilizável
-        BUSCA *camposAtualizados = NULL;    // Reutilizável
-
-        // Posiciona o ponteiro no início do arquivo
-        fseek(pontArqBin, 0, SEEK_SET);
-        // Lê o header
-        headerArq = header_ler(pontArqBin, headerArq);
-        if (headerArq == NULL) // Erro
-        {
-            mensagem_erro();
-            fclose(pontArqBin);
-            return;
-        }
-
-        for (int i = 0; i < quantAtualiz; i++)
-        {
-            byteOffsetEncontrado = -1;
-
-            // Realizando a busca
-            busca = busca_ler(busca);
-            byteOffsetEncontrado = arqBIN_buscar_byteOffset(pontArqBin, busca, headerArq, byteOffsetEncontrado);
-
-            // Se encontramos o dado:
-            if (byteOffsetEncontrado >= BYTEOFFSET_HEADER)
-            {
-                camposAtualizados = busca_ler(camposAtualizados);
-            }
-
-            busca_apagar(&busca);
-            busca_apagar(&camposAtualizados);
-            dado_apagar(&dado);
-        }
-
-        return;
-    */
 }
