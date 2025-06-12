@@ -453,3 +453,11 @@ bool dado_remover(FILE *pontArq, HEADER *headerArq, long int byteOffset)
 
     return true;
 }
+
+void print_dado_tam(DADO *registro)
+{
+    printf("Country: %ld\n", strlen(registro->country));
+    printf("AttackType: %ld\n", strlen(registro->attackType));
+    printf("TgtInd: %ld\n", strlen(registro->targetIndustry));
+    printf("DefMec: %ld\n\n", strlen(registro->defenseMechanism));
+}

@@ -372,11 +372,36 @@ void funcionalidade6()
             // Atualizando somente uma struct dado
             dadoAtualizado = busca_atualizar_dado(camposAtualizados, dadoAtualizado);
 
+            printf("**********\n");
+            dado_imprimir(headerArq, dado);
+            printf("TamReg: %d\n", dado_get_int(dado, 3));
+            print_dado_tam(dado);
+            printf("**********\n\n");
+
+            printf("**********\n");
+            dado_imprimir(headerArq, dadoAtualizado);
+            printf("TamReg: %d\n", dado_get_int(dadoAtualizado, 3));
+            print_dado_tam(dadoAtualizado);
+            printf("**********\n\n");
+
             // Dado atualizado maior que dado original
             if (dado_get_int(dadoAtualizado, 3) > dado_get_int(dado, 3))
             {
+                printf("Atualizado maior\n");
                 dado_remover(pontArqBin, headerArq, byteOffsetEncontrado);
-                // Inserir dado
+                arqBIN_insert_dado(pontArqBin, headerArq, dado);
+            }
+            // Dado atualizado com tamanho menor ou igual ao original
+            else
+            {
+                printf("Atualizado menor\n");
+                // Calculando quantidade de lixo
+                int quantLixo = dado_get_int(dado, 3) - dado_get_int(dadoAtualizado, 3);
+                printf("quantLixo = %d\n", quantLixo);
+                // Posicionando ponteiro no início do dado
+                fseek(pontArqBin, byteOffsetEncontrado, SEEK_SET);
+                // Sobrescrevendo dado
+                dado_escrever(pontArqBin, dadoAtualizado, quantLixo);
             }
         }
 
