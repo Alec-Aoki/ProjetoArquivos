@@ -288,7 +288,6 @@ void funcionalidade5()
     int quantDados;
     scanf(" %d", &quantDados);
 
-    
     HEADER *headerArq = NULL;
     headerArq = header_ler(pontArqBin, headerArq);
 
@@ -406,7 +405,8 @@ void funcionalidade6()
             if (dado_get_int(dadoAtualizado, 3) > dado_get_int(dado, 3))
             {
                 dado_remover(pontArqBin, headerArq, byteOffsetEncontrado);
-                arqBIN_insert_dado(pontArqBin, headerArq, dado);
+
+                arqBIN_insert_dado(pontArqBin, headerArq, dadoAtualizado);
             }
             // Dado atualizado com tamanho menor ou igual ao original
             else
@@ -428,6 +428,13 @@ void funcionalidade6()
         dado_apagar(&dado);
         dado_apagar(&dadoAtualizado);
     }
+    fseek(pontArqBin, 0, SEEK_SET);
+    header_escrever(pontArqBin, headerArq, false);
+
+    header_apagar(&headerArq);
+    fclose(pontArqBin);
+
+    binarioNaTela(nomeArqBin);
 
     return;
 }

@@ -185,12 +185,13 @@ Retorna: booleano (true se inserido, false se erro)
 */
 bool arqBIN_insert_dado(FILE *pontArqBIN, HEADER *headerArq, DADO *dado)
 {
+
     if (dado == NULL)
         return false;
 
     if (headerArq == NULL)
         return false;
-        
+
     // Inicializando variáveis necessárias
     int tamReg = dado_get_int(dado, 3);
     int nroRegArq = header_get_int(headerArq, 1);
@@ -230,10 +231,10 @@ bool arqBIN_insert_dado(FILE *pontArqBIN, HEADER *headerArq, DADO *dado)
                 // Se o tamanho do registro couber no registro removido,
                 // insere o dado e preenche com lixo($)
                 int nroLixo = dado_get_int(dadoRem, 3) - tamReg;
-                
+
                 // dado_set_tamReg(dado, dado_get_int(dadoRem, 3));
                 dado_set(dado, 0, dado_get_int(dadoRem, 3), -1, -2, -2, -2,
-                                NULL, NULL, NULL, NULL);
+                         NULL, NULL, NULL, NULL);
 
                 // inserir o dado e preencher com lixo
                 fseek(pontArqBIN, currentByteOffset, SEEK_SET);
@@ -263,7 +264,7 @@ bool arqBIN_insert_dado(FILE *pontArqBIN, HEADER *headerArq, DADO *dado)
                 nroRegArq++;
                 nroRegRem--;
                 inserido = true; // marca que o dado foi inserido
-                break;  
+                break;
             }
 
             // Se o tamanho do registro não couber, continua para o próximo registro removido
@@ -292,6 +293,6 @@ bool arqBIN_insert_dado(FILE *pontArqBIN, HEADER *headerArq, DADO *dado)
     // Atualizando o header
     headerArq = header_set(headerArq, -2, topo, -2, nroRegArq, nroRegRem,
                            NULL, NULL, NULL, NULL, NULL, NULL, NULL);
-    
+
     return inserido; // Retorna true se o dado foi inserido, false caso contrário
 }

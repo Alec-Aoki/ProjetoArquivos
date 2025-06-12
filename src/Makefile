@@ -18,6 +18,7 @@ run:
 clean:
 	rm -f main
 	rm -f *.txt
+	rm -f *.bin
 
 zip:
 	zip -r programaTrab.zip ./Makefile ./main.c ./libs/registros/dados.h ./libs/registros/header.h ./libs/registros/busca.h ./libs/registros/impl/dados.c ./libs/registros/impl/header.c ./libs/registros/impl/busca.c ./libs/arquivos/arqCSV.h ./libs/arquivos/arqBIN.h ./libs/arquivos/funcionalidades.h ./libs/arquivos/impl/arqBIN.c ./libs/arquivos/impl/arqCSV.c ./libs/arquivos/impl/funcionalidades.c ./libs/auxiliar/auxiliar.h ./libs/auxiliar/impl/auxiliar.c
