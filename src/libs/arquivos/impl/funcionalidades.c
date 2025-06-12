@@ -413,6 +413,9 @@ void funcionalidade6()
             {
                 // Calculando quantidade de lixo
                 int quantLixo = dado_get_int(dado, 3) - dado_get_int(dadoAtualizado, 3);
+                // Definindo tamanho do dado atualizado para o tam. do dado orig.
+                dadoAtualizado = dado_set(dadoAtualizado, -2, dado_get_int(dado, 3),
+                                          -2, -2, -2, -2, NULL, NULL, NULL, NULL);
                 // Posicionando ponteiro no início do dado
                 fseek(pontArqBin, byteOffsetEncontrado, SEEK_SET);
                 // Sobrescrevendo dado
