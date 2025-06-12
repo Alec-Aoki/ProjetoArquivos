@@ -46,7 +46,8 @@ Aloca dinamicamente memória para uma string e remove delimitadores no inicio e 
 Parâmetros: ponteiro para string
 Retorna: ponteiro para string formatada
 */
-char *desformata_string_registro(char *string);
+char *
+desformata_string_registro(char *string);
 
 /* separa_campo():
 A partir de um ponteiro que aponta para o inicio de uma
@@ -76,14 +77,6 @@ Parâmetro: ponteiro para ponteiro de ponteiro de char (entrada)
 Retorna: nenhum
 */
 void apaga_entrada(char ***entrada);
-
-/* tira_aspas()
-Remove aspas do início e do fim de uma string, se existirem
-Parâmetro: ponteiro para char (string)
-Retorna: ponteiro para a nova string sem aspas ou
-a string original se não tiver aspas
-*/
-char *tira_aspas(char *str);
 
 /*FUNÇÃO FORNECIDA PARA LEITURA DE STRINGS*/
 void scan_quote_string(char *str);

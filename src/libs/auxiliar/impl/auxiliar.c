@@ -74,7 +74,8 @@ char *formata_string_registro(char *string, char *id)
     if (strTemp == NULL)
         return string; // Erro de alocação de memória
 
-    if (string == NULL || strcmp(string, "") == 0 || strcmp(string, "NULO") == 0 || strcmp(string, "NADA CONSTA") == 0)
+    if (string == NULL || strcmp(string, "") == 0 ||
+        strcmp(string, "NULO") == 0 || strcmp(string, "NADA CONSTA") == 0)
         strcpy(strTemp, "NADA CONSTA");
     else
     {
@@ -103,7 +104,8 @@ char *desformata_string_registro(char *string)
     if (strTemp == NULL)
         return string; // Erro de alocação de memória
 
-    if (string == NULL || strcmp(string, "") == 0 || strcmp(string, "NULO") == 0 || strcmp(string, "NADA CONSTA") == 0)
+    if (string == NULL || strcmp(string, "") == 0 ||
+        strcmp(string, "NULO") == 0 || strcmp(string, "NADA CONSTA") == 0)
         strcpy(strTemp, "NADA CONSTA");
     else
     {
@@ -251,60 +253,9 @@ void apaga_entrada(char ***entrada)
     *entrada = NULL;
 }
 
-/* tira_aspas()
-Remove aspas do início e do fim de uma string, se existirem
-Parâmetro: ponteiro para char (string)
-Retorna: ponteiro para a nova string sem aspas ou
-a string original se não tiver aspas
-*/
-char *tira_aspas(char *str)
-{
-    if (str == NULL)
-    {
-        mensagem_erro();
-        return NULL;
-    }
-
-    // Verifica se a string começa e termina com aspas
-    size_t len = strlen(str);
-
-    if (len > 1 && str[0] == '"' && str[len - 1] == '"')
-    {
-        // Aloca memória para a nova string sem aspas
-        char *temp = (char *)malloc(len - 1);
-
-        if (temp == NULL)
-        {
-            mensagem_erro();
-            return NULL;
-        }
-
-        // Copia a string sem as aspas
-        strncpy(temp, str + 1, len - 2);
-        temp[len - 2] = '\0'; // Adiciona o terminador nulo
-        return temp;
-    }
-
-    return str; // Retorna a string original se não tiver aspas
-}
-
 /*FUNÇÃO FORNECIDA DE LEITURA DE STRING COM ASPAS*/
 void scan_quote_string(char *str)
 {
-
-    /*
-     *       Use essa função para ler um campo string delimitado entre aspas (").
-     *       Chame ela na hora que for ler tal campo. Por exemplo:
-     *
-     *       A entrada está da seguinte forma:
-     *               nomeDoCampo "MARIA DA SILVA"
-     *
-     *       Para ler isso para as strings já alocadas str1 e str2 do seu programa, você faz:
-     *               scanf("%s", str1); // Vai salvar nomeDoCampo em str1
-     *               scan_quote_string(str2); // Vai salvar MARIA DA SILVA em str2 (sem as aspas)
-     *
-     */
-
     char R;
 
     while ((R = getchar()) != EOF && isspace(R))
@@ -326,7 +277,7 @@ void scan_quote_string(char *str)
         getchar(); // ignorar aspas fechando
     }
     else if (R != EOF)
-    { // vc tá tentando ler uma string que não tá entre aspas! Fazer leitura normal %s então, pois deve ser algum inteiro ou algo assim...
+    {
         str[0] = R;
         scanf("%s", &str[1]);
     }
@@ -339,17 +290,13 @@ void scan_quote_string(char *str)
 /*FUNÇÃO FORNECIDA PARA CORREÇÃO*/
 void binarioNaTela(char *nomeArquivoBinario)
 { /* Você não precisa entender o código dessa função. */
-
-    /* Use essa função para comparação no run.codes. Lembre-se de ter fechado (fclose) o arquivo anteriormente.
-     *  Ela vai abrir de novo para leitura e depois fechar (você não vai perder pontos por isso se usar ela). */
-
     unsigned long i, cs;
     unsigned char *mb;
     size_t fl;
     FILE *fs;
     if (nomeArquivoBinario == NULL || !(fs = fopen(nomeArquivoBinario, "rb")))
     {
-        fprintf(stderr, "ERRO AO ESCREVER O BINARIO NA TELA (função binarioNaTela): não foi possível abrir o arquivo que me passou para leitura. Ele existe e você tá passando o nome certo? Você lembrou de fechar ele com fclose depois de usar?\n");
+        fprintf(stderr, "ERRO AO ESCREVER O BINARIO NA TELA\n");
         return;
     }
     fseek(fs, 0, SEEK_END);
