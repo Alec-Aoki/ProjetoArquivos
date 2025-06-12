@@ -103,8 +103,15 @@ BUSCA *busca_ler(BUSCA *busca)
 
     // Lendo string contendo os campos a serem buscados e seus valores
     fgets(buffer, sizeof(buffer), stdin);
-    buffer[strcspn(buffer, "\n")] = '\0';
-    ptr = buffer;
+    // Localiza no buffer o primeiro caractere de nova linha(\n) ou retorno de carro(\r)
+    int fdl1 = strcspn(buffer, "\n");
+    int fdl2 = strcspn(buffer, "\r");
+    if (fdl1 < fdl2)
+        buffer[fdl1] = '\0'; // Remove newline character
+    else
+        buffer[fdl2] = '\0'; // Remove carriage return character
+    
+        ptr = buffer;
 
     /*Lendo qual campo devemos buscar, salvando essa informação no vetor quais campos
         e guardando seus valores nas variáveis auxiliares corretas*/
