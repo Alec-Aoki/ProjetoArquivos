@@ -78,6 +78,9 @@ a string original se não tiver aspas
 */
 char *tira_aspas(char *str);
 
+/*FUNÇÃO FORNECIDA PARA LEITURA DE STRINGS*/
+void scan_quote_string(char *str); 
+
 /*FUNÇÃO FORNECIDA PARA CORREÇÃO*/
 void binarioNaTela(char *nomeArquivoBinario);
 
