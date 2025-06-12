@@ -90,10 +90,4 @@ Parâmetros: ponteiro para um arquivo, ponteiro para um header e valor booleano
 */
 void header_escrever(FILE *pontArq, HEADER *header, bool semantico);
 
-/* print_header():
-Imprime os campos variáveis de uma struct header
-Parâmetros: ponteiro para header
-*/
-void print_header(HEADER *header);
-
 #endif

@@ -96,6 +96,7 @@ Retorna: ponteiro para string formatada
 */
 char *desformata_string_registro(char *string)
 {
+    // Campo inicializado, não fazer nada
     if (strcmp(string, "$") == 0)
         return NULL;
 
@@ -104,10 +105,11 @@ char *desformata_string_registro(char *string)
     if (strTemp == NULL)
         return string; // Erro de alocação de memória
 
+    // Campo vazio (nada consta)
     if (string == NULL || strcmp(string, "") == 0 ||
         strcmp(string, "NULO") == 0 || strcmp(string, "NADA CONSTA") == 0)
         strcpy(strTemp, "NADA CONSTA");
-    else
+    else // Removendo delimitadores e id
     {
         strncpy(strTemp, string + 1, strlen(string) - 2);
         strTemp[strlen(string) - 1] = '\0';

@@ -106,8 +106,4 @@ Retorna: true se bem sucedido, mal senão
 */
 bool dado_remover(FILE *pontArq, HEADER *headerArq, long int byteOffset);
 
-void dado_print_puro(DADO *dado);
-
-void print_dado_tam(DADO *registro);
-
 #endif

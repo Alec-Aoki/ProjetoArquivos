@@ -9,23 +9,23 @@
 /*Armazena os campos de um registro de header*/
 struct header_
 {
-    char status;             // Consistência do arquivo de dados. 0 = inconsistente, 1 = consistente
-    long int topo;           // Byteoffset do primeiro registro logicamente removido. -1 = nenhum registro removido
-    long int proxByteOffset; // Valor do próximo byteoffset disponível
-    int nroRegArq;           // Quantidade de registros não removidos
-    int nroRegRem;           // Quantidade de registros removidos
+    char status;
+    long int topo;
+    long int proxByteOffset;
+    int nroRegArq;
+    int nroRegRem;
 
-    char descreveIdentificador[TAM_DESC_ID];       // Descrição do campo idAttack
-    char descreveYear[TAM_DESC_YEAR];              // Descrição do campo year
-    char descreveFinancialLoss[TAM_DESC_FIN_LOSS]; // Descrição do campo financialLoss
-    char codDescreveCountry;                       // Código da keyword que representa o campo country
-    char descreveCountry[TAM_DESC_COUNTRY];        // Descrição do campo country
-    char codDescreveType;                          // Código da keyword que representa o campo attackType
-    char descreveType[TAM_DESC_TYPE];              // Descrição do campo attackType
-    char codDescreveTargetIndustry;                // Código da keyword que representa o campo targetIndustry
-    char descreveTargetIndustry[TAM_DESC_TGT_IND]; // Descrição do campo targetIndustry
-    char codDescreveDefense;                       // Código da keyword que representa o campo defenseMechanism
-    char descreveDefense[TAM_DESC_DEF];            // Descrição do campo defenseMechanism
+    char descreveIdentificador[TAM_DESC_ID];
+    char descreveYear[TAM_DESC_YEAR];
+    char descreveFinancialLoss[TAM_DESC_FIN_LOSS];
+    char codDescreveCountry;
+    char descreveCountry[TAM_DESC_COUNTRY];
+    char codDescreveType;
+    char descreveType[TAM_DESC_TYPE];
+    char codDescreveTargetIndustry;
+    char descreveTargetIndustry[TAM_DESC_TGT_IND];
+    char codDescreveDefense;
+    char descreveDefense[TAM_DESC_DEF];
 };
 
 /* header_criar():
@@ -312,25 +312,4 @@ void header_escrever(FILE *pontArq, HEADER *headerArq, bool semantico)
     }
 
     return;
-}
-
-/* print_header():
-Imprime os campos variáveis de uma struct header
-Parâmetros: ponteiro para header
-*/
-void print_header(HEADER *header)
-{
-    if (header == NULL)
-    {
-        printf("Header is NULL\n");
-        return;
-    }
-
-    printf("\n");
-    printf("Status: %c\n", header->status);
-    printf("Topo: %ld\n", header->topo);
-    printf("Próximo Byte Offset: %ld\n", header->proxByteOffset);
-    printf("Número de Registros no Arquivo: %d\n", header->nroRegArq);
-    printf("Número de Registros Removidos: %d\n", header->nroRegRem);
-    printf("\n");
 }

@@ -10,19 +10,17 @@
 /*Armazena os campos de um registro de dados*/
 struct dados_
 {
-    char removido;       // Indica se o registro está logicamente removido.
-                         // 1 = removido, 0 = não removido
-    int tamanhoRegistro; // Tamanho do registro em bytes
-    long int prox;       // Byteoffset do próximo registro logicamente removido.
-                         // Inicializado com -1
-    int idAttack;        // Código identificador do ataque
-    int year;            // Ano em que o ataque ocorreu
-    float financialLoss; // Prejuízo causado pelo ataque
+    char removido;
+    int tamanhoRegistro;
+    long int prox;
+    int idAttack;
+    int year;
+    float financialLoss;
 
-    char country[TAM_MAX_STR];          // País onde ocorreu o ataque
-    char attackType[TAM_MAX_STR];       // Tipo de ameaça à segurança cibernética
-    char targetIndustry[TAM_MAX_STR];   // Setor da indústria que sofreu o ataque
-    char defenseMechanism[TAM_MAX_STR]; // Estratégia de defesa usada para resolver o problema
+    char country[TAM_MAX_STR];
+    char attackType[TAM_MAX_STR];
+    char targetIndustry[TAM_MAX_STR];
+    char defenseMechanism[TAM_MAX_STR];
 };
 
 /* dado_atualizar_tamReg():
@@ -115,7 +113,6 @@ DADO *dado_set(DADO *dado, int removido, int tamReg, long int prox, int idAttack
         dado->financialLoss = finLoss;
 
     // Campos de tamanho variável, COM delimitadores
-
     if (country != NULL && strcmp(country, "$") != 0)
     {
         if (strcmp(country, "NULO") == 0)
@@ -145,8 +142,9 @@ DADO *dado_set(DADO *dado, int removido, int tamReg, long int prox, int idAttack
             strcpy(dado->defenseMechanism, formata_string_registro(defMec, "4"));
     }
 
+    // Atualizando tamanho do registro somente se ele acabou de ser criado
     if (dadoNovo)
-        dado_atualizar_tamReg(dado); // Atualizando tamanho do registro somente se ele  acabou de ser criado
+        dado_atualizar_tamReg(dado);
 
     return dado; // Retorna ponteiro para struct DADO
 }
@@ -268,8 +266,8 @@ void dado_imprimir(HEADER *header, DADO *dado)
     if ((header == NULL) || (dado == NULL))
         return;
 
-    // Imprimindo as descrições semânticas dos campos do dado e seus valores
-
+    // Imprimindo as descrições semânticas dos campos do dado e seus valores,
+    // SEM DELIMITADORES
     /*idAttack*/
     printf("%.*s: ", TAM_DESC_ID, header_get_descricao(header, 1));
     if (dado->idAttack == -1)
@@ -285,7 +283,6 @@ void dado_imprimir(HEADER *header, DADO *dado)
         printf("%d\n", dado->year);
 
     /*country*/
-    // printf("%.*s: %s\n", TAM_DESC_COUNTRY, header_get_descricao(header, 4), dado->country);
     printf("%.*s: ", TAM_DESC_COUNTRY, header_get_descricao(header, 4));
     if (strcmp(dado->country, "NADA CONSTA") == 0)
         printf("NADA CONSTA\n");
@@ -293,7 +290,6 @@ void dado_imprimir(HEADER *header, DADO *dado)
         printf("%.*s\n", (int)strlen(dado->country) - 2, dado->country + 1);
 
     /*targetIndustry*/
-    // printf("%.*s: %s\n", TAM_DESC_TGT_IND, header_get_descricao(header, 6), dado->targetIndustry);
     printf("%.*s: ", TAM_DESC_TGT_IND, header_get_descricao(header, 6));
     if (strcmp(dado->targetIndustry, "NADA CONSTA") == 0)
         printf("NADA CONSTA\n");
@@ -301,7 +297,6 @@ void dado_imprimir(HEADER *header, DADO *dado)
         printf("%.*s\n", (int)strlen(dado->targetIndustry) - 2, dado->targetIndustry + 1);
 
     /*attackType*/
-    // printf("%.*s: %s\n", TAM_DESC_TYPE, header_get_descricao(header, 5), dado->attackType);
     printf("%.*s: ", TAM_DESC_TYPE, header_get_descricao(header, 5));
     if (strcmp(dado->attackType, "NADA CONSTA") == 0)
         printf("NADA CONSTA\n");
@@ -316,7 +311,6 @@ void dado_imprimir(HEADER *header, DADO *dado)
         printf("%.2f\n", dado->financialLoss);
 
     /*defenseMechanism*/
-    // printf("%.*s: %s\n", TAM_DESC_DEF, header_get_descricao(header, 7), dado->defenseMechanism);
     printf("%.*s: ", TAM_DESC_DEF, header_get_descricao(header, 7));
     if (strcmp(dado->defenseMechanism, "NADA CONSTA") == 0)
         printf("NADA CONSTA\n");
@@ -361,7 +355,7 @@ DADO *dado_ler(FILE *pontArq, DADO *dado, int byteOffset)
 
     // Ponteiro que aponta para o início do buffer
     char *pontCampo = buffer;
-    // Lê os dados do buffer e guarda nos campos da struct
+    // Lê os dados do buffer e guarda nos campos da struct (COM DELIMITADORES)
     strcpy(dado->country, formata_string_registro(separa_campo(&pontCampo, 1), "1"));
     strcpy(dado->attackType, formata_string_registro(separa_campo(&pontCampo, 2), "2"));
     strcpy(dado->targetIndustry, formata_string_registro(separa_campo(&pontCampo, 3), "3"));
@@ -472,31 +466,4 @@ bool dado_remover(FILE *pontArq, HEADER *headerArq, long int byteOffset)
     dado_apagar(&dado);
 
     return true;
-}
-
-void dado_print_puro(DADO *dado)
-{
-    if (dado == NULL)
-        return;
-
-    printf("Removido: %c\n", dado->removido);
-    printf("TamReg: %d\n", dado->tamanhoRegistro);
-    printf("Prox: %ld\n", dado->prox);
-    printf("idAttack: %d\n", dado->idAttack);
-    printf("Year: %d\n", dado->year);
-    printf("FinLoss: %f\n", dado->financialLoss);
-    printf("Country: %s\n", dado->country);
-    printf("AttackType: %s\n", dado->attackType);
-    printf("TgtInd: %s\n", dado->targetIndustry);
-    printf("DefMec: %s\n", dado->defenseMechanism);
-
-    return;
-}
-
-void print_dado_tam(DADO *registro)
-{
-    printf("Country: %ld\n", strlen(registro->country));
-    printf("AttackType: %ld\n", strlen(registro->attackType));
-    printf("TgtInd: %ld\n", strlen(registro->targetIndustry));
-    printf("DefMec: %ld\n\n", strlen(registro->defenseMechanism));
 }
