@@ -179,25 +179,16 @@ long int arqBIN_buscar_byteOffset(FILE *pontArqBIN, BUSCA *busca,
 
 /* arqBIN_insert_dado():
 Insere um dado no arquivo binário, utilizando estratégia de inserção First Fit.
-Parâmetro: ponteiro para arquivo, ponteiro para array de strings (entrada)
+Parâmetro: ponteiro para arquivo, ponteiro para struct dado, pont. para struct header
 Retorna: booleano (true se inserido, false se erro)
 */
-bool arqBIN_insert_dado(FILE *pontArqBIN, char **entrada)
+bool arqBIN_insert_dado(FILE *pontArqBIN, HEADER *headerArq, DADO *dado)
 {
-    if (entrada == NULL)
-    {
-        mensagem_erro();
-        fclose(pontArqBIN);
+    if (dado == NULL)
         return false;
-    }
 
-    HEADER *headerArq = NULL;
-    headerArq = header_ler(pontArqBIN, headerArq);
-
-    DADO *dado = NULL;
-    dado = dado_set(dado, 0, 0, -1, str_to_int(entrada[0]),
-                    str_to_int(entrada[1]), str_to_float(entrada[2]),
-                    entrada[3], entrada[4], entrada[5], entrada[6]);
+    if (headerArq == NULL)
+        headerArq = header_ler(pontArqBIN, headerArq);
 
     // Inicializando variáveis necessárias
     int tamReg = dado_get_int(dado, 3);

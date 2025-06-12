@@ -276,12 +276,13 @@ void funcionalidade5()
     scanf("%d", &quantDados);
 
     char **entrada = NULL;
+    DADO *dado = NULL;
+    HEADER *headerArq = NULL;
 
     for (int i = 0; i < quantDados; i++)
     {
         // Lê a entrada do usuário para inserir um novo registro
         entrada = ler_entrada_insert();
-
         if (entrada == NULL)
         {
             mensagem_erro();
@@ -289,7 +290,11 @@ void funcionalidade5()
             return;
         }
 
-        if (!arqBIN_insert_dado(pontArqBin, entrada))
+        dado = dado_set(dado, 0, 0, -1, str_to_int(entrada[0]),
+                        str_to_int(entrada[1]), str_to_float(entrada[2]),
+                        entrada[3], entrada[4], entrada[5], entrada[6]);
+
+        if (!arqBIN_insert_dado(pontArqBin, headerArq, dado))
         {
             mensagem_erro();
             apaga_entrada(&entrada);
@@ -370,7 +375,8 @@ void funcionalidade6()
             // Dado atualizado maior que dado original
             if (dado_get_int(dadoAtualizado, 3) > dado_get_int(dado, 3))
             {
-                /*REMOÇÃO POR BYTE OFFFSET*/
+                dado_remover(pontArqBin, headerArq, byteOffsetEncontrado);
+                // Inserir dado
             }
         }
 
