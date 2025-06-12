@@ -73,7 +73,7 @@ char *formata_string_registro(char *string, char *id)
     if (strTemp == NULL)
         return string; // Erro de alocação de memória
 
-    if (string == NULL || strcmp(string, "") == 0)
+    if (string == NULL || strcmp(string, "") == 0 || strcmp(string, "NADA CONSTA") == 0)
     {
         strcpy(strTemp, "NADA CONSTA");
     }
@@ -145,7 +145,7 @@ Aloca memória para um vetor de strings, onde cada string tem tamanho TAM_MAX_ST
 Parâmetro: nenhum
 Retorna: um ponteiro para o vetor de strings alocado ou NULL se falhar
 */
-char ** aloca_array_string ()
+char **aloca_array_string()
 {
     char **array = (char **)malloc(sizeof(char *) * 7);
     if (array == NULL)
@@ -172,7 +172,7 @@ Lê a entrada do usuário para inserir um novo registro
 Parâmetro: nenhum
 Retorna: um ponteiro para um vetor de strings (cada string representa um campo do registro)
 */
-char ** ler_entrada_insert()
+char **ler_entrada_insert()
 {
     getchar();
     char **entrada = aloca_array_string();
@@ -181,7 +181,7 @@ char ** ler_entrada_insert()
         mensagem_erro();
         return NULL; // Erro ao alocar memória
     }
-    
+
     char buffer[TAM_MAX_STR];
     char *ptr;
 

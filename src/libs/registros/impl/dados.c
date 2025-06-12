@@ -285,13 +285,28 @@ void dado_imprimir(HEADER *header, DADO *dado)
         printf("%d\n", dado->year);
 
     /*country*/
-    printf("%.*s: %s\n", TAM_DESC_COUNTRY, header_get_descricao(header, 4), dado->country);
+    // printf("%.*s: %s\n", TAM_DESC_COUNTRY, header_get_descricao(header, 4), dado->country);
+    printf("%.*s: ", TAM_DESC_COUNTRY, header_get_descricao(header, 4));
+    if (strcmp(dado->country, "NADA CONSTA") == 0)
+        printf("NADA CONSTA\n");
+    else
+        printf("%.*s\n", (int)strlen(dado->country) - 2, dado->country + 1);
 
     /*targetIndustry*/
-    printf("%.*s: %s\n", TAM_DESC_TGT_IND, header_get_descricao(header, 6), dado->targetIndustry);
+    // printf("%.*s: %s\n", TAM_DESC_TGT_IND, header_get_descricao(header, 6), dado->targetIndustry);
+    printf("%.*s: ", TAM_DESC_TGT_IND, header_get_descricao(header, 6));
+    if (strcmp(dado->targetIndustry, "NADA CONSTA") == 0)
+        printf("NADA CONSTA\n");
+    else
+        printf("%.*s\n", (int)strlen(dado->targetIndustry) - 2, dado->targetIndustry + 1);
 
     /*attackType*/
-    printf("%.*s: %s\n", TAM_DESC_TYPE, header_get_descricao(header, 5), dado->attackType);
+    // printf("%.*s: %s\n", TAM_DESC_TYPE, header_get_descricao(header, 5), dado->attackType);
+    printf("%.*s: ", TAM_DESC_TYPE, header_get_descricao(header, 5));
+    if (strcmp(dado->attackType, "NADA CONSTA") == 0)
+        printf("NADA CONSTA\n");
+    else
+        printf("%.*s\n", (int)strlen(dado->attackType) - 2, dado->attackType + 1);
 
     /*financialLoss*/
     printf("%.*s: ", TAM_DESC_FIN_LOSS, header_get_descricao(header, 3));
@@ -301,7 +316,12 @@ void dado_imprimir(HEADER *header, DADO *dado)
         printf("%.2f\n", dado->financialLoss);
 
     /*defenseMechanism*/
-    printf("%.*s: %s\n", TAM_DESC_DEF, header_get_descricao(header, 7), dado->defenseMechanism);
+    // printf("%.*s: %s\n", TAM_DESC_DEF, header_get_descricao(header, 7), dado->defenseMechanism);
+    printf("%.*s: ", TAM_DESC_DEF, header_get_descricao(header, 7));
+    if (strcmp(dado->defenseMechanism, "NADA CONSTA") == 0)
+        printf("NADA CONSTA\n");
+    else
+        printf("%.*s\n", (int)strlen(dado->defenseMechanism) - 2, dado->defenseMechanism + 1);
 
     return;
 }
@@ -342,14 +362,18 @@ DADO *dado_ler(FILE *pontArq, DADO *dado, int byteOffset)
     // Ponteiro que aponta para o início do buffer
     char *pontCampo = buffer;
     // Lê os dados do buffer e guarda nos campos da struct
-    strcpy(dado->country, separa_campo(&pontCampo, 1));
-    strcpy(dado->attackType, separa_campo(&pontCampo, 2));
-    strcpy(dado->targetIndustry, separa_campo(&pontCampo, 3));
-    strcpy(dado->defenseMechanism, separa_campo(&pontCampo, 4));
+    strcpy(dado->country, formata_string_registro(separa_campo(&pontCampo, 1), "1"));
+    strcpy(dado->attackType, formata_string_registro(separa_campo(&pontCampo, 2), "2"));
+    strcpy(dado->targetIndustry, formata_string_registro(separa_campo(&pontCampo, 3), "3"));
+    strcpy(dado->defenseMechanism, formata_string_registro(separa_campo(&pontCampo, 4), "4"));
 
     // Desaloca a memória do buffer e o aponta para NULL
     free(buffer);
     buffer = NULL;
+
+    printf("**** DADO PURO APÓS LEITURA ****\n");
+    dado_print_puro(dado);
+    printf("**** DADO PURO APÓS LEITURA ****\n\n");
 
     return dado;
 }
@@ -452,6 +476,25 @@ bool dado_remover(FILE *pontArq, HEADER *headerArq, long int byteOffset)
     dado_apagar(&dado);
 
     return true;
+}
+
+void dado_print_puro(DADO *dado)
+{
+    if (dado == NULL)
+        return;
+
+    printf("Removido: %c\n", dado->removido);
+    printf("TamReg: %d\n", dado->tamanhoRegistro);
+    printf("Prox: %ld\n", dado->prox);
+    printf("idAttack: %d\n", dado->idAttack);
+    printf("Year: %d\n", dado->year);
+    printf("FinLoss: %f\n", dado->financialLoss);
+    printf("Country: %s\n", dado->country);
+    printf("AttackType: %s\n", dado->attackType);
+    printf("TgtInd: %s\n", dado->targetIndustry);
+    printf("DefMec: %s\n", dado->defenseMechanism);
+
+    return;
 }
 
 void print_dado_tam(DADO *registro)
