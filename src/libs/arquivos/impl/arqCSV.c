@@ -34,7 +34,8 @@ HEADER *arqCSV_ler_header(FILE *pontArqCSV)
     // Substituindo '\n' por '\0' no buffer, por segurança
     buffer[253] = '\0';
 
-    // Vamos utilizar o strtok para separar a string no buffer nas ',' e evitar alocar espaço para as strings do header
+    // Vamos utilizar o strtok para separar a string no buffer nas ','
+    // e evitar alocar espaço para as strings do header
     char *tok = strtok(buffer, ",");
     // Guarda cada parte da string em um dos campos do vetor campos
     int i = 0;
@@ -112,7 +113,8 @@ DADO *arqCSV_ler_dado(FILE *pontArqCSV)
 
     // Guarda os dados lidos na struct DADO
     DADO *dadoArq = dado_set(NULL, 0, 0, -1, str_to_int(campos[0]), str_to_int(campos[1]),
-                             str_to_float(campos[2]), campos[3], campos[4], campos[5], campos[6]);
+                             str_to_float(campos[2]), campos[3], campos[4],
+                             campos[5], campos[6]);
     if (dadoArq == NULL)
     {
         mensagem_erro();
