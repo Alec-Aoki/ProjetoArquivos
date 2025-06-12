@@ -153,6 +153,7 @@ BUSCA *busca_ler(BUSCA *busca)
             {
                 tamStr = strlen(tok) - 2;
                 strncpy(busca->country, tok + 1, tamStr);
+                strcpy(busca->country, formata_string_registro(busca->country, "1"));
             }
             break;
         case 4:
@@ -162,6 +163,7 @@ BUSCA *busca_ler(BUSCA *busca)
             {
                 tamStr = strlen(tok) - 2;
                 strncpy(busca->attackType, tok + 1, tamStr);
+                strcpy(busca->attackType, formata_string_registro(busca->attackType, "2"));
             }
             break;
         case 5:
@@ -171,6 +173,7 @@ BUSCA *busca_ler(BUSCA *busca)
             {
                 tamStr = strlen(tok) - 2;
                 strncpy(busca->targetIndustry, tok + 1, tamStr);
+                strcpy(busca->targetIndustry, formata_string_registro(busca->targetIndustry, "3"));
             }
             break;
         case 6:
@@ -180,6 +183,7 @@ BUSCA *busca_ler(BUSCA *busca)
             {
                 tamStr = strlen(tok) - 2;
                 strncpy(busca->defenseMechanism, tok + 1, tamStr);
+                strcpy(busca->defenseMechanism, formata_string_registro(busca->defenseMechanism, "4"));
             }
             break;
         }

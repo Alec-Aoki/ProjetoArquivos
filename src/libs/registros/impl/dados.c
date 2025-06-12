@@ -371,10 +371,6 @@ DADO *dado_ler(FILE *pontArq, DADO *dado, int byteOffset)
     free(buffer);
     buffer = NULL;
 
-    printf("**** DADO PURO APÓS LEITURA ****\n");
-    dado_print_puro(dado);
-    printf("**** DADO PURO APÓS LEITURA ****\n\n");
-
     return dado;
 }
 

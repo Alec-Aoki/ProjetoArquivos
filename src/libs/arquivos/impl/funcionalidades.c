@@ -304,7 +304,6 @@ void funcionalidade5()
     {
         // Lê a entrada do usuário para inserir um novo registro
         entrada = ler_entrada_insert();
-        print_entrada(entrada);
         if (entrada == NULL)
         {
             mensagem_erro();
