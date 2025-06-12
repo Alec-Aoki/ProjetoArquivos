@@ -41,6 +41,13 @@ Retorna: ponteiro para string formatada
 */
 char *formata_string_registro(char *string, char *id);
 
+/* desformata_string_registro():
+Aloca dinamicamente memória para uma string e remove delimitadores no inicio e final
+Parâmetros: ponteiro para string
+Retorna: ponteiro para string formatada
+*/
+char *desformata_string_registro(char *string);
+
 /* separa_campo():
 A partir de um ponteiro que aponta para o inicio de uma
 string do registro, separa os campos dela
@@ -79,7 +86,7 @@ a string original se não tiver aspas
 char *tira_aspas(char *str);
 
 /*FUNÇÃO FORNECIDA PARA LEITURA DE STRINGS*/
-void scan_quote_string(char *str); 
+void scan_quote_string(char *str);
 
 /*FUNÇÃO FORNECIDA PARA CORREÇÃO*/
 void binarioNaTela(char *nomeArquivoBinario);

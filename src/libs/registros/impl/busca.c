@@ -88,7 +88,7 @@ BUSCA *busca_ler(BUSCA *busca)
     if (busca == NULL)
         busca = busca_criar();
 
-    // Buffer para leitura de strings$
+    // Buffer para leitura de strings
     char buffer[256];
     // Byteoffset inicial para leitura dos dados do arquivo
     int byteOffset = BYTEOFFSET_HEADER;
@@ -259,8 +259,9 @@ DADO *busca_atualizar_dado(BUSCA *busca, DADO *dado)
     if (busca == NULL || dado == NULL)
         return NULL;
 
-    dado = dado_set(dado, -2, -2, -2, busca->idAttack, busca->year, busca->finLoss, busca->country,
-                    busca->attackType, busca->targetIndustry, busca->defenseMechanism);
+    dado = dado_set(dado, -2, -2, -2, busca->idAttack, busca->year, busca->finLoss,
+                    desformata_string_registro(busca->country), desformata_string_registro(busca->attackType),
+                    desformata_string_registro(busca->targetIndustry), desformata_string_registro(busca->defenseMechanism));
 
     dado_atualizar_tamReg(dado);
 

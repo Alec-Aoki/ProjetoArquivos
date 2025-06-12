@@ -70,14 +70,12 @@ Retorna: ponteiro para string formatada
 char *formata_string_registro(char *string, char *id)
 {
     // Aloca memória para a string
-    char *strTemp = (char *)malloc(sizeof(char) * 256);
+    char *strTemp = (char *)malloc(sizeof(char) * TAM_MAX_STR);
     if (strTemp == NULL)
         return string; // Erro de alocação de memória
 
-    if (string == NULL || strcmp(string, "") == 0 || strcmp(string, "NADA CONSTA") == 0)
-    {
+    if (string == NULL || strcmp(string, "") == 0 || strcmp(string, "NULO") == 0 || strcmp(string, "NADA CONSTA") == 0)
         strcpy(strTemp, "NADA CONSTA");
-    }
     else
     {
         // Construção segura da string
@@ -85,6 +83,32 @@ char *formata_string_registro(char *string, char *id)
         strcat(strTemp, id);
         strcat(strTemp, string);
         strcat(strTemp, "|");
+    }
+
+    return strTemp; // Retorna a string formatada
+}
+
+/* desformata_string_registro():
+Aloca dinamicamente memória para uma string e remove delimitadores no inicio e final
+Parâmetros: ponteiro para string
+Retorna: ponteiro para string formatada
+*/
+char *desformata_string_registro(char *string)
+{
+    if (strcmp(string, "$") == 0)
+        return NULL;
+
+    // Aloca memória para a string
+    char *strTemp = (char *)malloc(sizeof(char) * TAM_MAX_STR);
+    if (strTemp == NULL)
+        return string; // Erro de alocação de memória
+
+    if (string == NULL || strcmp(string, "") == 0 || strcmp(string, "NULO") == 0 || strcmp(string, "NADA CONSTA") == 0)
+        strcpy(strTemp, "NADA CONSTA");
+    else
+    {
+        strncpy(strTemp, string + 1, strlen(string) - 2);
+        strTemp[strlen(string) - 1] = '\0';
     }
 
     return strTemp; // Retorna a string formatada
