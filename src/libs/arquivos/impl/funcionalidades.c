@@ -286,10 +286,9 @@ void funcionalidade5()
 
     // Quantidade de dados a serem inseridos
     int quantDados;
-    scanf("%d", &quantDados);
+    scanf(" %d", &quantDados);
 
-    char **entrada = NULL;
-    DADO *dado = NULL;
+    
     HEADER *headerArq = NULL;
     headerArq = header_ler(pontArqBin, headerArq);
 
@@ -302,6 +301,9 @@ void funcionalidade5()
 
     for (int i = 0; i < quantDados; i++)
     {
+        char **entrada = NULL;
+        DADO *dado = NULL;
+
         // Lê a entrada do usuário para inserir um novo registro
         entrada = ler_entrada_insert();
         if (entrada == NULL)
@@ -315,8 +317,6 @@ void funcionalidade5()
                         str_to_int(entrada[1]), str_to_float(entrada[2]),
                         entrada[3], entrada[4], entrada[5], entrada[6]);
 
-        printf("\n");
-
         if (!arqBIN_insert_dado(pontArqBin, headerArq, dado))
         {
             mensagem_erro();
@@ -327,6 +327,7 @@ void funcionalidade5()
 
         // Libera a memória alocada para a entrada
         apaga_entrada(&entrada);
+        dado_apagar(&dado);
     }
 
     // Atualizando o header do arquivo binário
@@ -335,7 +336,6 @@ void funcionalidade5()
 
     // Apagando structs e fechando o arquivo
     header_apagar(&headerArq);
-    dado_apagar(&dado);
     fclose(pontArqBin);
 
     binarioNaTela(nomeArqBin);
