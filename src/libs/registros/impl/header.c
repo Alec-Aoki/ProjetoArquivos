@@ -34,7 +34,8 @@ Retorna: ponteiro para a struct do tipo header
 */
 HEADER *header_criar()
 {
-    HEADER *novoHeader = (HEADER *)malloc(sizeof(HEADER)); // Alocando dinâmicamente uma struct do tipo HEADER
+    // Alocando dinâmicamente uma struct do tipo HEADER
+    HEADER *novoHeader = (HEADER *)malloc(sizeof(HEADER));
     if (novoHeader == NULL)
         return NULL; // Erro de alocação de memória
 
@@ -65,7 +66,8 @@ HEADER *header_criar()
 }
 
 /* header_set():
-Define os campos de uma struct do tipo header. Se uma struct não for fornecida, cria uma.
+Define os campos de uma struct do tipo header.
+Se uma struct não for fornecida, cria uma.
 Parâmetros: valores para os campos do header
 Retorna: ponteiro para a struct do tipo header
 */
@@ -79,7 +81,6 @@ HEADER *header_set(HEADER *header, int status, long int topo,
     if (header == NULL)
         header = header_criar();
 
-    /* INICIALIZANDO O HEADER */
     // Campos de valor variável
     if (status != -2)
         header->status = status + '0'; // Conversão int -> char
