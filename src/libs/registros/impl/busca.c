@@ -110,8 +110,8 @@ BUSCA *busca_ler(BUSCA *busca)
         buffer[fdl1] = '\0'; // Remove newline character
     else
         buffer[fdl2] = '\0'; // Remove carriage return character
-    
-        ptr = buffer;
+
+    ptr = buffer;
 
     /*Lendo qual campo devemos buscar, salvando essa informação no vetor quais campos
         e guardando seus valores nas variáveis auxiliares corretas*/
@@ -135,9 +135,9 @@ BUSCA *busca_ler(BUSCA *busca)
             flag = 6;
 
         busca->quaisCampos[j] = flag; // Guardando esse campo no vetor
-
         // Avançando o ponteiro na string
-        tok = strsep(&ptr, " "); // Tok aponta para o valor do campo que acaba de ser guardado
+        // Tok aponta para o valor do campo que acaba de ser guardado
+        tok = strsep(&ptr, " ");
         if (tok == NULL)
             break; // Caso tenhamos chegado ao final da string
 
@@ -267,30 +267,12 @@ DADO *busca_atualizar_dado(BUSCA *busca, DADO *dado)
         return NULL;
 
     dado = dado_set(dado, -2, -2, -2, busca->idAttack, busca->year, busca->finLoss,
-                    desformata_string_registro(busca->country), desformata_string_registro(busca->attackType),
-                    desformata_string_registro(busca->targetIndustry), desformata_string_registro(busca->defenseMechanism));
+                    desformata_string_registro(busca->country),
+                    desformata_string_registro(busca->attackType),
+                    desformata_string_registro(busca->targetIndustry),
+                    desformata_string_registro(busca->defenseMechanism));
 
     dado_atualizar_tamReg(dado);
 
     return dado;
-}
-
-/*print_busca():
-Imprime todos os campos de uma struct busca
-Parâmetro: ponteiro para busca
-*/
-void print_busca(BUSCA *busca)
-{
-    if (busca == NULL)
-        return;
-
-    printf("idAttack: %d\n", busca->idAttack);
-    printf("year: %d\n", busca->year);
-    printf("finLoss: %.2f\n", busca->finLoss);
-    printf("country: %s\n", busca->country);
-    printf("attackType: %s\n", busca->attackType);
-    printf("targetInd: %s\n", busca->targetIndustry);
-    printf("defMec: %s\n", busca->defenseMechanism);
-
-    return;
 }

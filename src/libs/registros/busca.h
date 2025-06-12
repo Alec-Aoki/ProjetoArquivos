@@ -49,10 +49,4 @@ Retorna: ponteiro para dado
 */
 DADO *busca_atualizar_dado(BUSCA *busca, DADO *dado);
 
-/*print_busca():
-Imprime todos os campos de uma struct busca
-Parâmetro: ponteiro para busca
-*/
-void print_busca(BUSCA *busca);
-
 #endif
