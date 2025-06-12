@@ -221,15 +221,16 @@ bool arqBIN_insert_dado(FILE *pontArqBIN, HEADER *headerArq, DADO *dado)
 
         while (currentByteOffset != -1)
         {
-            dadoRem = dado_ler(pontArqBIN, dado, currentByteOffset);
+            dadoRem = dado_ler(pontArqBIN, dadoRem, currentByteOffset);
 
             if (dado_get_removido(dadoRem) == '1' && tamReg <= dado_get_int(dadoRem, 3))
             {
-                long int proxByteOffset = dado_get_prox(dadoRem);
+                long int nextByteOffset = dado_get_prox(dadoRem);
 
                 // Se o tamanho do registro couber no registro removido,
                 // insere o dado e preenche com lixo($)
                 int nroLixo = dado_get_int(dadoRem, 3) - tamReg;
+                
                 // dado_set_tamReg(dado, dado_get_int(dadoRem, 3));
                 dado_set(dado, 0, dado_get_int(dadoRem, 3), -1, -2, -2, -2,
                                 NULL, NULL, NULL, NULL);
@@ -242,7 +243,7 @@ bool arqBIN_insert_dado(FILE *pontArqBIN, HEADER *headerArq, DADO *dado)
                 {
                     // Caso 1: Se o registro removido utilizado for o primeiro
                     // registro do arquivo, atualiza o topo
-                    topo = proxByteOffset;
+                    topo = nextByteOffset;
                 }
                 else
                 {
@@ -250,7 +251,7 @@ bool arqBIN_insert_dado(FILE *pontArqBIN, HEADER *headerArq, DADO *dado)
                     // O registro anterior ao removido deve apontar para o próximo do removido
                     DADO *dadoPrev = NULL;
                     dadoPrev = dado_ler(pontArqBIN, dadoPrev, prevByteOffset);
-                    dadoPrev = dado_set(dadoPrev, 1, -2, proxByteOffset, -2, -2, -2,
+                    dadoPrev = dado_set(dadoPrev, 1, -2, nextByteOffset, -2, -2, -2,
                                         NULL, NULL, NULL, NULL);
                     // Escreve o dado anterior atualizado no arquivo
                     fseek(pontArqBIN, prevByteOffset, SEEK_SET);
