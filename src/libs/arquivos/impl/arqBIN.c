@@ -188,8 +188,8 @@ bool arqBIN_insert_dado(FILE *pontArqBIN, HEADER *headerArq, DADO *dado)
         return false;
 
     if (headerArq == NULL)
-        headerArq = header_ler(pontArqBIN, headerArq);
-
+        return false;
+        
     // Inicializando variáveis necessárias
     int tamReg = dado_get_int(dado, 3);
     int nroRegArq = header_get_int(headerArq, 1);
@@ -214,45 +214,58 @@ bool arqBIN_insert_dado(FILE *pontArqBIN, HEADER *headerArq, DADO *dado)
     }
     else // Há registro logic. rem.
     {
-        long int byteOffset = topo;
+        long int currentByteOffset = topo;
+        long int prevByteOffset = -1; // Para armazenar o byte offset do registro removido anterior
         DADO *dadoRem = NULL;
 
-        while (byteOffset != -1)
+        while (currentByteOffset != -1)
         {
-            dadoRem = dado_ler(pontArqBIN, dado, byteOffset);
+            dadoRem = dado_ler(pontArqBIN, dado, currentByteOffset);
 
-            if (dado_get_removido(dadoRem) == '1')
+            if (dado_get_removido(dadoRem) == '1' && tamReg <= dado_get_int(dadoRem, 3))
             {
-                if (tamReg <= dado_get_int(dadoRem, 3))
+                long int proxByteOffset = dado_get_prox(dadoRem);
+
+                // Se o tamanho do registro couber no registro removido,
+                // insere o dado e preenche com lixo($)
+                int nroLixo = dado_get_int(dadoRem, 3) - tamReg;
+                // dado_set_tamReg(dado, dado_get_int(dadoRem, 3));
+                dado_set(dado, 0, dado_get_int(dadoRem, 3), -1, -2, -2, -2,
+                                NULL, NULL, NULL, NULL);
+
+                // inserir o dado e preencher com lixo
+                dado_escrever(pontArqBIN, dado, nroLixo);
+
+                if (prevByteOffset == -1)
                 {
-                    // Se o tamanho do registro couber no registro removido,
-                    // insere o dado e preenche com lixo($)
-                    int nroLixo = dado_get_int(dadoRem, 3) - tamReg;
-                    // dado_set_tamReg(dado, dado_get_int(dadoRem, 3));
-                    dado = dado_set(dado, -2, dado_get_int(dadoRem, 3), -2, -2, -2, -2,
-                                    NULL, NULL, NULL, NULL);
-
-                    // inserir o dado e preencher com lixo
-                    dado_escrever(pontArqBIN, dado, nroLixo);
-
-                    // Define o dado como não removido
-                    // E define o próximo do dado como o próximo do dado removido
-                    dado = dado_set(dado, 0, -2, dado_get_prox(dadoRem), -2, -2, -2,
-                                    NULL, NULL, NULL, NULL);
-
-                    // Atualiza o topo para o próximo do dado removido
-                    topo = dado_get_prox(dadoRem);
-
-                    // Atualiza o número de registros
-                    nroRegArq++;
-                    nroRegRem--;
-                    inserido = true; // marca que o dado foi inserido
-                    break;
+                    // Caso 1: Se o registro removido utilizado for o primeiro
+                    // registro do arquivo, atualiza o topo
+                    topo = proxByteOffset;
                 }
+                else
+                {
+                    // Caso 2: Se o registro removido utilizado não for o primeiro
+                    // O registro anterior ao removido deve apontar para o próximo do removido
+                    DADO *dadoPrev = NULL;
+                    dadoPrev = dado_ler(pontArqBIN, dadoPrev, prevByteOffset);
+                    dadoPrev = dado_set(dadoPrev, 1, -2, proxByteOffset, -2, -2, -2,
+                                        NULL, NULL, NULL, NULL);
+                    // Escreve o dado anterior atualizado no arquivo
+                    fseek(pontArqBIN, prevByteOffset, SEEK_SET);
+                    dado_escrever(pontArqBIN, dadoPrev, 0);
+                    dado_apagar(&dadoPrev);
+                }
+
+                // Atualiza o número de registros
+                nroRegArq++;
+                nroRegRem--;
+                inserido = true; // marca que o dado foi inserido
+                break;  
             }
 
             // Se o tamanho do registro não couber, continua para o próximo registro removido
-            byteOffset = dado_get_prox(dadoRem);
+            prevByteOffset = currentByteOffset;
+            currentByteOffset = dado_get_prox(dadoRem);
             dado_apagar(&dadoRem);
         }
     }
@@ -276,10 +289,6 @@ bool arqBIN_insert_dado(FILE *pontArqBIN, HEADER *headerArq, DADO *dado)
     // Atualizando o header
     headerArq = header_set(headerArq, -2, topo, -2, nroRegArq, nroRegRem,
                            NULL, NULL, NULL, NULL, NULL, NULL, NULL);
-    fseek(pontArqBIN, 0, SEEK_SET);
-    header_escrever(pontArqBIN, headerArq, false); // Escrevendo o header atualizado no arquivo
-
-    dado_apagar(&dado);
-    header_apagar(&headerArq);
+    
     return inserido; // Retorna true se o dado foi inserido, false caso contrário
 }

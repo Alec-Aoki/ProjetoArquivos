@@ -278,6 +278,14 @@ void funcionalidade5()
     char **entrada = NULL;
     DADO *dado = NULL;
     HEADER *headerArq = NULL;
+    headerArq = header_ler(pontArqBin, headerArq);
+    
+    if (headerArq == NULL)
+    {
+        mensagem_erro();
+        fclose(pontArqBin);
+        return;
+    }
 
     for (int i = 0; i < quantDados; i++)
     {
@@ -306,6 +314,13 @@ void funcionalidade5()
         apaga_entrada(&entrada);
     }
 
+    // Atualizando o header do arquivo binário
+    fseek(pontArqBin, 0, SEEK_SET);
+    arqBIN_escrever_header(pontArqBin, headerArq, false);
+    
+    // Apagando structs e fechando o arquivo
+    header_apagar(&headerArq);
+    dado_apagar(&dado);
     fclose(pontArqBin);
 
     binarioNaTela(nomeArqBin);
