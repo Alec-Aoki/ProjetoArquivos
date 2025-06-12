@@ -255,6 +255,19 @@ void funcionalidade4()
     return;
 }
 
+void print_entrada(char **entrada)
+{
+    if (entrada == NULL)
+        return;
+
+    for (int i = 0; i < 7; i++)
+    {
+        if (entrada[i] != NULL)
+            printf("%s ", entrada[i]);
+    }
+    printf("\n");
+}
+
 /* funcionalidade5()
 Insere um dado no arquivo binário
 */
@@ -279,7 +292,7 @@ void funcionalidade5()
     DADO *dado = NULL;
     HEADER *headerArq = NULL;
     headerArq = header_ler(pontArqBin, headerArq);
-    
+
     if (headerArq == NULL)
     {
         mensagem_erro();
@@ -291,6 +304,7 @@ void funcionalidade5()
     {
         // Lê a entrada do usuário para inserir um novo registro
         entrada = ler_entrada_insert();
+        print_entrada(entrada);
         if (entrada == NULL)
         {
             mensagem_erro();
@@ -301,6 +315,8 @@ void funcionalidade5()
         dado = dado_set(dado, 0, 0, -1, str_to_int(entrada[0]),
                         str_to_int(entrada[1]), str_to_float(entrada[2]),
                         entrada[3], entrada[4], entrada[5], entrada[6]);
+
+        printf("\n");
 
         if (!arqBIN_insert_dado(pontArqBin, headerArq, dado))
         {
@@ -317,7 +333,7 @@ void funcionalidade5()
     // Atualizando o header do arquivo binário
     fseek(pontArqBin, 0, SEEK_SET);
     arqBIN_escrever_header(pontArqBin, headerArq, false);
-    
+
     // Apagando structs e fechando o arquivo
     header_apagar(&headerArq);
     dado_apagar(&dado);

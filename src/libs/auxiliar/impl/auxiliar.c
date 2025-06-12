@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
+#include <ctype.h>
 
 #include "../auxiliar.h"
 
@@ -174,35 +175,29 @@ Retorna: um ponteiro para um vetor de strings (cada string representa um campo d
 */
 char **ler_entrada_insert()
 {
-    getchar();
+    // getchar();
     char **entrada = aloca_array_string();
     if (entrada == NULL)
     {
         mensagem_erro();
         return NULL; // Erro ao alocar memória
     }
-
-    char buffer[TAM_MAX_STR];
-    char *ptr;
-
-    fgets(buffer, sizeof(buffer), stdin);
-    buffer[strcspn(buffer, "\n")] = '\0';
-    ptr = buffer;
-
-    char *tok = strsep(&ptr, " ");
-    int j = 0; // Contador para os campos
-    while (tok != NULL && j < 7)
+    int i = 0;
+    for (; i < 3; i++)
     {
-        if (strcmp(tok, "NULO") == 0)
+        scanf(" %s", entrada[i]);
+        if (strcmp(entrada[i], "NULO") == 0)
         {
-            entrada[j] = NULL; // Define como NULL se for "NULO"
+            entrada[i] = NULL; // Define como NULL se for "NULO"
         }
-        else
+    }
+    for (; i < 7; i++)
+    {
+        scan_quote_string(entrada[i]);
+        if (strcmp(entrada[i], "NULO") == 0)
         {
-            strcpy(entrada[j], tira_aspas(tok)); // Remove aspas e copia para o campo
+            entrada[i] = NULL;
         }
-        j++;
-        tok = strsep(&ptr, " ");
     }
 
     return entrada;
@@ -267,6 +262,54 @@ char *tira_aspas(char *str)
     }
 
     return str; // Retorna a string original se não tiver aspas
+}
+
+/*FUNÇÃO FORNECIDA DE LEITURA DE STRING COM ASPAS*/
+void scan_quote_string(char *str)
+{
+
+    /*
+     *       Use essa função para ler um campo string delimitado entre aspas (").
+     *       Chame ela na hora que for ler tal campo. Por exemplo:
+     *
+     *       A entrada está da seguinte forma:
+     *               nomeDoCampo "MARIA DA SILVA"
+     *
+     *       Para ler isso para as strings já alocadas str1 e str2 do seu programa, você faz:
+     *               scanf("%s", str1); // Vai salvar nomeDoCampo em str1
+     *               scan_quote_string(str2); // Vai salvar MARIA DA SILVA em str2 (sem as aspas)
+     *
+     */
+
+    char R;
+
+    while ((R = getchar()) != EOF && isspace(R))
+        ; // ignorar espaços, \r, \n...
+
+    if (R == 'N' || R == 'n')
+    { // campo NULO
+        getchar();
+        getchar();
+        getchar();       // ignorar o "ULO" de NULO.
+        strcpy(str, ""); // copia string vazia
+    }
+    else if (R == '\"')
+    {
+        if (scanf("%[^\"]", str) != 1)
+        { // ler até o fechamento das aspas
+            strcpy(str, "");
+        }
+        getchar(); // ignorar aspas fechando
+    }
+    else if (R != EOF)
+    { // vc tá tentando ler uma string que não tá entre aspas! Fazer leitura normal %s então, pois deve ser algum inteiro ou algo assim...
+        str[0] = R;
+        scanf("%s", &str[1]);
+    }
+    else
+    { // EOF
+        strcpy(str, "");
+    }
 }
 
 /*FUNÇÃO FORNECIDA PARA CORREÇÃO*/

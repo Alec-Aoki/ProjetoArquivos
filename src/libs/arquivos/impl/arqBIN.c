@@ -58,7 +58,8 @@ void arqBIN_imprimir(FILE *pontArqBIN)
     }
 
     // Leitura do header do arquivo
-    HEADER *headerArq = header_ler(pontArqBIN, headerArq);
+    HEADER *headerArq = NULL;
+    headerArq = header_ler(pontArqBIN, headerArq);
     if (headerArq == NULL)
     {
         mensagem_erro();
@@ -234,6 +235,7 @@ bool arqBIN_insert_dado(FILE *pontArqBIN, HEADER *headerArq, DADO *dado)
                                 NULL, NULL, NULL, NULL);
 
                 // inserir o dado e preencher com lixo
+                fseek(pontArqBIN, currentByteOffset, SEEK_SET);
                 dado_escrever(pontArqBIN, dado, nroLixo);
 
                 if (prevByteOffset == -1)
