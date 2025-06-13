@@ -448,7 +448,7 @@ bool dado_remover(FILE *pontArq, HEADER *headerArq, long int byteOffset)
     // Atualizando campos do header
     quantRegArq--; // Decrementa o número de registros no arquivo
     quantRegRem++; // Incrementa o número de registros removidos
-    headerArq = header_set(headerArq, 0, topo, -2, quantRegArq, quantRegRem,
+    headerArq = header_set(headerArq, -2, topo, -2, quantRegArq, quantRegRem,
                            NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
     // Escrever o dado atualizado no arquivo
@@ -456,12 +456,6 @@ bool dado_remover(FILE *pontArq, HEADER *headerArq, long int byteOffset)
     fseek(pontArq, byteOffset, SEEK_SET);
     // Escreve o dado atualizado no arquivo
     dado_escrever(pontArq, dado, 0);
-
-    // Escreve o header atualizado no arquivo
-    fseek(pontArq, 0, SEEK_SET);
-    headerArq = header_set(headerArq, 1, -2, -2, -2, -2,
-                           NULL, NULL, NULL, NULL, NULL, NULL, NULL);
-    header_escrever(pontArq, headerArq, false);
 
     dado_apagar(&dado);
 

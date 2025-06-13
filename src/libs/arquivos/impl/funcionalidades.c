@@ -47,13 +47,12 @@ void funcionalidade1()
         return;
     }
 
-    // Escrevendo o header  no arquivo binário
-    fseek(pontArqBin, 0, SEEK_SET);
-
     // Definindo status como inconsistente (0)
     headerCSV = header_set(headerCSV, 0, -2, -2, -2, -2,
                            NULL, NULL, NULL, NULL, NULL, NULL, NULL);
-    arqBIN_escrever_header(pontArqBin, headerCSV, true);
+    // Escrevendo o header  no arquivo binário
+    fseek(pontArqBin, 0, SEEK_SET);
+    header_escrever(pontArqBin, headerCSV, true);
 
     // Lendo dados do .csv e escrevendo no .bin
     DADO *dadoCSV = NULL;                            // Ponteiro para dado (reutilizável)
@@ -69,7 +68,7 @@ void funcionalidade1()
             break;
 
         // Escreve a linha no .bin
-        arqBIN_escrever_dado(pontArqBin, dadoCSV);
+        dado_escrever(pontArqBin, dadoCSV, 0);
         // Atualizando quantidade de dados e ponteiro
         quantRegDados++;
         byteOffsetPonteiro += dado_get_int(dadoCSV, 3) + 5;
@@ -83,7 +82,7 @@ void funcionalidade1()
 
     // Escrevendo o header no arquivo binário
     fseek(pontArqBin, 0, SEEK_SET);
-    arqBIN_escrever_header(pontArqBin, headerCSV, false);
+    header_escrever(pontArqBin, headerCSV, false);
 
     // Apagando structs e fechando os arquivos
     header_apagar(&headerCSV);
@@ -158,11 +157,12 @@ void funcionalidade3()
         // Buscando no arq. .bin
         while (byteOffsetEncontrado < byteOffsetFimArq)
         {
-
-            byteOffsetEncontrado = arqBIN_buscar_byteOffset(pontArqBin, busca, headerArq, byteOffsetEncontrado);
+            byteOffsetEncontrado = arqBIN_buscar_byteOffset(pontArqBin, busca,
+                                                            headerArq, byteOffsetEncontrado);
             if (byteOffsetEncontrado == -1)
             {
-                mensagem_regInexistente(); // Não foi encontrado um dado que obedece os campos de busca
+                // Não foi encontrado um dado que obedece os campos de busca
+                mensagem_regInexistente();
                 break;
             }
             else if (byteOffsetEncontrado == -2 || byteOffsetEncontrado == -3)
@@ -224,6 +224,12 @@ void funcionalidade4()
         mensagem_erro();
         return;
     }
+    // Definindo status como inconsistente (0)
+    headerArq = header_set(headerArq, 0, -2, -2, -2, -2,
+                           NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+    // Escrevendo o header  no arquivo binário
+    fseek(pontArqBin, 0, SEEK_SET);
+    header_escrever(pontArqBin, headerArq, false);
 
     long int byteOffsetEncontrado = -1;
     long int byteOffsetFimArq = header_get_longint(headerArq, 2);
@@ -236,7 +242,8 @@ void funcionalidade4()
         // Buscar registro que satisfaz os campos de busca
         while (byteOffsetEncontrado < byteOffsetFimArq)
         {
-            byteOffsetEncontrado = arqBIN_buscar_byteOffset(pontArqBin, busca, headerArq, byteOffsetEncontrado);
+            byteOffsetEncontrado = arqBIN_buscar_byteOffset(pontArqBin, busca,
+                                                            headerArq, byteOffsetEncontrado);
             if (byteOffsetEncontrado < 0)
                 break; // Não foi encontrado um dado que obedece os campos de busca
             else
@@ -247,25 +254,19 @@ void funcionalidade4()
         busca_apagar(&busca);
     }
 
+    // Definindo status como consistente (1)
+    headerArq = header_set(headerArq, 1, -2, -2, -2, -2,
+                           NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+    // Escrevendo o header  no arquivo binário
+    fseek(pontArqBin, 0, SEEK_SET);
+    header_escrever(pontArqBin, headerArq, false);
+
     header_apagar(&headerArq);
     fclose(pontArqBin);
 
     binarioNaTela(nomeArqBin);
 
     return;
-}
-
-void print_entrada(char **entrada)
-{
-    if (entrada == NULL)
-        return;
-
-    for (int i = 0; i < 7; i++)
-    {
-        if (entrada[i] != NULL)
-            printf("%s ", entrada[i]);
-    }
-    printf("\n");
 }
 
 /* funcionalidade5()
@@ -290,13 +291,18 @@ void funcionalidade5()
 
     HEADER *headerArq = NULL;
     headerArq = header_ler(pontArqBin, headerArq);
-
     if (headerArq == NULL)
     {
         mensagem_erro();
         fclose(pontArqBin);
         return;
     }
+    // Definindo status como inconsistente (0)
+    headerArq = header_set(headerArq, 0, -2, -2, -2, -2,
+                           NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+    // Escrevendo o header  no arquivo binário
+    fseek(pontArqBin, 0, SEEK_SET);
+    header_escrever(pontArqBin, headerArq, false);
 
     for (int i = 0; i < quantDados; i++)
     {
@@ -330,8 +336,12 @@ void funcionalidade5()
     }
 
     // Atualizando o header do arquivo binário
+    // Definindo status como consistente (1)
+    headerArq = header_set(headerArq, 1, -2, -2, -2, -2,
+                           NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+    // Escrevendo o header  no arquivo binário
     fseek(pontArqBin, 0, SEEK_SET);
-    arqBIN_escrever_header(pontArqBin, headerArq, false);
+    header_escrever(pontArqBin, headerArq, false);
 
     // Apagando structs e fechando o arquivo
     header_apagar(&headerArq);
@@ -378,6 +388,13 @@ void funcionalidade6()
         return;
     }
 
+    // Definindo status como inconsistente (0)
+    headerArq = header_set(headerArq, 0, -2, -2, -2, -2,
+                           NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+    // Escrevendo o header  no arquivo binário
+    fseek(pontArqBin, 0, SEEK_SET);
+    header_escrever(pontArqBin, headerArq, false);
+
     for (int i = 0; i < quantAtualiz; i++)
     {
         byteOffsetEncontrado = -1;
@@ -387,7 +404,8 @@ void funcionalidade6()
         // Lendo os parâmetros a serem atualizados
         camposAtualizados = busca_ler(camposAtualizados);
 
-        byteOffsetEncontrado = arqBIN_buscar_byteOffset(pontArqBin, busca, headerArq, byteOffsetEncontrado);
+        byteOffsetEncontrado = arqBIN_buscar_byteOffset(pontArqBin, busca,
+                                                        headerArq, byteOffsetEncontrado);
 
         // Se encontramos o dado
         if (byteOffsetEncontrado >= BYTEOFFSET_HEADER)
@@ -428,6 +446,10 @@ void funcionalidade6()
         dado_apagar(&dado);
         dado_apagar(&dadoAtualizado);
     }
+    // Definindo status como consistente (1)
+    headerArq = header_set(headerArq, 1, -2, -2, -2, -2,
+                           NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+    // Escrevendo o header  no arquivo binário
     fseek(pontArqBin, 0, SEEK_SET);
     header_escrever(pontArqBin, headerArq, false);
 

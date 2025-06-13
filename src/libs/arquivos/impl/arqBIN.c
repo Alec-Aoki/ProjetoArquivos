@@ -9,42 +9,6 @@
 #include "../../registros/busca.h"
 #include "../arqBIN.h"
 
-/*arqBin_escrever_header():
-Escreve uma struct do tipo header em um arquivo.bin
-Parâmetro: ponteiro para arquivo, ponteiro para header, valor booleano
-*/
-void arqBIN_escrever_header(FILE *pontArqBIN, HEADER *header, bool camposSemanticos)
-{
-    if (pontArqBIN == NULL || header == NULL)
-    {
-        mensagem_erro();
-        return;
-    }
-
-    // Escrevendo header no arquivo binário
-    header_escrever(pontArqBIN, header, camposSemanticos);
-
-    return;
-}
-
-/*arqBIN_escrever_dado():
-Lê um dado de um arquivo .bin
-Parâmetro: ponteiro para arquivo, ponteiro para dado
-*/
-void arqBIN_escrever_dado(FILE *pontArqBIN, DADO *dado)
-{
-    if (pontArqBIN == NULL || dado == NULL)
-    {
-        mensagem_erro();
-        return;
-    }
-
-    // Escrevendo header no arquivo binário
-    dado_escrever(pontArqBIN, dado, 0);
-
-    return;
-}
-
 /*arqBIN_imprimir():
 Imprime um arquivo.bin
 Parâmetro: ponteiro para arquivo
@@ -205,7 +169,7 @@ bool arqBIN_insert_dado(FILE *pontArqBIN, HEADER *headerArq, DADO *dado)
         // logo insere-se no final do arquivo
         long int proxByteOffset = header_get_longint(headerArq, 2);
         fseek(pontArqBIN, proxByteOffset, SEEK_SET);
-        arqBIN_escrever_dado(pontArqBIN, dado);
+        dado_escrever(pontArqBIN, dado, 0);
 
         proxByteOffset += tamReg + 5; // Atualiza o próximo byte offset
         nroRegArq++;
@@ -217,7 +181,8 @@ bool arqBIN_insert_dado(FILE *pontArqBIN, HEADER *headerArq, DADO *dado)
     else // Há registro logic. rem.
     {
         long int currentByteOffset = topo;
-        long int prevByteOffset = -1; // Para armazenar o byte offset do registro removido anterior
+        // Para armazenar o byte offset do registro removido anterior
+        long int prevByteOffset = -1;
         DADO *dadoRem = NULL;
 
         while (currentByteOffset != -1)
@@ -232,11 +197,9 @@ bool arqBIN_insert_dado(FILE *pontArqBIN, HEADER *headerArq, DADO *dado)
                 // insere o dado e preenche com lixo($)
                 int nroLixo = dado_get_int(dadoRem, 3) - tamReg;
 
-                // dado_set_tamReg(dado, dado_get_int(dadoRem, 3));
                 dado_set(dado, 0, dado_get_int(dadoRem, 3), -1, -2, -2, -2,
                          NULL, NULL, NULL, NULL);
-
-                // inserir o dado e preencher com lixo
+                // Insere o dado e preenche com lixo
                 fseek(pontArqBIN, currentByteOffset, SEEK_SET);
                 dado_escrever(pontArqBIN, dado, nroLixo);
 
@@ -263,7 +226,7 @@ bool arqBIN_insert_dado(FILE *pontArqBIN, HEADER *headerArq, DADO *dado)
                 // Atualiza o número de registros
                 nroRegArq++;
                 nroRegRem--;
-                inserido = true; // marca que o dado foi inserido
+                inserido = true; // Marca que o dado foi inserido
                 break;
             }
 
@@ -278,8 +241,8 @@ bool arqBIN_insert_dado(FILE *pontArqBIN, HEADER *headerArq, DADO *dado)
     {
         // Se não foi inserido, inserir no final do arquivo
         long int proxByteOffset = header_get_longint(headerArq, 2);
-        fseek(pontArqBIN, proxByteOffset, SEEK_SET); // trocar por proxByteOffset
-        arqBIN_escrever_dado(pontArqBIN, dado);
+        fseek(pontArqBIN, proxByteOffset, SEEK_SET);
+        dado_escrever(pontArqBIN, dado, 0);
 
         proxByteOffset += tamReg + 5; // Atualiza o próximo byte offset
         // Atualiza o próximo byte offset no header
