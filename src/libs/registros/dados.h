@@ -36,13 +36,6 @@ Parâmetro: ponteiro para ponteiro da struct
 */
 void dado_apagar(DADO **registro);
 
-/* dado_get_prox():
-Retorna o valor do campo prox de um dado
-Parâmetros: ponteiro pra struct do tipo dado
-Retorna: valor do campo (-1 se dado nulo)
-*/
-long int dado_get_prox(DADO *dado);
-
 /* dado_get_string():
 Retorna a string de um campo
 Parâmetros: ponteiro pra struct do tipo dado, inteiro de 1 a 4 (campo)
@@ -63,6 +56,13 @@ Parâmetros: ponteiro pra struct do tipo dado, inteiro de 1 a 3 (campo)
 Retorna: valor do campo (-1 se mal sucedido)
 */
 int dado_get_int(DADO *dado, int campo);
+
+/* dado_get_prox():
+Retorna o valor do campo prox de um dado
+Parâmetros: ponteiro pra struct do tipo dado
+Retorna: valor do campo (-1 se dado nulo)
+*/
+long int dado_get_prox(DADO *dado);
 
 /* dado_get_finLoss():
 Retorna o valor do campo financialLoss
