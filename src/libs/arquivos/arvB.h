@@ -36,7 +36,7 @@ void ArvB_header_apagar(HEADER_ARVB **headerArvB);
 Retorna o valor de um campo inteiro de uma struct do tipo HEADER_ARVB.
 Parâmetros: ponteiro para a struct e o campo desejado
     1: noRaiz
-    2: proxByteOffset
+    2: proxRRN
     3: nroNos
 Retorna: valor do campo (-1 se não encontrado ou header nulo)
 */
@@ -99,5 +99,13 @@ Parâmetros: ponteiro para o arquivo, byteOffset do nó atual, chave a ser busca
 Retorna: ponteiro para o nó que contém a chave (NULL se não encontrado)
 */
 NO *ArvB_busca(FILE *pontArq, int byteOffsetAtual, int chave);
+
+/*TODO*/
+/* ArvB_inserir():
+Função inicial para mexer no header e lidar com a primeira inserção
+Parâmetros: ponteiro para header de arvB, chave a ser inserido, byteOffset do
+registro no arquivo de dados com essa chave
+*/
+void ArvB_inserir(FILE *pontArq, HEADER_ARVB *header, int chave, int byteOffsetDado);
 
 #endif

@@ -157,6 +157,9 @@ void ArvB_header_escrever(FILE *pontArq, HEADER_ARVB *headerArvB)
     if (pontArq == NULL || headerArvB == NULL)
         return;
 
+    // Colocando o ponteiro no início do arquivo
+    fseek(pontArq, 0, SEEK_SET);
+
     // Escrevendo os campos do header no arquivo
     fwrite(&(headerArvB->status), sizeof(char), 1, pontArq);
     fwrite(&(headerArvB->noRaiz), sizeof(int), 1, pontArq);
@@ -256,7 +259,7 @@ NO *ArvB_no_set(NO *no, int byteOffset, int *chaves,
                 int tipoNo, int quantChavesAtual)
 {
     if (no == NULL)
-        return NULL;
+        no = ArvB_no_criar();
 
     if (byteOffset != -2)
         no->byteOffset = byteOffset;
@@ -300,7 +303,6 @@ void ArvB_no_escrever(FILE *pontArq, NO *no)
     return;
 }
 
-/*TODO*/
 /* ArvB_busca():
 Busca uma chave na árvore-B
 Parâmetros: ponteiro para o arquivo, byteOffset do nó atual, chave a ser buscada
@@ -345,13 +347,16 @@ NO *ArvB_busca(FILE *pontArq, int byteOffsetAtual, int chave)
 }
 
 /*TODO*/
-/* void ArvB_inserir():
+// void ArvB_inserir_recursivo(FILE *pontArq, HEADER_ARVB *header, int chave, int byteOffsetDado, int byteOffsetNoAtual);
+
+/* ArvB_inserir():
 Função inicial para mexer no header e lidar com a primeira inserção
-Parâmetros: ponteiro para header de arvB,
+Parâmetros: ponteiro para header de arvB, chave a ser inserido, byteOffset do
+registro no arquivo de dados com essa chave
 */
 void ArvB_inserir(FILE *pontArq, HEADER_ARVB *header, int chave, int byteOffsetDado)
 {
-    if (header == NULL)
+    if (pontArq == NULL || header == NULL)
         return; // Erro
 
     int byteOffsetNoRaiz = header->noRaiz;
@@ -360,7 +365,10 @@ void ArvB_inserir(FILE *pontArq, HEADER_ARVB *header, int chave, int byteOffsetD
     if (byteOffsetNoRaiz == -1)
     {
         NO *noRaiz = NULL;
-        noRaiz = ArvB_no_set(noRaiz, TAM_HEADER_ARVB + (header->proxRRN) * TAM_REGISTRO_ARVB, -2, -2, -2, 0, 1);
+        noRaiz = ArvB_no_set(noRaiz, TAM_HEADER_ARVB + (header->proxRRN) * TAM_REGISTRO_ARVB, NULL, NULL, NULL, 0, 1);
+        if (noRaiz == NULL)
+            return;
+
         noRaiz->chaves[0] = chave;
         noRaiz->byteOffsetDados[0] = byteOffsetDado;
 
@@ -392,3 +400,30 @@ void ArvB_inserir(FILE *pontArq, HEADER_ARVB *header, int chave, int byteOffsetD
 
     // Caso 2: árvore não-vazia
 }
+
+/* ArvB_inserir_recursivo():
+Função para lidar com a inserção no caso em que a árvore não está vazia (caso geral)
+Parâmetros: ponteiro para header de arvB, chave a ser inserido, byteOffset do
+registro no arquivo de dados com essa chave, byteOffset do nó sendo lido
+
+void ArvB_inserir_recursivo(FILE *pontArq, HEADER_ARVB *header, int chave, int byteOffsetDado, int byteOffsetNoAtual)
+{
+    if (pontArq == NULL || header == NULL)
+        return; // Erro
+
+    // Lendo nó atual
+    NO *noAtual = NULL;
+    noAtual = ArvB_no_ler(pontArq, byteOffsetNoAtual);
+    if (noAtual == NULL)
+        return;
+
+    // Caso 1: nó folha
+    if (noAtual->tipoNo == -1)
+    {
+        // Caso tenha espaço no nó folha
+        if(noAtual->quantChavesAtual < quantMaxChaves){
+
+        }
+    }
+}
+*/
