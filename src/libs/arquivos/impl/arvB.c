@@ -359,18 +359,10 @@ void ArvB_inserir(FILE *pontArq, HEADER_ARVB *header, int chave, int byteOffsetD
     // Caso 1: árvore vázia
     if (byteOffsetNoRaiz == -1)
     {
-        // Criando nó raíz
-        NO *noRaiz = ArvB_no_criar();
-        if (noRaiz == NULL)
-            return;
-
-        noRaiz->tipoNo = 0;
-
-        // Inserindo chave
-        noRaiz->byteOffset = TAM_HEADER_ARVB + (header->proxRRN) * TAM_REGISTRO_ARVB;
+        NO *noRaiz = NULL;
+        noRaiz = ArvB_no_set(noRaiz, TAM_HEADER_ARVB + (header->proxRRN) * TAM_REGISTRO_ARVB, -2, -2, -2, 0, 1);
         noRaiz->chaves[0] = chave;
         noRaiz->byteOffsetDados[0] = byteOffsetDado;
-        noRaiz->quantChavesAtual = 1;
 
         // Preenchendo o resto dos campos como nulo
         for (int i = 1; i < quantMaxChaves; i++)
@@ -384,10 +376,7 @@ void ArvB_inserir(FILE *pontArq, HEADER_ARVB *header, int chave, int byteOffsetD
         }
 
         // Definindo campos do header antes da escrita
-        header->noRaiz = noRaiz->byteOffset;
-        header->nroNos = 1;
-        header->proxRRN = 1;
-        header->status = 0;
+        header = ArvB_header_set(header, 0, noRaiz->byteOffset, 1, 1);
 
         // Escrevendo header e nó raíz
         ArvB_header_escrever(pontArq, header);
@@ -400,4 +389,6 @@ void ArvB_inserir(FILE *pontArq, HEADER_ARVB *header, int chave, int byteOffsetD
         ArvB_no_apagar(&noRaiz);
         return;
     }
+
+    // Caso 2: árvore não-vazia
 }
