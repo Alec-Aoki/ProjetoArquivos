@@ -343,3 +343,61 @@ NO *ArvB_busca(FILE *pontArq, int byteOffsetAtual, int chave)
         return ArvB_busca(pontArq, noAtual->byteOffsetDescendentes[i], chave);
     }
 }
+
+/*TODO*/
+/* void ArvB_inserir():
+Função inicial para mexer no header e lidar com a primeira inserção
+Parâmetros: ponteiro para header de arvB,
+*/
+void ArvB_inserir(FILE *pontArq, HEADER_ARVB *header, int chave, int byteOffsetDado)
+{
+    if (header == NULL)
+        return; // Erro
+
+    int byteOffsetNoRaiz = header->noRaiz;
+
+    // Caso 1: árvore vázia
+    if (byteOffsetNoRaiz == -1)
+    {
+        // Criando nó raíz
+        NO *noRaiz = ArvB_no_criar();
+        if (noRaiz == NULL)
+            return;
+
+        noRaiz->tipoNo = 0;
+
+        // Inserindo chave
+        noRaiz->byteOffset = TAM_HEADER_ARVB + (header->proxRRN) * TAM_REGISTRO_ARVB;
+        noRaiz->chaves[0] = chave;
+        noRaiz->byteOffsetDados[0] = byteOffsetDado;
+        noRaiz->quantChavesAtual = 1;
+
+        // Preenchendo o resto dos campos como nulo
+        for (int i = 1; i < quantMaxChaves; i++)
+        {
+            noRaiz->chaves[i] = -1;
+            noRaiz->byteOffsetDados[i] = -1;
+        }
+        for (int i = 0; i < quantMaxFilhos; i++)
+        {
+            noRaiz->byteOffsetDescendentes[i] = -1;
+        }
+
+        // Definindo campos do header antes da escrita
+        header->noRaiz = noRaiz->byteOffset;
+        header->nroNos = 1;
+        header->proxRRN = 1;
+        header->status = 0;
+
+        // Escrevendo header e nó raíz
+        ArvB_header_escrever(pontArq, header);
+        ArvB_no_escrever(pontArq, noRaiz);
+
+        // Definindo header como consistente e escrevendo
+        header->status = 1;
+        ArvB_header_escrever(pontArq, header);
+
+        ArvB_no_apagar(&noRaiz);
+        return;
+    }
+}
