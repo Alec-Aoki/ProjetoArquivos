@@ -60,7 +60,11 @@ HEADER_ARVB *ArvB_header_set(HEADER_ARVB *headerArvB, int status,
                              int noRaiz, int proxRRN, int nroNos)
 {
     if (headerArvB == NULL)
-        return NULL;
+    {
+        headerArvB = ArvB_header_criar();
+        if (headerArvB == NULL)
+            return NULL;
+    }
 
     if (status != -2)
         headerArvB->status = status + '0'; // Conversão int -> char
@@ -296,6 +300,7 @@ void ArvB_no_escrever(FILE *pontArq, NO *no)
     return;
 }
 
+/*TODO*/
 /* ArvB_busca():
 Busca uma chave na árvore-B
 Parâmetros: ponteiro para o arquivo, byteOffset do nó atual, chave a ser buscada
@@ -330,7 +335,7 @@ NO *ArvB_busca(FILE *pontArq, int byteOffsetAtual, int chave)
     // Se não encontrou, verifica se é uma folha
     if (noAtual->tipoNo == -1)
     {
-        return -1;
+        return NULL;
     }
     else
     {

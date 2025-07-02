@@ -7,6 +7,8 @@
         "auxiliar.h": "c",
         "arqcsv.h": "c",
         "dados.h": "c",
-        "header.h": "c"
+        "header.h": "c",
+        "funcionalidades.h": "c",
+        "arvb.h": "c"
     }
 }
