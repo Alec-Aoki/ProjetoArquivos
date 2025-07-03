@@ -92,6 +92,8 @@ Parâmetros: ponteiro para o arquivo, ponteiro para o nó a ser escrito
 */
 void ArvB_no_escrever(FILE *pontArq, NO *no);
 
+int ArvB_no_get_int(NO *no, int campo);
+
 /*TODO*/
 /* ArvB_busca():
 Busca uma chave na árvore-B

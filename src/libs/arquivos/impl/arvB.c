@@ -303,6 +303,27 @@ void ArvB_no_escrever(FILE *pontArq, NO *no)
     return;
 }
 
+int ArvB_no_get_int(NO *no, int campo)
+{
+    if (no == NULL)
+        return -1;
+
+    switch (campo)
+    {
+    case 1: // byteOffset
+        return no->byteOffset;
+    case 2: // tipoNo
+        return no->tipoNo;
+    case 3: // quantChavesAtual
+        return no->quantChavesAtual;
+    default:
+        break;
+    }
+
+    return -1; // Campo inválido
+}
+
+/*TODO*/
 /* ArvB_busca():
 Busca uma chave na árvore-B
 Parâmetros: ponteiro para o arquivo, byteOffset do nó atual, chave a ser buscada
@@ -321,6 +342,11 @@ NO *ArvB_busca(FILE *pontArq, int byteOffsetAtual, int chave)
 
     fseek(pontArq, byteOffsetAtual, SEEK_SET);
     noAtual = ArvB_no_ler(pontArq, byteOffsetAtual);
+    if (noAtual == NULL)
+    {
+        mensagem_erro();
+        return NULL;
+    }
 
     // Procura a chave no nó atual, avançando o índice quando a chave for maior que as chaves do nó
     while (i < noAtual->quantChavesAtual && chave > noAtual->chaves[i])
@@ -337,12 +363,16 @@ NO *ArvB_busca(FILE *pontArq, int byteOffsetAtual, int chave)
     // Se não encontrou, verifica se é uma folha
     if (noAtual->tipoNo == -1)
     {
+        ArvB_no_apagar(&noAtual); // Libera memória do nó atual
         return NULL;
     }
     else
     {
+        int byteOffsetFilho = noAtual->byteOffsetDescendentes[i];
+        ArvB_no_apagar(&noAtual); // Libera memória do nó atual
+
         // Se a chave não foi encontrada, segue para o filho correspondente
-        return ArvB_busca(pontArq, noAtual->byteOffsetDescendentes[i], chave);
+        return ArvB_busca(pontArq, byteOffsetFilho, chave);
     }
 }
 
