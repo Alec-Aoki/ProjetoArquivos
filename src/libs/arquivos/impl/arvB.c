@@ -303,6 +303,14 @@ void ArvB_no_escrever(FILE *pontArq, NO *no)
     return;
 }
 
+/* ArvB_no_get_int():
+Retorna o valor de um campo inteiro de uma struct do tipo no.
+Parâmetros: ponteiro para a struct e o campo desejado
+    1: byteOffset
+    2: tipoNO
+    3: quantChavesAtual
+Retorna: valor do campo (-1 se não encontrado ou no nulo)
+*/
 int ArvB_no_get_int(NO *no, int campo)
 {
     if (no == NULL)
@@ -377,47 +385,54 @@ NO *ArvB_busca(FILE *pontArq, int byteOffsetAtual, int chave)
 }
 
 /* inserir_ordenado():
-Insere uma chave, o byteOffset do seu dado e o byteOffset de seu nó filho
-nos vetores de um nó ordenadamente. Caso o byteOffset do nó filho seja -2,
-ele não será inserido
-Parâmetros: ponteiro para nó, chave, byteOffset do dado e byteOffste do nó filho
+Insere uma chave e os respectivos campos nos vetores de uma estrutura nó.
+Não utilizamos a struct para podermos usar essa função no split, cujos vetores
+têm tamanho diferentes do nó
 */
-void inserir_ordenado(NO *no, int chave, int byteOffsetDado, int byteOffsetFilho)
+int inserir_ordenado(int *chaves, int *byteOffsetDados, int *byteOffsetDescendentes,
+                     int *quantChavesAtual, int chave, int byteOffsetDado, int byteOffsetFilho)
 {
-    if (no == NULL || chave < 0 || byteOffsetDado < 0)
-        return; // Erro
+    if (chaves == NULL || byteOffsetDados == NULL)
+        return -1; // Erro
 
-    // Encontrando posição do campo novo
+    // Encontrando posição da chave
     int pos = 0;
-    while (chave > no->chaves[pos] && pos < quantMaxChaves)
+    while (pos < *quantChavesAtual && chave > chaves[pos])
         pos++;
 
-    if (no->chaves[pos] == chave)
-        return; // Chave já inserida
-
-    // Shiftando os campos já existentes pra direita
-    for (int i = no->quantChavesAtual; i > pos; i--)
+    // Deslocando chaves e etc. para a direita
+    for (int i = *quantChavesAtual; i > pos; i--)
     {
-        no->chaves[i] = no->chaves[i - 1];
-        no->byteOffsetDados[i] = no->byteOffsetDados[i - 1];
-        if (byteOffsetFilho != -2)
-            no->byteOffsetDescendentes[i + 1] = no->byteOffsetDescendentes[i];
+        chaves[i] = chaves[i - 1];
+        byteOffsetDados[i] = byteOffsetDados[i - 1];
     }
 
-    // Inserindo campos
-    no->chaves[pos] = chave;
-    no->byteOffsetDados[pos] = byteOffsetDado;
+    // Inserindo a chave na posicao que abrimos
+    chaves[pos] = chave;
+    byteOffsetDados[pos] = byteOffsetDado;
+
+    if (quantChavesAtual != NULL)
+        (*quantChavesAtual)++;
+
     if (byteOffsetFilho != -2)
-        no->byteOffsetDescendentes[pos + 1] = byteOffsetFilho;
+    {
+        if (byteOffsetDescendentes == NULL)
+            return -1; // Erro
 
-    no->quantChavesAtual++;
+        // Deslocando pra direita
+        for (int i = quantMaxFilhos - 1; i > pos + 1; i--)
+            byteOffsetDescendentes[i] = byteOffsetDescendentes[i - 1];
 
-    return;
+        byteOffsetDescendentes[pos + 1] = byteOffsetFilho;
+    }
+
+    return pos;
 }
 
 /*TODO*/
 
 void ArvB_inserir_recursivo(FILE *pontArq, HEADER_ARVB *header, int chave, int byteOffsetDado, int byteOffsetNoAtual);
+NO *ArvB_split(NO *no, HEADER_ARVB *header, int chave, int byteOffsetDado, int byteOffsetFilho);
 
 /* ArvB_inserir():
 Função inicial para mexer no header e lidar com a primeira inserção
@@ -435,7 +450,7 @@ void ArvB_inserir(FILE *pontArq, HEADER_ARVB *header, int chave, int byteOffsetD
     if (byteOffsetNoRaiz == -1)
     {
         NO *noRaiz = NULL;
-        noRaiz = ArvB_no_set(noRaiz, TAM_HEADER_ARVB + (header->proxRRN) * TAM_REGISTRO_ARVB, NULL, NULL, NULL, 0, 1);
+        noRaiz = ArvB_no_set(noRaiz, TAM_HEADER_ARVB + (header->proxRRN) * TAM_REGISTRO_ARVB, NULL, NULL, NULL, -1, 1);
         if (noRaiz == NULL)
             return;
 
@@ -461,7 +476,7 @@ void ArvB_inserir(FILE *pontArq, HEADER_ARVB *header, int chave, int byteOffsetD
         ArvB_no_escrever(pontArq, noRaiz);
 
         // Definindo header como consistente e escrevendo
-        header->status = 1;
+        header->status = '1';
         ArvB_header_escrever(pontArq, header);
 
         ArvB_no_apagar(&noRaiz);
@@ -469,6 +484,7 @@ void ArvB_inserir(FILE *pontArq, HEADER_ARVB *header, int chave, int byteOffsetD
     }
 
     // Caso 2: árvore não-vazia
+    ArvB_inserir_recursivo(pontArq, header, chave, byteOffsetDado, byteOffsetNoRaiz);
 }
 
 /* ArvB_inserir_recursivo():
@@ -476,7 +492,6 @@ Função para lidar com a inserção no caso em que a árvore não está vazia (
 Parâmetros: ponteiro para header de arvB, chave a ser inserido, byteOffset do
 registro no arquivo de dados com essa chave, byteOffset do nó sendo lido
 */
-
 void ArvB_inserir_recursivo(FILE *pontArq, HEADER_ARVB *header, int chave, int byteOffsetDado, int byteOffsetNoAtual)
 {
     if (pontArq == NULL || header == NULL)
@@ -494,16 +509,115 @@ void ArvB_inserir_recursivo(FILE *pontArq, HEADER_ARVB *header, int chave, int b
         // Caso tenha espaço no nó folha
         if (noAtual->quantChavesAtual < quantMaxChaves)
         {
-            inserir_ordenado(noAtual, chave, byteOffsetDado, -2);
+            inserir_ordenado(noAtual->chaves, noAtual->byteOffsetDados, NULL, &(noAtual->quantChavesAtual), chave, byteOffsetDado, -2);
             ArvB_no_escrever(pontArq, noAtual);
         }
         else
         {
             // Split
+            // Nó resultante do split
+            NO *noNovo = ArvB_split(noAtual, header, chave, byteOffsetDado, -2);
+            ArvB_no_escrever(pontArq, noAtual); // Atualizando nó original
+            ArvB_no_escrever(pontArq, noNovo);  // Novo nó
+            ArvB_no_apagar(&noNovo);
         }
     }
     else
     {
         // Caso 2: nó intermediário, continuar procurando nó folha
     }
+}
+
+NO *ArvB_split(NO *no, HEADER_ARVB *header, int chave, int byteOffsetDado, int byteOffsetFilho)
+{
+    if (no == NULL || header == NULL)
+        return NULL; // Erro
+
+    // Vetores temporários
+    int chavesTemp[quantMaxChaves + 1];
+    int byteOffsetDadosTemp[quantMaxChaves + 1];
+    int byteOffsetFilhosTemp[quantMaxFilhos + 1];
+    int quantChavesTemp = quantMaxChaves;
+    // Inicializando
+    for (int i = 0; i < quantMaxChaves; i++)
+    {
+        chavesTemp[i] = -1;
+        byteOffsetDadosTemp[i] = -1;
+    }
+    for (int i = 0; i < quantMaxFilhos; i++)
+        byteOffsetFilhosTemp[i] = -1;
+
+    // Copiando dados do nó para estes vetores
+    for (int i = 0; i < quantMaxChaves; i++)
+    {
+        chavesTemp[i] = no->chaves[i];
+        byteOffsetDadosTemp[i] = no->byteOffsetDados[i];
+    }
+    if (byteOffsetFilho != -2)
+    {
+        for (int i = 0; i < quantMaxFilhos; i++)
+            byteOffsetFilhosTemp[i] = no->byteOffsetDescendentes[i];
+    }
+
+    // Limpando nó original
+    for (int i = 0; i < quantMaxChaves; i++)
+    {
+        no->chaves[i] = -1;
+        no->byteOffsetDados[i] = -1;
+    }
+    if (byteOffsetFilho != -2)
+    {
+        for (int i = 0; i < quantMaxFilhos; i++)
+            no->byteOffsetDescendentes[i] = -1;
+    }
+
+    // Inserindo a chave nos vetores temporários
+    inserir_ordenado(chavesTemp, byteOffsetDadosTemp, byteOffsetFilhosTemp, &quantChavesTemp, chave, byteOffsetDado, byteOffsetFilho);
+
+    // Criando nó novo
+    NO *noNovo = ArvB_no_criar();
+    if (noNovo == NULL)
+        return NULL; // Erro
+
+    // Redistribuindo chaves e etc -> MELHORAR
+    no->chaves[0] = chavesTemp[0];
+    no->byteOffsetDados[0] = byteOffsetDadosTemp[0];
+    noNovo->chaves[0] = chavesTemp[1];
+    noNovo->byteOffsetDados[0] = byteOffsetDadosTemp[1];
+    noNovo->chaves[1] = chavesTemp[2];
+    noNovo->byteOffsetDados[1] = byteOffsetDadosTemp[2];
+    if (byteOffsetFilho != -2)
+    {
+        no->byteOffsetDescendentes[0] = byteOffsetFilhosTemp[0];
+        no->byteOffsetDescendentes[1] = byteOffsetFilhosTemp[1];
+        noNovo->byteOffsetDescendentes[0] = byteOffsetFilhosTemp[2];
+        noNovo->byteOffsetDescendentes[1] = byteOffsetFilhosTemp[3];
+    }
+
+    // Atualizando campos dos dois nós
+    no->quantChavesAtual = 1;
+    noNovo->byteOffset = TAM_HEADER_ARVB + header->proxRRN * TAM_REGISTRO_ARVB;
+    noNovo->quantChavesAtual = 2;
+    noNovo->tipoNo = no->tipoNo;
+
+    return noNovo;
+}
+
+void print_no(NO *no)
+{
+    if (no == NULL)
+        return;
+
+    printf("**********************\n");
+    printf("Byteoffset: %d\n", no->byteOffset);
+    printf("Chave 1: %d\n", no->chaves[0]);
+    printf("Chave 2: %d\n", no->chaves[1]);
+    printf("Byteoffset Chave 1: %d\n", no->byteOffsetDados[0]);
+    printf("Byteoffset Chave 2: %d\n", no->byteOffsetDados[1]);
+    printf("ByteOffset Filho 1: %d\n", no->byteOffsetDescendentes[0]);
+    printf("ByteOffset Filho 2: %d\n", no->byteOffsetDescendentes[1]);
+    printf("ByteOffset Filho 2: %d\n", no->byteOffsetDescendentes[2]);
+    printf("**********************\n\n");
+
+    return;
 }
