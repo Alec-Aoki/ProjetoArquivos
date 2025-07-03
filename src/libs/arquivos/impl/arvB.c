@@ -3,10 +3,12 @@
 #include <stdbool.h>
 #include <string.h>
 
-#include "../../registros/header.h"
+/*/#include "../../registros/header.h"
 #include "../../registros/dados.h"
 #include "../../auxiliar/auxiliar.h"
-#include "../../registros/busca.h"
+#include "../../registros/busca.h"*/
+#include "../../auxiliar/auxiliar.h"
+
 #include "../arvB.h"
 
 struct header_arvB_
@@ -229,8 +231,14 @@ Retorna: ponteiro para a struct do tipo NO lida (NULL se falhar)
 */
 NO *ArvB_no_ler(FILE *pontArq, int byteOffset)
 {
-    if (pontArq == NULL || byteOffset < 0)
+    if (pontArq == NULL)
     {
+        mensagem_erro();
+        return NULL;
+    }
+    if (byteOffset < 0)
+    {
+        printf("ERRO NO LER BYTEOFFSET\n");
         mensagem_erro();
         return NULL;
     }
@@ -437,7 +445,6 @@ int inserir_ordenado(int *chaves, int *byteOffsetDados, int *byteOffsetDescenden
     return pos;
 }
 
-/*TODO*/
 PROMOCAO ArvB_inserir_recursivo(FILE *pontArq, HEADER_ARVB *header, int chave, int byteOffsetDado, int byteOffsetNoAtual);
 PROMOCAO ArvB_split(NO *no, HEADER_ARVB *header, int chave, int byteOffsetDado, int byteOffsetFilho);
 
@@ -560,12 +567,12 @@ PROMOCAO ArvB_inserir_recursivo(FILE *pontArq, HEADER_ARVB *header, int chave, i
     promocao.byteOffsetDadoPromov = -1;
     promocao.houveSplit = false;
 
-    if (pontArq == NULL || header == NULL)
+    if (pontArq == NULL || header == NULL || byteOffsetNoAtual < 0)
         return promocao; // Erro
 
     // Lendo nó atual
     NO *noAtual = NULL;
-    noAtual = ArvB_no_ler(pontArq, byteOffsetNoAtual);
+    noAtual = ArvB_no_ler(pontArq, byteOffsetNoAtual); /*PROVAVEL ERRO*/
     if (noAtual == NULL)
         return promocao;
 
@@ -615,7 +622,7 @@ PROMOCAO ArvB_inserir_recursivo(FILE *pontArq, HEADER_ARVB *header, int chave, i
             // Caso 1: o nó atual tem espaço pra chave que foi promovida
             if (noAtual->quantChavesAtual < quantMaxChaves)
             {
-                inserir_ordenado(noAtual, noAtual->byteOffsetDados, noAtual->byteOffsetDescendentes, &(noAtual->quantChavesAtual),
+                inserir_ordenado(noAtual->chaves, noAtual->byteOffsetDados, noAtual->byteOffsetDescendentes, &(noAtual->quantChavesAtual),
                                  promocaoFilho.chavePromov, promocaoFilho.byteOffsetDadoPromov, ArvB_no_get_int(promocaoFilho.noNovo, 1));
 
                 ArvB_no_escrever(pontArq, noAtual);
