@@ -486,7 +486,7 @@ int main()
     printf("=================\n");
     printf("ATENÇÃO: Este código contém os seguintes problemas identificados:\n");
     printf("1. ArvB_busca() retorna -1 ao invés de NULL\n");
-    printf("2. Vazamento de memória na função ArvB_busca()\n");
+    // printf("2. Vazamento de memória na função ArvB_busca()\n"); CORRIGIDO
     printf("3. ArvB_header_set() não cria header quando NULL (contradiz documentação)\n");
     printf("4. Falta validação de integridade dos dados lidos\n");
     printf("5. Não há tratamento robusto para arquivos corrompidos\n");
