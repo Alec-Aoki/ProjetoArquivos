@@ -346,8 +346,48 @@ NO *ArvB_busca(FILE *pontArq, int byteOffsetAtual, int chave)
     }
 }
 
+/* inserir_ordenado():
+Insere uma chave, o byteOffset do seu dado e o byteOffset de seu nó filho
+nos vetores de um nó ordenadamente. Caso o byteOffset do nó filho seja -2,
+ele não será inserido
+Parâmetros: ponteiro para nó, chave, byteOffset do dado e byteOffste do nó filho
+*/
+void inserir_ordenado(NO *no, int chave, int byteOffsetDado, int byteOffsetFilho)
+{
+    if (no == NULL || chave < 0 || byteOffsetDado < 0)
+        return; // Erro
+
+    // Encontrando posição do campo novo
+    int pos = 0;
+    while (chave > no->chaves[pos] && pos < quantMaxChaves)
+        pos++;
+
+    if (no->chaves[pos] == chave)
+        return; // Chave já inserida
+
+    // Shiftando os campos já existentes pra direita
+    for (int i = no->quantChavesAtual; i > pos; i--)
+    {
+        no->chaves[i] = no->chaves[i - 1];
+        no->byteOffsetDados[i] = no->byteOffsetDados[i - 1];
+        if (byteOffsetFilho != -2)
+            no->byteOffsetDescendentes[i + 1] = no->byteOffsetDescendentes[i];
+    }
+
+    // Inserindo campos
+    no->chaves[pos] = chave;
+    no->byteOffsetDados[pos] = byteOffsetDado;
+    if (byteOffsetFilho != -2)
+        no->byteOffsetDescendentes[pos + 1] = byteOffsetFilho;
+
+    no->quantChavesAtual++;
+
+    return;
+}
+
 /*TODO*/
-// void ArvB_inserir_recursivo(FILE *pontArq, HEADER_ARVB *header, int chave, int byteOffsetDado, int byteOffsetNoAtual);
+
+void ArvB_inserir_recursivo(FILE *pontArq, HEADER_ARVB *header, int chave, int byteOffsetDado, int byteOffsetNoAtual);
 
 /* ArvB_inserir():
 Função inicial para mexer no header e lidar com a primeira inserção
@@ -405,6 +445,7 @@ void ArvB_inserir(FILE *pontArq, HEADER_ARVB *header, int chave, int byteOffsetD
 Função para lidar com a inserção no caso em que a árvore não está vazia (caso geral)
 Parâmetros: ponteiro para header de arvB, chave a ser inserido, byteOffset do
 registro no arquivo de dados com essa chave, byteOffset do nó sendo lido
+*/
 
 void ArvB_inserir_recursivo(FILE *pontArq, HEADER_ARVB *header, int chave, int byteOffsetDado, int byteOffsetNoAtual)
 {
@@ -421,9 +462,18 @@ void ArvB_inserir_recursivo(FILE *pontArq, HEADER_ARVB *header, int chave, int b
     if (noAtual->tipoNo == -1)
     {
         // Caso tenha espaço no nó folha
-        if(noAtual->quantChavesAtual < quantMaxChaves){
-
+        if (noAtual->quantChavesAtual < quantMaxChaves)
+        {
+            inserir_ordenado(noAtual, chave, byteOffsetDado, -2);
+            ArvB_no_escrever(pontArq, noAtual);
+        }
+        else
+        {
+            // Split
         }
     }
+    else
+    {
+        // Caso 2: nó intermediário, continuar procurando nó folha
+    }
 }
-*/
