@@ -3,10 +3,10 @@
 #include <stdbool.h>
 #include <string.h>
 
-/*/#include "../../registros/header.h"
+#include "../../registros/header.h"
 #include "../../registros/dados.h"
 #include "../../auxiliar/auxiliar.h"
-#include "../../registros/busca.h"*/
+#include "../../registros/busca.h"
 #include "../../auxiliar/auxiliar.h"
 
 #include "../arvB.h"
@@ -739,6 +739,60 @@ PROMOCAO ArvB_split(NO *no, HEADER_ARVB *header, int chave, int byteOffsetDado, 
     promocao.noNovo = noNovo;
 
     return promocao;
+}
+
+void ArvB_DFS(FILE *pontArq, int byteOffsetAtual, BUSCA *busca, HEADER *header)
+{
+    // Condição de parada
+    if (byteOffsetAtual < 0)
+        return;
+
+    NO *noAtual = NULL;
+    noAtual = ArvB_no_ler(pontArq, byteOffsetAtual);
+
+    if (noAtual == NULL)
+    {
+        mensagem_erro();
+        return;
+    }
+
+    // Se o nó não é folha, intercala a trajetoria
+    if (noAtual->tipoNo != -1)
+    {
+        for (int i = 0; i < noAtual->quantChavesAtual; i++)
+        {
+            ArvB_DFS(pontArq, noAtual->byteOffsetDescendentes[i], busca);
+            int byteOffset = noAtual->byteOffsetDados[i];
+
+            DADO *dado = NULL;
+            dado = dado_ler(pontArq, dado, byteOffset);
+            if (dado == NULL)
+            {
+                mensagem_erro();
+                return;
+            }
+
+            if (dado_get_removido(dado) == '0') // Verifica se o dado não foi removido
+            {
+                if (busca_comparar(busca, dado))
+                {
+                    dado_imprimir(dado, header); // Imprime o dado se a busca for bem-sucedida
+                    print("\n");
+                }
+            }
+            dado_apagar(&dado);
+        }
+
+        ArvB_DFS(pontArq, noAtual->byteOffsetDescendentes[noAtual->quantChavesAtual], busca);
+    }
+    // Se o nó é folha, processa o nó
+    else
+    {
+        for (int i = 0; i < noAtual->quantChavesAtual; i++)
+        {
+            // Processa o nó
+        }
+    }
 }
 
 void print_no(NO *no)

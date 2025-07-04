@@ -460,3 +460,40 @@ void funcionalidade6()
 
     return;
 }
+
+/* funcionalidade7():
+Esta funcionalidade cria um arquivo de índice árvore-B e insere as chaves
+*/
+
+/*
+void funcionalidade7()
+{
+    1. Lê o nome arquivo de dados e arquivo de indices
+    2. inserir um-a-um os índices sendo eles indexados pelo idAttack (Registros logicamente removidos não devem ser inseridos)
+}
+*/
+
+/* funcionalidade8():
+Faz a busca de registros que atendam os campos da busca
+*/
+
+/*
+void funcionalidade8()
+{
+    1. Lê o nome dos arquivos e o número de buscas
+    2. Leitura dos campos de busca
+    3. se o idAttack está entre os campos busca utilizae ArvB_busca, se não utilizar a func3
+}
+*/
+
+/* funcionalidade9()
+NAO DEVE SER IMPLEMENTADA
+*/
+
+/* funcionalidade10():
+Insere um registro num arquivo de dados dado
+*/
+
+/* funcionalidade11():
+Atualiza um registro no arquivo de dados, exceto o campo idAttack
+*/
