@@ -9,6 +9,7 @@
 #include "../../auxiliar/auxiliar.h"
 #include "../arqCSV.h"
 #include "../arqBIN.h"
+#include "../arvB.h"
 #include "../funcionalidades.h"
 
 /* funcionalidade1()
@@ -496,14 +497,102 @@ void funcionalidade7()
 /* funcionalidade8():
 Faz a busca de registros que atendam os campos da busca
 */
+<<<<<<< HEAD
 /*
+=======
+
+>>>>>>> fb3b570be3422225e3139995e8570b3c36237316
 void funcionalidade8()
 {
-    1. Lê o nome dos arquivos e o número de buscas
-    2. Leitura dos campos de busca
-    3. se o idAttack está entre os campos busca utilizae ArvB_busca, se não utilizar a func3
+    char nomeArqDados[TAM_MAX_STR];
+    char nomeArqArvB[TAM_MAX_STR];
+
+    ler_nome_arquivo(nomeArqDados);
+    ler_nome_arquivo(nomeArqArvB);
+
+    // Abre o arquivo de dados para leitura
+    FILE *pontArqDados = fopen(nomeArqDados, "rb");
+    if (pontArqDados == NULL)
+    {
+        mensagem_erro();
+        return;
+    }
+
+    // Abre o arquivo de índices árvore-B para leitura
+    FILE *pontArqArvB = fopen(nomeArqArvB, "rb");
+    if (pontArqArvB == NULL)
+    {
+        mensagem_erro();
+        fclose(pontArqDados);
+        return;
+    }
+
+    // Lendo quantidade de buscas a serem feitas
+    int quantBuscas;
+    scanf("%d", &quantBuscas);
+
+    BUSCA *busca = NULL;
+    HEADER *headerDados = NULL;
+    HEADER_ARVB *headerArvB = NULL;
+    // Lendo header do arquivo de dados
+    headerDados = header_ler(pontArqDados, headerDados);
+    if (headerDados == NULL)
+    {
+        mensagem_erro();
+        fclose(pontArqDados);
+        return;
+    }
+
+    // Lendo header do arquivo de índices árvore-B
+    headerArvB = ArvB_header_ler(pontArqArvB, headerArvB);
+    if (headerArvB == NULL)
+    {
+        mensagem_erro();
+        fclose(pontArqArvB);
+        return;
+    }
+
+    // Guarda o byteOffset da raiz
+    int byteOffsetRaiz = ArvB_header_get_int(headerArvB, 1);
+
+    // Lendo cada busca do usuário e efetuando-a
+    for (int i = 0; i < quantBuscas; i++)
+    {
+        busca = busca_ler(busca);
+        // Verifica se o idAttack faz parte do filtro de busca
+        int buscaIdAttack = busca_get_quaisCampos(busca, 1);
+        if (buscaIdAttack == 0)
+        {
+            // Caso faça, faz busca via na árvore de busca
+            int idAttack = busca_get_int(busca, 0);
+            NO *noEncontrado = NULL;
+            noEncontrado = ArvB_busca(pontArqArvB, byteOffsetRaiz, idAttack);
+            if (noEncontrado == NULL)
+            {
+                mensagem_regInexistente();
+                continue; // Registro não encontrado
+            }
+
+            ArvB_compara_dado(pontArqArvB, noEncontrado, busca);
+        }
+        else
+        {
+            // Caso não faça, visita todos os nós da árvore verificandos
+            ArvB_DFS(pontArqArvB, byteOffsetRaiz, busca, headerDados);
+        }
+
+        printf("**********\n");
+
+        // Reseta a struct busca
+        busca_apagar(&busca);
+    }
+
+    header_apagar(&headerDados);
+    ArvB_header_apagar(&headerArvB);
+
+    fclose(pontArqDados);
+    fclose(pontArqArvB);
 }
-*/
 
 /* funcionalidade9()
 NAO DEVE SER IMPLEMENTADA

@@ -49,4 +49,11 @@ Retorna: ponteiro para dado
 */
 DADO *busca_atualizar_dado(BUSCA *busca, DADO *dado);
 
+/* busca_get_int():
+Retorna o valor de um campo inteiro de uma struct busca
+Parâmetros: ponteiro para struct busca, inteiro (campo)
+Retorna: valor do campo ou -2 se inválido
+*/
+int busca_get_int(BUSCA *busca, int campo);
+
 #endif
