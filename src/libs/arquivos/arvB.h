@@ -24,7 +24,7 @@ Parâmetros: valores para os campos do header
 Retorna: ponteiro para a struct do tipo HEADER_ARVB
 */
 HEADER_ARVB *ArvB_header_set(HEADER_ARVB *headerArvB, int status,
-                             int noRaiz, int proxByteOffset, int nroNos);
+                             int noRaiz, int proxRRN, int nroNos);
 
 /* ArvB_header_apagar():
 Desaloca a memória ocupada por uma struct do tipo HEADER_ARVB.

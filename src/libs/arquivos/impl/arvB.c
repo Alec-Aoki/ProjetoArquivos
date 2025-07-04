@@ -763,8 +763,8 @@ void ArvB_DFS(FILE *pontArq, int byteOffsetAtual, BUSCA *busca, HEADER *header)
             {
                 if (busca_comparar(busca, dado))
                 {
-                    dado_imprimir(dado, header); // Imprime o dado se a busca for bem-sucedida
-                    print("\n");
+                    dado_imprimir(header, dado); // Imprime o dado se a busca for bem-sucedida
+                    printf("\n");
                 }
             }
             dado_apagar(&dado);
@@ -791,8 +791,8 @@ void ArvB_DFS(FILE *pontArq, int byteOffsetAtual, BUSCA *busca, HEADER *header)
             {
                 if (busca_comparar(busca, dado))
                 {
-                    dado_imprimir(dado, header); // Imprime o dado se a busca for bem-sucedida
-                    print("\n");
+                    dado_imprimir(header, dado); // Imprime o dado se a busca for bem-sucedida
+                    printf("\n");
                 }
             }
             dado_apagar(&dado);
@@ -853,6 +853,8 @@ void ArvB_compara_dado(FILE *pontArq, NO *no, BUSCA *busca)
     if (no == NULL || busca == NULL)
         return; // Erro
 
+    HEADER *header = header_ler(pontArq, header);
+
     // Percorre as chaves do nó
     for (int i = 0; i < no->quantChavesAtual; i++)
     {
@@ -868,12 +870,15 @@ void ArvB_compara_dado(FILE *pontArq, NO *no, BUSCA *busca)
         {
             if (busca_comparar(busca, dado))
             {
-                dado_imprimir(dado, NULL); // Imprime o dado se a busca for bem-sucedida
-                print("\n");
+                dado_imprimir(header, dado); // Imprime o dado se a busca for bem-sucedida
+                printf("\n");
             }
         }
         dado_apagar(&dado);
     }
+
+    header_apagar(&header);
+    return;
 }
 
 // Função para debuggar
