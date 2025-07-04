@@ -464,19 +464,38 @@ void funcionalidade6()
 /* funcionalidade7():
 Esta funcionalidade cria um arquivo de índice árvore-B e insere as chaves
 */
-
-/*
 void funcionalidade7()
 {
-    1. Lê o nome arquivo de dados e arquivo de indices
-    2. inserir um-a-um os índices sendo eles indexados pelo idAttack (Registros logicamente removidos não devem ser inseridos)
+    // 1. Lê o nome arquivo de dados e arquivo de indices
+    char nomeArqDados[TAM_MAX_STR];
+    char nomeArqArvB[TAM_MAX_STR];
+
+    ler_nome_arquivo(nomeArqDados);
+    ler_nome_arquivo(nomeArqArvB);
+
+    /*Abrindo arquivos*/
+    // Modo de leitura (binário)
+    FILE *pontArqDados = fopen(nomeArqDados, "rb");
+    if (pontArqDados == NULL)
+    {
+        mensagem_erro();
+        return;
+    }
+
+    // Modo de escrita (binário)
+    FILE *pontArqArv = fopen(nomeArqArvB, "wb");
+    if (pontArqArv == NULL)
+    {
+        mensagem_erro();
+        return;
+    }
+
+    // 2. inserir um-a-um os índices sendo eles indexados pelo idAttack (Registros logicamente removidos não devem ser inseridos)
 }
-*/
 
 /* funcionalidade8():
 Faz a busca de registros que atendam os campos da busca
 */
-
 /*
 void funcionalidade8()
 {
