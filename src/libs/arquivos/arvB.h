@@ -92,13 +92,20 @@ Parâmetros: ponteiro para o arquivo, ponteiro para o nó a ser escrito
 */
 void ArvB_no_escrever(FILE *pontArq, NO *no);
 
-/* ArvB_header_get_int():
-Retorna o valor de um campo inteiro de uma struct do tipo HEADER_ARVB.
+/* ArvB_no_get_int():
+Retorna o valor de um campo inteiro de uma struct do tipo no.
 Parâmetros: ponteiro para a struct e o campo desejado
-    1: noRaiz
-    2: proxRRN
-    3: nroNos
-Retorna: valor do campo (-1 se não encontrado ou header nulo)
+    1: byteOffset
+    2: tipoNO
+    3: quantChavesAtual
+    4: chave 1
+    5: chave 2
+    6: byteOffsetDado chave 1
+    7: byteOffsetDado chave 2
+    8: byteOffsetFilho 1
+    9: byteOffsetFilho 2
+    10: byteOffsetFilho 3
+Retorna: valor do campo (-1 se não encontrado ou no nulo)
 */
 int ArvB_no_get_int(NO *no, int campo);
 

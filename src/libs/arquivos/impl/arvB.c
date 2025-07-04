@@ -319,6 +319,13 @@ Parâmetros: ponteiro para a struct e o campo desejado
     1: byteOffset
     2: tipoNO
     3: quantChavesAtual
+    4: chave 1
+    5: chave 2
+    6: byteOffsetDado chave 1
+    7: byteOffsetDado chave 2
+    8: byteOffsetFilho 1
+    9: byteOffsetFilho 2
+    10: byteOffsetFilho 3
 Retorna: valor do campo (-1 se não encontrado ou no nulo)
 */
 int ArvB_no_get_int(NO *no, int campo)
@@ -334,6 +341,20 @@ int ArvB_no_get_int(NO *no, int campo)
         return no->tipoNo;
     case 3: // quantChavesAtual
         return no->quantChavesAtual;
+    case 4:
+        return no->chaves[0];
+    case 5:
+        return no->chaves[1];
+    case 6:
+        return no->byteOffsetDados[0];
+    case 7:
+        return no->byteOffsetDados[1];
+    case 8:
+        return no->byteOffsetDescendentes[0];
+    case 9:
+        return no->byteOffsetDescendentes[1];
+    case 10:
+        return no->byteOffsetDescendentes[2];
     default:
         break;
     }
@@ -889,14 +910,17 @@ void print_no(NO *no)
 
     printf("**********************\n");
     printf("Byteoffset: %d\n", no->byteOffset);
-    printf("Tipo no: %d\n", no->tipoNo);
+    printf("Tipo no: %d\n\n", no->tipoNo);
+
     printf("Chave 1: %d\n", no->chaves[0]);
     printf("Chave 2: %d\n\n", no->chaves[1]);
-    /*printf("Byteoffset Chave 1: %d\n", no->byteOffsetDados[0]);
-    printf("Byteoffset Chave 2: %d\n", no->byteOffsetDados[1]);
+
+    printf("Byteoffset Chave 1: %d\n", no->byteOffsetDados[0]);
+    printf("Byteoffset Chave 2: %d\n\n", no->byteOffsetDados[1]);
+
     printf("ByteOffset Filho 1: %d\n", no->byteOffsetDescendentes[0]);
     printf("ByteOffset Filho 2: %d\n", no->byteOffsetDescendentes[1]);
-    printf("ByteOffset Filho 2: %d\n", no->byteOffsetDescendentes[2]);*/
+    printf("ByteOffset Filho 3: %d\n", no->byteOffsetDescendentes[2]);
     printf("**********************\n\n");
 
     return;
