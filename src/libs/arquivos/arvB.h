@@ -102,7 +102,6 @@ Retorna: valor do campo (-1 se não encontrado ou header nulo)
 */
 int ArvB_no_get_int(NO *no, int campo);
 
-/*TODO*/
 /* ArvB_busca():
 Busca uma chave na árvore-B
 Parâmetros: ponteiro para o arquivo, byteOffset do nó atual, chave a ser buscada
@@ -110,14 +109,13 @@ Retorna: ponteiro para o nó que contém a chave (NULL se não encontrado)
 */
 NO *ArvB_busca(FILE *pontArq, int byteOffsetAtual, int chave);
 
-/*TODO*/
 /* ArvB_inserir():
-Função inicial para mexer no header e lidar com a primeira inserção
-Parâmetros: ponteiro para header de arvB, chave a ser inserido, byteOffset do
-registro no arquivo de dados com essa chave
+Função "macro" para mexer no header e lidar com a primeira inserção
+Parâmetros: ponteiro para arquivo, ponteiro para header de arvB, chave a ser inserido e seus campos
 */
 void ArvB_inserir(FILE *pontArq, HEADER_ARVB *header, int chave, int byteOffsetDado);
 
+// Função para debuggar
 void print_no(NO *no);
 
 #endif
