@@ -519,12 +519,30 @@ void ArvB_inserir(FILE *pontArq, HEADER_ARVB *header, int chave, int byteOffsetD
             NO *noRaizAntigo = ArvB_no_ler(pontArq, byteOffsetNoRaiz);
             if (noRaizAntigo != NULL)
             {
-                noRaizAntigo->tipoNo = 1;
+                int tipoNo = -1; // Folha
+                for (int i = 0; i < quantMaxFilhos; i++)
+                {
+                    if (noRaizAntigo->byteOffsetDescendentes[i] != -1)
+                    {
+                        tipoNo = 1; // Intermediario
+                        break;
+                    }
+                }
+                noRaizAntigo->tipoNo = tipoNo;
                 ArvB_no_escrever(pontArq, noRaizAntigo);
                 ArvB_no_apagar(&noRaizAntigo);
             }
 
-            promocao.noNovo->tipoNo = 1;
+            int tipoNo = -1; // Folha
+            for (int i = 0; i < quantMaxFilhos; i++)
+            {
+                if (promocao.noNovo->byteOffsetDescendentes[i] != -1)
+                {
+                    tipoNo = 1; // Intermediario
+                    break;
+                }
+            }
+            promocao.noNovo->tipoNo = tipoNo;
             ArvB_no_escrever(pontArq, promocao.noNovo);
 
             ArvB_no_escrever(pontArq, raizNova); // Escrevendo raíz nova
@@ -662,12 +680,12 @@ PROMOCAO ArvB_split(NO *no, HEADER_ARVB *header, int chave, int byteOffsetDado, 
     int quantChavesTemp = quantMaxChaves;
 
     // Inicializando vetores temporários
-    for (int i = 0; i < quantMaxChaves; i++)
+    for (int i = 0; i < quantMaxChaves + 1; i++)
     {
         chavesTemp[i] = -1;
         byteOffsetDadosTemp[i] = -1;
     }
-    for (int i = 0; i < quantMaxFilhos; i++)
+    for (int i = 0; i < quantMaxFilhos + 1; i++)
         byteOffsetFilhosTemp[i] = -1;
 
     // Copiando dados do nó para estes vetores
@@ -720,7 +738,7 @@ PROMOCAO ArvB_split(NO *no, HEADER_ARVB *header, int chave, int byteOffsetDado, 
     }
     noNovo->quantChavesAtual = quantChavesTemp - meio - 1;
 
-    // Redistribuindo os filhos se for preciso
+    // Redistribuindo os filhos
     // Nó esquerdo
     for (int i = 0; i <= meio; i++)
         no->byteOffsetDescendentes[i] = byteOffsetFilhosTemp[i];
@@ -748,13 +766,14 @@ void print_no(NO *no)
 
     printf("**********************\n");
     printf("Byteoffset: %d\n", no->byteOffset);
+    printf("Tipo no: %d\n", no->tipoNo);
     printf("Chave 1: %d\n", no->chaves[0]);
-    printf("Chave 2: %d\n", no->chaves[1]);
-    printf("Byteoffset Chave 1: %d\n", no->byteOffsetDados[0]);
+    printf("Chave 2: %d\n\n", no->chaves[1]);
+    /*printf("Byteoffset Chave 1: %d\n", no->byteOffsetDados[0]);
     printf("Byteoffset Chave 2: %d\n", no->byteOffsetDados[1]);
     printf("ByteOffset Filho 1: %d\n", no->byteOffsetDescendentes[0]);
     printf("ByteOffset Filho 2: %d\n", no->byteOffsetDescendentes[1]);
-    printf("ByteOffset Filho 2: %d\n", no->byteOffsetDescendentes[2]);
+    printf("ByteOffset Filho 2: %d\n", no->byteOffsetDescendentes[2]);*/
     printf("**********************\n\n");
 
     return;
