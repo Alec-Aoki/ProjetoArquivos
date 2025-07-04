@@ -724,6 +724,10 @@ PROMOCAO ArvB_split(NO *no, HEADER_ARVB *header, int chave, int byteOffsetDado, 
     return promocao;
 }
 
+/* ArvB_DFS():
+Realiza uma busca em profundidade na árvore B e imprime os dados que satisfazem a busca
+Parâmetros: ponteiro para o arquivo, byteOffset atual, ponteiro para a busca e header
+*/
 void ArvB_DFS(FILE *pontArq, int byteOffsetAtual, BUSCA *busca, HEADER *header)
 {
     // Condição de parada
@@ -744,7 +748,7 @@ void ArvB_DFS(FILE *pontArq, int byteOffsetAtual, BUSCA *busca, HEADER *header)
     {
         for (int i = 0; i < noAtual->quantChavesAtual; i++)
         {
-            ArvB_DFS(pontArq, noAtual->byteOffsetDescendentes[i], busca);
+            ArvB_DFS(pontArq, noAtual->byteOffsetDescendentes[i], busca, header);
             int byteOffset = noAtual->byteOffsetDados[i];
 
             DADO *dado = NULL;
@@ -766,14 +770,32 @@ void ArvB_DFS(FILE *pontArq, int byteOffsetAtual, BUSCA *busca, HEADER *header)
             dado_apagar(&dado);
         }
 
-        ArvB_DFS(pontArq, noAtual->byteOffsetDescendentes[noAtual->quantChavesAtual], busca);
+        ArvB_DFS(pontArq, noAtual->byteOffsetDescendentes[noAtual->quantChavesAtual], busca, header);
     }
     // Se o nó é folha, processa o nó
     else
     {
         for (int i = 0; i < noAtual->quantChavesAtual; i++)
         {
-            // Processa o nó
+            int byteOffset = noAtual->byteOffsetDados[i];
+
+            DADO *dado = NULL;
+            dado = dado_ler(pontArq, dado, byteOffset);
+            if (dado == NULL)
+            {
+                mensagem_erro();
+                return;
+            }
+
+            if (dado_get_removido(dado) == '0') // Verifica se o dado não foi removido
+            {
+                if (busca_comparar(busca, dado))
+                {
+                    dado_imprimir(dado, header); // Imprime o dado se a busca for bem-sucedida
+                    print("\n");
+                }
+            }
+            dado_apagar(&dado);
         }
     }
 }
@@ -820,6 +842,38 @@ int inserir_ordenado(int *chaves, int *byteOffsetDados, int *byteOffsetDescenden
     }
 
     return pos;
+}
+
+/* ArvB_compara_dado():
+Compara os dados de um nó com uma busca e imprime os dados que satisfazem a busca
+Parâmetros: ponteiro para o arquivo, ponteiro para o nó a ser comparado, ponteiro para a busca
+*/
+void ArvB_compara_dado(FILE *pontArq, NO *no, BUSCA *busca)
+{
+    if (no == NULL || busca == NULL)
+        return; // Erro
+
+    // Percorre as chaves do nó
+    for (int i = 0; i < no->quantChavesAtual; i++)
+    {
+        DADO *dado = NULL;
+        dado = dado_ler(pontArq, dado, no->byteOffsetDados[i]);
+        if (dado == NULL)
+        {
+            mensagem_erro();
+            return;
+        }
+
+        if (dado_get_removido(dado) == '0') // Verifica se o dado não foi removido
+        {
+            if (busca_comparar(busca, dado))
+            {
+                dado_imprimir(dado, NULL); // Imprime o dado se a busca for bem-sucedida
+                print("\n");
+            }
+        }
+        dado_apagar(&dado);
+    }
 }
 
 // Função para debuggar
