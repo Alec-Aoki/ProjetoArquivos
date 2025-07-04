@@ -484,7 +484,7 @@ void funcionalidade7()
     }
 
     // Modo de escrita (binário)
-    FILE *pontArqArv = fopen(nomeArqArvB, "wb");
+    FILE *pontArqArv = fopen(nomeArqArvB, "wb+");
     if (pontArqArv == NULL)
     {
         mensagem_erro();
@@ -529,11 +529,14 @@ void funcionalidade7()
     headerArv = ArvB_header_set(headerArv, 1, -2, -2, -2); // Definindo status do arq. da arv. como consistente
     ArvB_header_escrever(pontArqArv, headerArv);           // Escrevendo header
 
+    print_arv(pontArqArv, ArvB_header_get_int(headerArv, 1), headerArv);
     dado_apagar(&dadoTemp);
     header_apagar(&headerDados);
     ArvB_header_apagar(&headerArv);
     fclose(pontArqDados);
     fclose(pontArqArv);
+
+    binarioNaTela(nomeArqArvB);
 
     return;
 }

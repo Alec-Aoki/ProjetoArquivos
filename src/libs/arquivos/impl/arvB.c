@@ -901,3 +901,71 @@ void print_no(NO *no)
 
     return;
 }
+
+// Função para debuggar
+void print_arv(FILE *pontArq, int byteOffsetAtual, HEADER *header)
+{
+    // Condição de parada
+    if (byteOffsetAtual < 0)
+        return;
+
+    NO *noAtual = NULL;
+    noAtual = ArvB_no_ler(pontArq, byteOffsetAtual);
+
+    if (noAtual == NULL)
+    {
+        mensagem_erro();
+        return;
+    }
+
+    // Se o nó não é folha, intercala a trajetoria
+    if (noAtual->tipoNo != -1)
+    {
+        for (int i = 0; i < noAtual->quantChavesAtual; i++)
+        {
+            print_arv(pontArq, noAtual->byteOffsetDescendentes[i], header);
+            int byteOffset = noAtual->byteOffsetDados[i];
+
+            DADO *dado = NULL;
+            dado = dado_ler(pontArq, dado, byteOffset);
+            if (dado == NULL)
+            {
+                mensagem_erro();
+                return;
+            }
+
+            if (dado_get_removido(dado) == '0') // Verifica se o dado não foi removido
+            {
+                dado_imprimir(header, dado); // Imprime o dado se a busca for bem-sucedida
+                printf("\n");
+            }
+            dado_apagar(&dado);
+        }
+
+        print_arv(pontArq, noAtual->byteOffsetDescendentes[noAtual->quantChavesAtual], header);
+    }
+    // Se o nó é folha, processa o nó
+    else
+    {
+        for (int i = 0; i < noAtual->quantChavesAtual; i++)
+        {
+            int byteOffset = noAtual->byteOffsetDados[i];
+
+            DADO *dado = NULL;
+            dado = dado_ler(pontArq, dado, byteOffset);
+            if (dado == NULL)
+            {
+                mensagem_erro();
+                return;
+            }
+
+            if (dado_get_removido(dado) == '0') // Verifica se o dado não foi removido
+            {
+
+                dado_imprimir(header, dado); // Imprime o dado se a busca for bem-sucedida
+                printf("\n");
+            }
+            dado_apagar(&dado);
+        }
+    }
+}

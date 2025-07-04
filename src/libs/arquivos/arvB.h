@@ -130,4 +130,7 @@ void ArvB_DFS(FILE *pontArq, int byteOffsetAtual, BUSCA *busca, HEADER *header);
 // Função para debuggar
 void print_no(NO *no);
 
+// Função para debuggar
+void print_arv(FILE *pontArq, int byteOffsetAtual, HEADER *header);
+
 #endif
