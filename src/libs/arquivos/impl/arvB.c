@@ -231,14 +231,8 @@ Retorna: ponteiro para a struct do tipo NO lida (NULL se falhar)
 */
 NO *ArvB_no_ler(FILE *pontArq, int byteOffset)
 {
-    if (pontArq == NULL)
+    if (pontArq == NULL || byteOffset < 0)
     {
-        mensagem_erro();
-        return NULL;
-    }
-    if (byteOffset < 0)
-    {
-        printf("ERRO NO LER BYTEOFFSET\n");
         mensagem_erro();
         return NULL;
     }
@@ -430,11 +424,8 @@ int inserir_ordenado(int *chaves, int *byteOffsetDados, int *byteOffsetDescenden
     if (quantChavesAtual != NULL)
         (*quantChavesAtual)++;
 
-    if (byteOffsetFilho != -2)
+    if (byteOffsetFilho != -2 && byteOffsetDescendentes != NULL)
     {
-        if (byteOffsetDescendentes == NULL)
-            return -1; // Erro
-
         // Deslocando pra direita
         for (int i = quantMaxFilhos - 1; i > pos + 1; i--)
             byteOffsetDescendentes[i] = byteOffsetDescendentes[i - 1];
@@ -526,7 +517,7 @@ void ArvB_inserir(FILE *pontArq, HEADER_ARVB *header, int chave, int byteOffsetD
 
             // Atualizando os tipos dos nós filhos
             NO *noRaizAntigo = ArvB_no_ler(pontArq, byteOffsetNoRaiz);
-            if (noRaizAntigo == NULL)
+            if (noRaizAntigo != NULL)
             {
                 noRaizAntigo->tipoNo = 1;
                 ArvB_no_escrever(pontArq, noRaizAntigo);
@@ -685,11 +676,8 @@ PROMOCAO ArvB_split(NO *no, HEADER_ARVB *header, int chave, int byteOffsetDado, 
         chavesTemp[i] = no->chaves[i];
         byteOffsetDadosTemp[i] = no->byteOffsetDados[i];
     }
-    if (byteOffsetFilho != -2)
-    {
-        for (int i = 0; i < quantMaxFilhos; i++)
-            byteOffsetFilhosTemp[i] = no->byteOffsetDescendentes[i];
-    }
+    for (int i = 0; i < quantMaxFilhos; i++)
+        byteOffsetFilhosTemp[i] = no->byteOffsetDescendentes[i];
 
     // Inserindo a chave nos vetores temporários
     inserir_ordenado(chavesTemp, byteOffsetDadosTemp, byteOffsetFilhosTemp, &quantChavesTemp, chave, byteOffsetDado, byteOffsetFilho);
@@ -711,11 +699,8 @@ PROMOCAO ArvB_split(NO *no, HEADER_ARVB *header, int chave, int byteOffsetDado, 
         no->chaves[i] = -1;
         no->byteOffsetDados[i] = -1;
     }
-    if (byteOffsetFilho != -2)
-    {
-        for (int i = 0; i < quantMaxFilhos; i++)
-            no->byteOffsetDescendentes[i] = -1;
-    }
+    for (int i = 0; i < quantMaxFilhos; i++)
+        no->byteOffsetDescendentes[i] = -1;
 
     // Nó esquerdo (original)
     for (int i = 0; i < meio; i++)
@@ -733,22 +718,19 @@ PROMOCAO ArvB_split(NO *no, HEADER_ARVB *header, int chave, int byteOffsetDado, 
         noNovo->byteOffsetDados[j] = byteOffsetDadosTemp[i];
         j++;
     }
-    noNovo->quantChavesAtual = quantChavesTemp - meio;
+    noNovo->quantChavesAtual = quantChavesTemp - meio - 1;
 
     // Redistribuindo os filhos se for preciso
-    if (byteOffsetFilho != -2)
-    {
-        // Nó esquerdo
-        for (int i = 0; i <= meio; i++)
-            no->byteOffsetDescendentes[i] = byteOffsetFilhosTemp[i];
+    // Nó esquerdo
+    for (int i = 0; i <= meio; i++)
+        no->byteOffsetDescendentes[i] = byteOffsetFilhosTemp[i];
 
-        // Nó direito
-        j = 0;
-        for (int i = meio + 1; i < quantMaxFilhos + 1; i++)
-        {
-            noNovo->byteOffsetDescendentes[j] = byteOffsetFilhosTemp[i];
-            j++;
-        }
+    // Nó direito
+    j = 0;
+    for (int i = meio + 1; i < quantMaxFilhos + 1; i++)
+    {
+        noNovo->byteOffsetDescendentes[j] = byteOffsetFilhosTemp[i];
+        j++;
     }
 
     noNovo->byteOffset = TAM_HEADER_ARVB + header->proxRRN * TAM_REGISTRO_ARVB;
