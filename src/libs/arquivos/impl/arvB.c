@@ -13,27 +13,28 @@
 
 struct header_arvB_
 {
-    char status; // 0 = inconsistente, 1 = consistente
     int noRaiz;  // byteOffset
     int proxRRN; // byteOffset
     int nroNos;
+    char status; // 0 = inconsistente, 1 = consistente
 };
 
 struct no_
 {
-    int byteOffset;                             // byteOffset atual do reg.
-    int chaves[quantMaxChaves];                 // idAttacks
-    int byteOffsetDados[quantMaxChaves];        // byteOffsets no arq. de dados
-    int byteOffsetDescendentes[quantMaxFilhos]; // byteOffsets dos nós filhos
-    int tipoNo;                                 // -1 = folha, 0 = raiz, 1 = interm.
+    int byteOffset; // byteOffset atual do reg.
+
     int quantChavesAtual;
+    int tipoNo;                                 // -1 = folha, 0 = raiz, 1 = interm.
+    int chaves[quantMaxChaves];                 // idAttacks
+    long int byteOffsetDados[quantMaxChaves];   // byteOffsets no arq. de dados
+    int byteOffsetDescendentes[quantMaxFilhos]; // byteOffsets dos nós filhos
 };
 
 typedef struct promocao_
 {
     NO *noNovo;
     int chavePromov;
-    int byteOffsetDadoPromov;
+    long int byteOffsetDadoPromov;
     bool houveSplit;
 } PROMOCAO;
 
@@ -76,7 +77,7 @@ HEADER_ARVB *ArvB_header_set(HEADER_ARVB *headerArvB, int status,
             return NULL;
     }
 
-    if (status != -2)
+    if (status != -2 && status >= 0)
         headerArvB->status = status + '0'; // Conversão int -> char
     if (noRaiz != -2)
         headerArvB->noRaiz = noRaiz;
@@ -175,6 +176,7 @@ void ArvB_header_escrever(FILE *pontArq, HEADER_ARVB *headerArvB)
     fwrite(&(headerArvB->noRaiz), sizeof(int), 1, pontArq);
     fwrite(&(headerArvB->proxRRN), sizeof(int), 1, pontArq);
     fwrite(&(headerArvB->nroNos), sizeof(int), 1, pontArq);
+    fwrite("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$", sizeof(char), 31, pontArq);
 
     return;
 }
@@ -243,16 +245,19 @@ NO *ArvB_no_ler(FILE *pontArq, int byteOffset)
         mensagem_erro();
         return NULL;
     }
-
     // Posicionando ponteiro no byteOffset do nó
     fseek(pontArq, byteOffset, SEEK_SET);
+    no->byteOffset = byteOffset;
     // Lendo os campos do nó
-    fread(&(no->byteOffset), sizeof(int), 1, pontArq);
-    fread(no->chaves, sizeof(int), quantMaxChaves, pontArq);
-    fread(no->byteOffsetDados, sizeof(int), quantMaxChaves, pontArq);
-    fread(no->byteOffsetDescendentes, sizeof(int), quantMaxFilhos, pontArq);
     fread(&(no->tipoNo), sizeof(int), 1, pontArq);
     fread(&(no->quantChavesAtual), sizeof(int), 1, pontArq);
+    fread(&(no->byteOffsetDescendentes[0]), sizeof(int), 1, pontArq);
+    fread(&(no->chaves[0]), sizeof(int), 1, pontArq);
+    fread(&(no->byteOffsetDados[0]), sizeof(long int), 1, pontArq);
+    fread(&(no->byteOffsetDescendentes[1]), sizeof(int), 1, pontArq);
+    fread(&(no->chaves[1]), sizeof(int), 1, pontArq);
+    fread(&(no->byteOffsetDados[1]), sizeof(long int), 1, pontArq);
+    fread(&(no->byteOffsetDescendentes[2]), sizeof(int), 1, pontArq);
 
     return no;
 }
@@ -265,7 +270,7 @@ Parâmetros: valores para os campos do nó
 Retorna: ponteiro para a struct do tipo NO
 */
 NO *ArvB_no_set(NO *no, int byteOffset, int *chaves,
-                int *byteOffsetDados, int *byteOffsetDescendentes,
+                long int *byteOffsetDados, int *byteOffsetDescendentes,
                 int tipoNo, int quantChavesAtual)
 {
     if (no == NULL)
@@ -276,7 +281,7 @@ NO *ArvB_no_set(NO *no, int byteOffset, int *chaves,
     if (chaves != NULL)
         memcpy(no->chaves, chaves, sizeof(int) * quantMaxChaves);
     if (byteOffsetDados != NULL)
-        memcpy(no->byteOffsetDados, byteOffsetDados, sizeof(int) * quantMaxChaves);
+        memcpy(no->byteOffsetDados, byteOffsetDados, sizeof(long int) * quantMaxChaves);
     if (byteOffsetDescendentes != NULL)
         memcpy(no->byteOffsetDescendentes, byteOffsetDescendentes, sizeof(int) * quantMaxFilhos);
     if (tipoNo != -2)
@@ -303,12 +308,15 @@ void ArvB_no_escrever(FILE *pontArq, NO *no)
     fseek(pontArq, no->byteOffset, SEEK_SET);
 
     // Escrevendo os campos do nó no arquivo
-    fwrite(&(no->byteOffset), sizeof(int), 1, pontArq);
-    fwrite(no->chaves, sizeof(int), quantMaxChaves, pontArq);
-    fwrite(no->byteOffsetDados, sizeof(int), quantMaxChaves, pontArq);
-    fwrite(no->byteOffsetDescendentes, sizeof(int), quantMaxFilhos, pontArq);
     fwrite(&(no->tipoNo), sizeof(int), 1, pontArq);
     fwrite(&(no->quantChavesAtual), sizeof(int), 1, pontArq);
+    fwrite(&(no->byteOffsetDescendentes[0]), sizeof(int), 1, pontArq);
+    fwrite(&(no->chaves[0]), sizeof(int), 1, pontArq);
+    fwrite(&(no->byteOffsetDados[0]), sizeof(long int), 1, pontArq);
+    fwrite(&(no->byteOffsetDescendentes[1]), sizeof(int), 1, pontArq);
+    fwrite(&(no->chaves[1]), sizeof(int), 1, pontArq);
+    fwrite(&(no->byteOffsetDados[1]), sizeof(long int), 1, pontArq);
+    fwrite(&(no->byteOffsetDescendentes[2]), sizeof(int), 1, pontArq);
 
     return;
 }
@@ -321,11 +329,9 @@ Parâmetros: ponteiro para a struct e o campo desejado
     3: quantChavesAtual
     4: chave 1
     5: chave 2
-    6: byteOffsetDado chave 1
-    7: byteOffsetDado chave 2
-    8: byteOffsetFilho 1
-    9: byteOffsetFilho 2
-    10: byteOffsetFilho 3
+    6: byteOffsetFilho 1
+    7: byteOffsetFilho 2
+    8: byteOffsetFilho 3
 Retorna: valor do campo (-1 se não encontrado ou no nulo)
 */
 int ArvB_no_get_int(NO *no, int campo)
@@ -346,14 +352,10 @@ int ArvB_no_get_int(NO *no, int campo)
     case 5:
         return no->chaves[1];
     case 6:
-        return no->byteOffsetDados[0];
-    case 7:
-        return no->byteOffsetDados[1];
-    case 8:
         return no->byteOffsetDescendentes[0];
-    case 9:
+    case 7:
         return no->byteOffsetDescendentes[1];
-    case 10:
+    case 8:
         return no->byteOffsetDescendentes[2];
     default:
         break;
@@ -362,7 +364,31 @@ int ArvB_no_get_int(NO *no, int campo)
     return -1; // Campo inválido
 }
 
-/*TODO*/
+/* ArvB_no_get_longint():
+Retorna o valor de um campo long int de uma struct do tipo no.
+Parâmetros: ponteiro para a struct e o campo desejado
+    1: byteOffsetDado chave 1
+    2: byteOffsetDado chave2
+Retorna: valor do campo (-1 se não encontrado ou no nulo)
+*/
+long int ArvB_no_get_longint(NO *no, int campo)
+{
+    if (no == NULL)
+        return -1;
+
+    switch (campo)
+    {
+    case 1: // byteOffset
+        return no->byteOffsetDados[0];
+    case 2: // tipoNo
+        return no->byteOffsetDados[1];
+    default:
+        break;
+    }
+
+    return -1; // Campo inválido
+}
+
 /* ArvB_busca():
 Busca uma chave na árvore-B
 Parâmetros: ponteiro para o arquivo, byteOffset do nó atual, chave a ser buscada
@@ -416,22 +442,19 @@ NO *ArvB_busca(FILE *pontArq, int byteOffsetAtual, int chave)
 }
 
 // Funções internas auxiliares da inserção:
-int inserir_ordenado(int *chaves, int *byteOffsetDados, int *byteOffsetDescendentes,
-                     int *quantChavesAtual, int chave, int byteOffsetDado, int byteOffsetFilho);
-PROMOCAO ArvB_inserir_recursivo(FILE *pontArq, HEADER_ARVB *header, int chave, int byteOffsetDado, int byteOffsetNoAtual);
-PROMOCAO ArvB_split(NO *no, HEADER_ARVB *header, int chave, int byteOffsetDado, int byteOffsetFilho);
+int inserir_ordenado(int *chaves, long int *byteOffsetDados, int *byteOffsetDescendentes,
+                     int *quantChavesAtual, int chave, long int byteOffsetDado, int byteOffsetFilho);
+PROMOCAO ArvB_inserir_recursivo(FILE *pontArq, HEADER_ARVB *header, int chave, long int byteOffsetDado, int byteOffsetNoAtual);
+PROMOCAO ArvB_split(NO *no, HEADER_ARVB *header, int chave, long int byteOffsetDado, int byteOffsetFilho);
 
 /* ArvB_inserir():
 Função "macro" para mexer no header e lidar com a primeira inserção
 Parâmetros: ponteiro para arquivo, ponteiro para header de arvB, chave a ser inserido e seus campos
 */
-void ArvB_inserir(FILE *pontArq, HEADER_ARVB *header, int chave, int byteOffsetDado)
+void ArvB_inserir(FILE *pontArq, HEADER_ARVB *header, int chave, long int byteOffsetDado)
 {
     if (pontArq == NULL || header == NULL)
         return; // Erro
-
-    header->status = '0';
-    ArvB_header_escrever(pontArq, header);
 
     int byteOffsetNoRaiz = header->noRaiz;
 
@@ -539,8 +562,6 @@ void ArvB_inserir(FILE *pontArq, HEADER_ARVB *header, int chave, int byteOffsetD
     }
 
     // Definindo header como consistente e escrevendo
-    header->status = '1';
-    ArvB_header_escrever(pontArq, header);
     return;
 }
 
@@ -549,7 +570,7 @@ Caso "geral" da inserção, que busca pela nó em que a chave será inserida usa
 Parâmetros: ponteiro para arquivo, ponteiro para header de arvB, chave a ser inserido e seus campos
 Retorna: struct da chave que foi promovida (se houve split)
 */
-PROMOCAO ArvB_inserir_recursivo(FILE *pontArq, HEADER_ARVB *header, int chave, int byteOffsetDado, int byteOffsetNoAtual)
+PROMOCAO ArvB_inserir_recursivo(FILE *pontArq, HEADER_ARVB *header, int chave, long int byteOffsetDado, int byteOffsetNoAtual)
 {
     PROMOCAO promocao;
     promocao.noNovo = NULL;
@@ -648,7 +669,7 @@ Insere uma chave em um nó, realizando o split e indicando a chave a ser promovi
 Parâmetros: ponteiro para no, chave e campos a serem inseridos
 Retorna: struct que indica as informacoes da chave a ser promovida
 */
-PROMOCAO ArvB_split(NO *no, HEADER_ARVB *header, int chave, int byteOffsetDado, int byteOffsetFilho)
+PROMOCAO ArvB_split(NO *no, HEADER_ARVB *header, int chave, long int byteOffsetDado, int byteOffsetFilho)
 {
     PROMOCAO promocao;
     promocao.noNovo = NULL;
@@ -661,7 +682,7 @@ PROMOCAO ArvB_split(NO *no, HEADER_ARVB *header, int chave, int byteOffsetDado, 
 
     // Vetores temporários
     int chavesTemp[quantMaxChaves + 1];
-    int byteOffsetDadosTemp[quantMaxChaves + 1];
+    long int byteOffsetDadosTemp[quantMaxChaves + 1];
     int byteOffsetFilhosTemp[quantMaxFilhos + 1];
     int quantChavesTemp = quantMaxChaves;
 
@@ -745,82 +766,6 @@ PROMOCAO ArvB_split(NO *no, HEADER_ARVB *header, int chave, int byteOffsetDado, 
     return promocao;
 }
 
-/* ArvB_DFS():
-Realiza uma busca em profundidade na árvore B e imprime os dados que satisfazem a busca
-Parâmetros: ponteiro para o arquivo, byteOffset atual, ponteiro para a busca e header
-*/
-void ArvB_DFS(FILE *pontArq, int byteOffsetAtual, BUSCA *busca, HEADER *header)
-{
-    // Condição de parada
-    if (byteOffsetAtual < 0)
-        return;
-
-    NO *noAtual = NULL;
-    noAtual = ArvB_no_ler(pontArq, byteOffsetAtual);
-
-    if (noAtual == NULL)
-    {
-        mensagem_erro();
-        return;
-    }
-
-    // Se o nó não é folha, intercala a trajetoria
-    if (noAtual->tipoNo != -1)
-    {
-        for (int i = 0; i < noAtual->quantChavesAtual; i++)
-        {
-            ArvB_DFS(pontArq, noAtual->byteOffsetDescendentes[i], busca, header);
-            int byteOffset = noAtual->byteOffsetDados[i];
-
-            DADO *dado = NULL;
-            dado = dado_ler(pontArq, dado, byteOffset);
-            if (dado == NULL)
-            {
-                mensagem_erro();
-                return;
-            }
-
-            if (dado_get_removido(dado) == '0') // Verifica se o dado não foi removido
-            {
-                if (busca_comparar(busca, dado))
-                {
-                    dado_imprimir(header, dado); // Imprime o dado se a busca for bem-sucedida
-                    printf("\n");
-                }
-            }
-            dado_apagar(&dado);
-        }
-
-        ArvB_DFS(pontArq, noAtual->byteOffsetDescendentes[noAtual->quantChavesAtual], busca, header);
-    }
-    // Se o nó é folha, processa o nó
-    else
-    {
-        for (int i = 0; i < noAtual->quantChavesAtual; i++)
-        {
-            int byteOffset = noAtual->byteOffsetDados[i];
-
-            DADO *dado = NULL;
-            dado = dado_ler(pontArq, dado, byteOffset);
-            if (dado == NULL)
-            {
-                mensagem_erro();
-                return;
-            }
-
-            if (dado_get_removido(dado) == '0') // Verifica se o dado não foi removido
-            {
-                if (busca_comparar(busca, dado))
-                {
-                    dado_imprimir(header, dado); // Imprime o dado se a busca for bem-sucedida
-                    printf("\n");
-                }
-            }
-            dado_apagar(&dado);
-        }
-    }
-}
-
 /* inserir_ordenado():
 Insere uma chave e os respectivos campos nos vetores de uma estrutura nó.
 Não utilizamos a struct para podermos usar essa função no split, cujos vetores
@@ -828,8 +773,8 @@ têm tamanho diferentes do nó
 Parâmetros: ponteiro para vetores, chave e campos a serem inseridos
 Retorna: posição encontrada para a chave
 */
-int inserir_ordenado(int *chaves, int *byteOffsetDados, int *byteOffsetDescendentes,
-                     int *quantChavesAtual, int chave, int byteOffsetDado, int byteOffsetFilho)
+int inserir_ordenado(int *chaves, long int *byteOffsetDados, int *byteOffsetDescendentes,
+                     int *quantChavesAtual, int chave, long int byteOffsetDado, int byteOffsetFilho)
 {
     if (chaves == NULL || byteOffsetDados == NULL)
         return -1; // Erro
@@ -863,6 +808,82 @@ int inserir_ordenado(int *chaves, int *byteOffsetDados, int *byteOffsetDescenden
     }
 
     return pos;
+}
+
+/* ArvB_DFS():
+Realiza uma busca em profundidade na árvore B e imprime os dados que satisfazem a busca
+Parâmetros: ponteiro para o arquivo, byteOffset atual, ponteiro para a busca e header
+*/
+void ArvB_DFS(FILE *pontArq, int byteOffsetAtual, BUSCA *busca, HEADER *header)
+{
+    // Condição de parada
+    if (byteOffsetAtual < 0)
+        return;
+
+    NO *noAtual = NULL;
+    noAtual = ArvB_no_ler(pontArq, byteOffsetAtual);
+
+    if (noAtual == NULL)
+    {
+        mensagem_erro();
+        return;
+    }
+
+    // Se o nó não é folha, intercala a trajetoria
+    if (noAtual->tipoNo != -1)
+    {
+        for (int i = 0; i < noAtual->quantChavesAtual; i++)
+        {
+            ArvB_DFS(pontArq, noAtual->byteOffsetDescendentes[i], busca, header);
+            long int byteOffset = noAtual->byteOffsetDados[i];
+
+            DADO *dado = NULL;
+            dado = dado_ler(pontArq, dado, byteOffset);
+            if (dado == NULL)
+            {
+                mensagem_erro();
+                return;
+            }
+
+            if (dado_get_removido(dado) == '0') // Verifica se o dado não foi removido
+            {
+                if (busca_comparar(busca, dado))
+                {
+                    dado_imprimir(header, dado); // Imprime o dado se a busca for bem-sucedida
+                    printf("\n");
+                }
+            }
+            dado_apagar(&dado);
+        }
+
+        ArvB_DFS(pontArq, noAtual->byteOffsetDescendentes[noAtual->quantChavesAtual], busca, header);
+    }
+    // Se o nó é folha, processa o nó
+    else
+    {
+        for (int i = 0; i < noAtual->quantChavesAtual; i++)
+        {
+            long int byteOffset = noAtual->byteOffsetDados[i];
+
+            DADO *dado = NULL;
+            dado = dado_ler(pontArq, dado, byteOffset);
+            if (dado == NULL)
+            {
+                mensagem_erro();
+                return;
+            }
+
+            if (dado_get_removido(dado) == '0') // Verifica se o dado não foi removido
+            {
+                if (busca_comparar(busca, dado))
+                {
+                    dado_imprimir(header, dado); // Imprime o dado se a busca for bem-sucedida
+                    printf("\n");
+                }
+            }
+            dado_apagar(&dado);
+        }
+    }
 }
 
 /* ArvB_compara_dado():
@@ -915,8 +936,8 @@ void print_no(NO *no)
     printf("Chave 1: %d\n", no->chaves[0]);
     printf("Chave 2: %d\n\n", no->chaves[1]);
 
-    printf("Byteoffset Chave 1: %d\n", no->byteOffsetDados[0]);
-    printf("Byteoffset Chave 2: %d\n\n", no->byteOffsetDados[1]);
+    printf("Byteoffset Chave 1: %ld\n", no->byteOffsetDados[0]);
+    printf("Byteoffset Chave 2: %ld\n\n", no->byteOffsetDados[1]);
 
     printf("ByteOffset Filho 1: %d\n", no->byteOffsetDescendentes[0]);
     printf("ByteOffset Filho 2: %d\n", no->byteOffsetDescendentes[1]);
@@ -927,69 +948,15 @@ void print_no(NO *no)
 }
 
 // Função para debuggar
-void print_arv(FILE *pontArq, int byteOffsetAtual, HEADER *header)
+void print_header(HEADER_ARVB *header)
 {
-    // Condição de parada
-    if (byteOffsetAtual < 0)
+    if (header == NULL)
         return;
 
-    NO *noAtual = NULL;
-    noAtual = ArvB_no_ler(pontArq, byteOffsetAtual);
+    printf("Byteoffset noRaiz: %d\n", header->noRaiz);
+    printf("Quant nos: %d\n", header->nroNos);
+    printf("ProxRRN: %d\n", header->proxRRN);
+    printf("Status: %c\n", header->status);
 
-    if (noAtual == NULL)
-    {
-        mensagem_erro();
-        return;
-    }
-
-    // Se o nó não é folha, intercala a trajetoria
-    if (noAtual->tipoNo != -1)
-    {
-        for (int i = 0; i < noAtual->quantChavesAtual; i++)
-        {
-            print_arv(pontArq, noAtual->byteOffsetDescendentes[i], header);
-            int byteOffset = noAtual->byteOffsetDados[i];
-
-            DADO *dado = NULL;
-            dado = dado_ler(pontArq, dado, byteOffset);
-            if (dado == NULL)
-            {
-                mensagem_erro();
-                return;
-            }
-
-            if (dado_get_removido(dado) == '0') // Verifica se o dado não foi removido
-            {
-                dado_imprimir(header, dado); // Imprime o dado se a busca for bem-sucedida
-                printf("\n");
-            }
-            dado_apagar(&dado);
-        }
-
-        print_arv(pontArq, noAtual->byteOffsetDescendentes[noAtual->quantChavesAtual], header);
-    }
-    // Se o nó é folha, processa o nó
-    else
-    {
-        for (int i = 0; i < noAtual->quantChavesAtual; i++)
-        {
-            int byteOffset = noAtual->byteOffsetDados[i];
-
-            DADO *dado = NULL;
-            dado = dado_ler(pontArq, dado, byteOffset);
-            if (dado == NULL)
-            {
-                mensagem_erro();
-                return;
-            }
-
-            if (dado_get_removido(dado) == '0') // Verifica se o dado não foi removido
-            {
-
-                dado_imprimir(header, dado); // Imprime o dado se a busca for bem-sucedida
-                printf("\n");
-            }
-            dado_apagar(&dado);
-        }
-    }
+    return;
 }
