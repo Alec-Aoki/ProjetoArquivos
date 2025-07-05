@@ -594,7 +594,7 @@ void funcionalidade8()
     }
 
     // Guarda o byteOffset da raiz
-    int byteOffsetRaiz = ArvB_header_get_int(headerArvB, 1);
+    int byteOffsetRaiz = TAM_HEADER_ARVB + ArvB_header_get_int(headerArvB, 1) * TAM_REGISTRO_ARVB;
 
     // Lendo cada busca do usuário e efetuando-a
     for (int i = 0; i < quantBuscas; i++)
