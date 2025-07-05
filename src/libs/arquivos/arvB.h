@@ -38,6 +38,7 @@ Parâmetros: ponteiro para a struct e o campo desejado
     1: noRaiz
     2: proxRRN
     3: nroNos
+    4: status
 Retorna: valor do campo (-1 se não encontrado ou header nulo)
 */
 int ArvB_header_get_int(HEADER_ARVB *headerArvB, int campo);

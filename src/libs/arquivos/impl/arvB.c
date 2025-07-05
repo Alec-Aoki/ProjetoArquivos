@@ -13,10 +13,10 @@
 
 struct header_arvB_
 {
-    int noRaiz;  // byteOffset
-    int proxRRN; // byteOffset
-    int nroNos;
     char status; // 0 = inconsistente, 1 = consistente
+    int noRaiz;  // byteOffset
+    int proxRRN;
+    int nroNos;
 };
 
 struct no_
@@ -77,7 +77,7 @@ HEADER_ARVB *ArvB_header_set(HEADER_ARVB *headerArvB, int status,
             return NULL;
     }
 
-    if (status != -2 && status >= 0)
+    if (status != -2)
         headerArvB->status = status + '0'; // Conversão int -> char
     if (noRaiz != -2)
         headerArvB->noRaiz = noRaiz;
@@ -108,6 +108,7 @@ Parâmetros: ponteiro para a struct e o campo desejado
     1: noRaiz
     2: proxRRN
     3: nroNos
+    4: status
 Retorna: valor do campo (-1 se não encontrado ou header nulo)
 */
 int ArvB_header_get_int(HEADER_ARVB *headerArvB, int campo)
@@ -123,6 +124,8 @@ int ArvB_header_get_int(HEADER_ARVB *headerArvB, int campo)
         return headerArvB->proxRRN;
     case 3: // nroNos
         return headerArvB->nroNos;
+    case 4: // status
+        return headerArvB->status - '0';
     default:
         break;
     }
@@ -170,13 +173,13 @@ void ArvB_header_escrever(FILE *pontArq, HEADER_ARVB *headerArvB)
 
     // Colocando o ponteiro no início do arquivo
     fseek(pontArq, 0, SEEK_SET);
-
     // Escrevendo os campos do header no arquivo
     fwrite(&(headerArvB->status), sizeof(char), 1, pontArq);
     fwrite(&(headerArvB->noRaiz), sizeof(int), 1, pontArq);
     fwrite(&(headerArvB->proxRRN), sizeof(int), 1, pontArq);
     fwrite(&(headerArvB->nroNos), sizeof(int), 1, pontArq);
     fwrite("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$", sizeof(char), 31, pontArq);
+    fflush(pontArq);
 
     return;
 }
@@ -304,6 +307,8 @@ void ArvB_no_escrever(FILE *pontArq, NO *no)
         return;
     }
 
+    if (no->byteOffset < TAM_HEADER_ARVB)
+        return; // Erro
     // Posicionando ponteiro no byteOffset do nó
     fseek(pontArq, no->byteOffset, SEEK_SET);
 
@@ -317,6 +322,7 @@ void ArvB_no_escrever(FILE *pontArq, NO *no)
     fwrite(&(no->chaves[1]), sizeof(int), 1, pontArq);
     fwrite(&(no->byteOffsetDados[1]), sizeof(long int), 1, pontArq);
     fwrite(&(no->byteOffsetDescendentes[2]), sizeof(int), 1, pontArq);
+    fflush(pontArq);
 
     return;
 }
@@ -560,8 +566,6 @@ void ArvB_inserir(FILE *pontArq, HEADER_ARVB *header, int chave, long int byteOf
             ArvB_no_apagar(&(promocao.noNovo));
         }
     }
-
-    // Definindo header como consistente e escrevendo
     return;
 }
 
