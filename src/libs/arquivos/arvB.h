@@ -140,7 +140,7 @@ void ArvB_compara_dado(FILE *pontArq, NO *no, BUSCA *busca);
 Realiza uma busca em profundidade na árvore B e imprime os dados que satisfazem a busca
 Parâmetros: ponteiro para o arquivo, byteOffset atual, ponteiro para a busca e header
 */
-void ArvB_DFS(FILE *pontArqArv, FILE *pontArqDados, long int byteOffsetAtual, BUSCA *busca, HEADER *header);
+void ArvB_DFS(FILE *pontArqArv, FILE *pontArqDados, long int byteOffsetAtual, BUSCA *busca, HEADER *header, bool *encontrado);
 
 // Função para debuggar
 void print_no(NO *no);

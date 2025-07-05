@@ -420,15 +420,11 @@ NO *ArvB_busca(FILE *pontArq, long int byteOffsetAtual, int chave)
 
     // Procura a chave no nó atual, avançando o índice quando a chave for maior que as chaves do nó
     while (i < noAtual->quantChavesAtual && chave > noAtual->chaves[i])
-    {
         i++;
-    }
 
     // Verifica se a chave foi encontrada
     if (i < noAtual->quantChavesAtual && chave == noAtual->chaves[i])
-    {
         return noAtual; // Chave encontrada
-    }
 
     // Se não encontrou, verifica se é uma folha
     if (noAtual->tipoNo == -1)
@@ -444,6 +440,8 @@ NO *ArvB_busca(FILE *pontArq, long int byteOffsetAtual, int chave)
         // Se a chave não foi encontrada, segue para o filho correspondente
         return ArvB_busca(pontArq, byteOffsetFilho, chave);
     }
+
+    return NULL;
 }
 
 // Funções internas auxiliares da inserção:
@@ -817,7 +815,7 @@ int inserir_ordenado(int *chaves, long int *byteOffsetDados, int *rrnDescendente
 Realiza uma busca em profundidade na árvore B e imprime os dados que satisfazem a busca
 Parâmetros: ponteiro para o arquivo, byteOffset atual, ponteiro para a busca e header
 */
-void ArvB_DFS(FILE *pontArqArv, FILE *pontArqDados, long int byteOffsetAtual, BUSCA *busca, HEADER *header)
+void ArvB_DFS(FILE *pontArqArv, FILE *pontArqDados, long int byteOffsetAtual, BUSCA *busca, HEADER *header, bool *encontrado)
 {
     // Condição de parada
     if (byteOffsetAtual < 0)
@@ -825,7 +823,6 @@ void ArvB_DFS(FILE *pontArqArv, FILE *pontArqDados, long int byteOffsetAtual, BU
 
     NO *noAtual = NULL;
     noAtual = ArvB_no_ler(pontArqArv, byteOffsetAtual);
-
     if (noAtual == NULL)
     {
         mensagem_erro();
@@ -837,7 +834,7 @@ void ArvB_DFS(FILE *pontArqArv, FILE *pontArqDados, long int byteOffsetAtual, BU
     {
         for (int i = 0; i < noAtual->quantChavesAtual; i++)
         {
-            ArvB_DFS(pontArqArv, pontArqDados, TAM_HEADER_ARVB + noAtual->rrnDescendentes[i] * TAM_REGISTRO_ARVB, busca, header);
+            ArvB_DFS(pontArqArv, pontArqDados, TAM_HEADER_ARVB + noAtual->rrnDescendentes[i] * TAM_REGISTRO_ARVB, busca, header, encontrado);
             long int byteOffset = noAtual->byteOffsetDados[i];
 
             DADO *dado = NULL;
@@ -854,12 +851,13 @@ void ArvB_DFS(FILE *pontArqArv, FILE *pontArqDados, long int byteOffsetAtual, BU
                 {
                     dado_imprimir(header, dado); // Imprime o dado se a busca for bem-sucedida
                     printf("\n");
+                    *encontrado = true;
                 }
             }
             dado_apagar(&dado);
         }
 
-        ArvB_DFS(pontArqArv, pontArqDados, TAM_HEADER_ARVB + noAtual->rrnDescendentes[noAtual->quantChavesAtual] * TAM_REGISTRO_ARVB, busca, header);
+        ArvB_DFS(pontArqArv, pontArqDados, TAM_HEADER_ARVB + noAtual->rrnDescendentes[noAtual->quantChavesAtual] * TAM_REGISTRO_ARVB, busca, header, encontrado);
     }
     // Se o nó é folha, processa o nó
     else
@@ -882,11 +880,14 @@ void ArvB_DFS(FILE *pontArqArv, FILE *pontArqDados, long int byteOffsetAtual, BU
                 {
                     dado_imprimir(header, dado); // Imprime o dado se a busca for bem-sucedida
                     printf("\n");
+                    *encontrado = true;
                 }
             }
             dado_apagar(&dado);
         }
     }
+
+    return;
 }
 
 /* ArvB_compara_dado():

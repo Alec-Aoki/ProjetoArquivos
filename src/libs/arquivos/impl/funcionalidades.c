@@ -601,7 +601,7 @@ void funcionalidade8()
     {
         busca = busca_ler(busca);
         // Verifica se o idAttack faz parte do filtro de busca
-        int buscaIdAttack = busca_get_quaisCampos(busca, 1);
+        int buscaIdAttack = busca_get_quaisCampos(busca, 0);
         if (buscaIdAttack == 0)
         {
             // Caso faça, faz busca via na árvore de busca
@@ -609,17 +609,18 @@ void funcionalidade8()
             NO *noEncontrado = NULL;
             noEncontrado = ArvB_busca(pontArqArvB, byteOffsetRaiz, idAttack);
             if (noEncontrado == NULL)
-            {
                 mensagem_regInexistente();
-                continue; // Registro não encontrado
-            }
-
-            ArvB_compara_dado(pontArqArvB, noEncontrado, busca);
+            else
+                ArvB_compara_dado(pontArqArvB, noEncontrado, busca);
         }
         else
         {
             // Caso não faça, visita todos os nós da árvore verificandos
-            ArvB_DFS(pontArqArvB, pontArqDados, byteOffsetRaiz, busca, headerDados);
+            bool encontrado = false;
+            ArvB_DFS(pontArqArvB, pontArqDados, byteOffsetRaiz, busca, headerDados, &encontrado);
+
+            if (!encontrado)
+                mensagem_regInexistente();
         }
 
         printf("**********\n");
