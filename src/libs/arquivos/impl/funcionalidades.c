@@ -756,3 +756,75 @@ void funcionalidade10()
 /* funcionalidade11():
 Atualiza um registro no arquivo de dados, exceto o campo idAttack
 */
+void funcionalidade11()
+{
+    char nomeArqDados[TAM_MAX_STR];
+    char nomeArqArvB[TAM_MAX_STR];
+
+    ler_nome_arquivo(nomeArqDados);
+    ler_nome_arquivo(nomeArqArvB);
+
+    FILE *pontArqDados = fopen(pontArqDados, "rb+");
+    if (pontArqDados == NULL)
+    {
+        mensagem_erro();
+        return;
+    }
+
+    FILE *pontArqArvB = fopen(pontArqArvB, "rb+");
+    if (pontArqArvB == NULL)
+    {
+        mensagem_erro();
+        fclose(pontArqDados);
+        return;
+    }
+
+    int quantAtualiz;
+    scanf(" %d", &quantAtualiz);
+
+    BUSCA *busca = NULL;
+    BUSCA *camposAtulizados = NULL;
+    DADO *dado = NULL;
+    DADO *dadoAtulizado = NULL;
+    HEADER *headerDados = NULL;
+    HEADER_ARVB *headerArvB = NULL;
+    long int byteOffsetEncontrado = -1;
+
+    fseek(pontArqDados, 0, SEEK_SET);
+    headerDados = header_ler(pontArqDados, headerDados);
+    if (headerDados == NULL)
+    {
+        mensagem_erro();
+        fclose(pontArqDados);
+        fclose(pontArqArvB);
+        return;
+    }
+
+    fseek(pontArqArvB, 0, SEEK_SET);
+    headerArvB = header_ler(pontArqArvB, headerArvB);
+    if (headerArvB == NULL)
+    {
+        mensagem_erro();
+        fclose(pontArqArvB);
+        fclose(pontArqDados);
+        return;
+    }
+
+    // Definindo status como inconsistente (0)
+    headerDados = header_set(headerDados, 0, -2, -2, -2, -2,
+                             NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+    // Escrevendo o header  no arquivo binário
+    fseek(pontArqDados, 0, SEEK_SET);
+    header_escrever(pontArqDados, headerDados, false);
+
+    for (int i = 0; i < quantAtualiz; i++)
+    {
+        byteOffsetEncontrado = -1;
+        // Lendo a busca a ser lida
+        busca = busca_ler(busca);
+        // Lendo os campos a serem atualizados
+        camposAtulizados = busca_ler(camposAtulizados);
+
+        // fazer a busca
+    }
+}
