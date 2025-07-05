@@ -3,8 +3,8 @@
 
 #define quantMaxFilhos 3 // Ordem 3
 #define quantMaxChaves 2
-#define TAM_REGISTRO_ARVB 40 // Tamanho fixo do registro de nó na árvore B
-#define TAM_HEADER_ARVB 13   // Tamanho fixo do header da árvore B
+#define TAM_REGISTRO_ARVB 44 // Tamanho fixo do registro de nó na árvore B
+#define TAM_HEADER_ARVB 44   // Tamanho fixo do header da árvore B
 
 typedef struct header_arvB_ HEADER_ARVB;
 
@@ -24,7 +24,7 @@ Parâmetros: valores para os campos do header
 Retorna: ponteiro para a struct do tipo HEADER_ARVB
 */
 HEADER_ARVB *ArvB_header_set(HEADER_ARVB *headerArvB, int status,
-                             int noRaiz, int proxByteOffset, int nroNos);
+                             int noRaiz, int proxRRN, int nroNos);
 
 /* ArvB_header_apagar():
 Desaloca a memória ocupada por uma struct do tipo HEADER_ARVB.
@@ -83,7 +83,7 @@ Parâmetros: valores para os campos do nó
 Retorna: ponteiro para a struct do tipo NO
 */
 NO *ArvB_no_set(NO *no, int byteOffset, int *chaves,
-                int *byteOffsetDados, int *byteOffsetDescendentes,
+                long int *byteOffsetDados, int *byteOffsetDescendentes,
                 int tipoNo, int quantChavesAtual);
 
 /* ArvB_no_escrever():
@@ -92,15 +92,29 @@ Parâmetros: ponteiro para o arquivo, ponteiro para o nó a ser escrito
 */
 void ArvB_no_escrever(FILE *pontArq, NO *no);
 
-/* ArvB_header_get_int():
-Retorna o valor de um campo inteiro de uma struct do tipo HEADER_ARVB.
+/* ArvB_no_get_int():
+Retorna o valor de um campo inteiro de uma struct do tipo no.
 Parâmetros: ponteiro para a struct e o campo desejado
-    1: noRaiz
-    2: proxRRN
-    3: nroNos
-Retorna: valor do campo (-1 se não encontrado ou header nulo)
+    1: byteOffset
+    2: tipoNO
+    3: quantChavesAtual
+    4: chave 1
+    5: chave 2
+    6: byteOffsetFilho 1
+    7: byteOffsetFilho 2
+    8: byteOffsetFilho 3
+Retorna: valor do campo (-1 se não encontrado ou no nulo)
 */
 int ArvB_no_get_int(NO *no, int campo);
+
+/* ArvB_no_get_longint():
+Retorna o valor de um campo long int de uma struct do tipo no.
+Parâmetros: ponteiro para a struct e o campo desejado
+    1: byteOffsetDado chave 1
+    2: byteOffsetDado chave2
+Retorna: valor do campo (-1 se não encontrado ou no nulo)
+*/
+long int ArvB_no_get_longint(NO *no, int campo);
 
 /* ArvB_busca():
 Busca uma chave na árvore-B
@@ -113,7 +127,7 @@ NO *ArvB_busca(FILE *pontArq, int byteOffsetAtual, int chave);
 Função "macro" para mexer no header e lidar com a primeira inserção
 Parâmetros: ponteiro para arquivo, ponteiro para header de arvB, chave a ser inserido e seus campos
 */
-void ArvB_inserir(FILE *pontArq, HEADER_ARVB *header, int chave, int byteOffsetDado);
+void ArvB_inserir(FILE *pontArq, HEADER_ARVB *header, int chave, long int byteOffsetDado);
 
 /* ArvB_compara_dado():
 Compara os dados de um nó com uma busca e imprime os dados que satisfazem a busca
@@ -129,5 +143,8 @@ void ArvB_DFS(FILE *pontArq, int byteOffsetAtual, BUSCA *busca, HEADER *header);
 
 // Função para debuggar
 void print_no(NO *no);
+
+// Função apra debuggar
+void print_header(HEADER_ARVB *header);
 
 #endif

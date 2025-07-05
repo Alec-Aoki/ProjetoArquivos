@@ -38,4 +38,28 @@ Atualiza um dado no arquivo binário
 */
 void funcionalidade6();
 
+/* funcionalidade7():
+Cria um arquivo de índice árvore-B a partir de um arquivo de dados
+*/
+void funcionalidade7();
+
+/* funcionalidade8():
+Faz a busca de registros que atendam os campos da busca
+*/
+void funcionalidade8();
+
+/* funcionalidade9()
+NAO DEVE SER IMPLEMENTADA
+*/
+
+/* funcionalidade10():
+Insere um registro num arquivo de dados dado
+*/
+void funcionalidade10();
+
+/* funcionalidade11():
+Atualiza um registro no arquivo de dados, exceto o campo idAttack
+*/
+void funcionalidade11();
+
 #endif

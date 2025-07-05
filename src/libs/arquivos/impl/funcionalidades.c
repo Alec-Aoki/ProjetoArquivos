@@ -465,19 +465,84 @@ void funcionalidade6()
 /* funcionalidade7():
 Esta funcionalidade cria um arquivo de índice árvore-B e insere as chaves
 */
-
-/*
 void funcionalidade7()
 {
-    1. Lê o nome arquivo de dados e arquivo de indices
-    2. inserir um-a-um os índices sendo eles indexados pelo idAttack (Registros logicamente removidos não devem ser inseridos)
+    // 1. Lê o nome arquivo de dados e arquivo de indices
+    char nomeArqDados[TAM_MAX_STR];
+    char nomeArqArvB[TAM_MAX_STR];
+
+    ler_nome_arquivo(nomeArqDados);
+    ler_nome_arquivo(nomeArqArvB);
+
+    /*Abrindo arquivos*/
+    // Modo de leitura (binário)
+    FILE *pontArqDados = fopen(nomeArqDados, "rb");
+    if (pontArqDados == NULL)
+    {
+        mensagem_erro();
+        return;
+    }
+
+    // Modo de escrita (binário)
+    FILE *pontArqArv = fopen(nomeArqArvB, "wb+");
+    if (pontArqArv == NULL)
+    {
+        mensagem_erro();
+        return;
+    }
+
+    // 2. inserir um-a-um os índices sendo eles indexados pelo idAttack (Registros logicamente removidos não devem ser inseridos)
+    HEADER_ARVB *headerArv = ArvB_header_criar();          // Header da árvore
+    headerArv = ArvB_header_set(headerArv, 0, -2, -2, -2); // Definindo status do arq. da arv. como inconsistente
+    ArvB_header_escrever(pontArqArv, headerArv);           // Escrevendo header
+
+    HEADER *headerDados = header_criar();
+    headerDados = header_ler(pontArqDados, headerDados); // Header do arq. de dados
+
+    int quantReg = header_get_int(headerDados, 1);
+    int byteOffsetDado = BYTEOFFSET_HEADER; // Contador para percorrer o arquivo de dados
+
+    DADO *dadoTemp = NULL;
+
+    // Loop de leitura de dados
+    while (quantReg > 0)
+    {
+        // Lê dado do arq. bin
+        dadoTemp = dado_ler(pontArqDados, dadoTemp, byteOffsetDado);
+        if (dadoTemp == NULL)
+        {
+            mensagem_erro();
+            return; // Erro ao ler o dado
+        }
+
+        // Inserindo o dado somente se ele não estiver removido
+        if (dado_get_removido(dadoTemp) != '1')
+        {
+            ArvB_inserir(pontArqArv, headerArv, dado_get_int(dadoTemp, 1), byteOffsetDado); // Atualiza o header automaticamente
+            quantReg--;
+        }
+
+        // Avançando o contador
+        byteOffsetDado += dado_get_int(dadoTemp, 3) + 5;
+    }
+
+    headerArv = ArvB_header_set(headerArv, 1, -2, -2, -2); // Definindo status do arq. da arv. como consistente
+    ArvB_header_escrever(pontArqArv, headerArv);           // Escrevendo header
+
+    dado_apagar(&dadoTemp);
+    header_apagar(&headerDados);
+    ArvB_header_apagar(&headerArv);
+    fclose(pontArqDados);
+    fclose(pontArqArv);
+
+    binarioNaTela(nomeArqArvB);
+
+    return;
 }
-*/
 
 /* funcionalidade8():
 Faz a busca de registros que atendam os campos da busca
 */
-
 void funcionalidade8()
 {
     char nomeArqDados[TAM_MAX_STR];
