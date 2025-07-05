@@ -601,7 +601,7 @@ void funcionalidade8()
     {
         busca = busca_ler(busca);
         // Verifica se o idAttack faz parte do filtro de busca
-        int buscaIdAttack = busca_get_quaisCampos(busca, 0);
+        int buscaIdAttack = busca_get_quaisCampos(busca, 1);
         if (buscaIdAttack == 0)
         {
             // Caso faça, faz busca via na árvore de busca
@@ -609,18 +609,17 @@ void funcionalidade8()
             NO *noEncontrado = NULL;
             noEncontrado = ArvB_busca(pontArqArvB, byteOffsetRaiz, idAttack);
             if (noEncontrado == NULL)
+            {
                 mensagem_regInexistente();
-            else
-                ArvB_compara_dado(pontArqArvB, noEncontrado, busca);
+                continue; // Registro não encontrado
+            }
+
+            ArvB_compara_dado(pontArqArvB, noEncontrado, busca, );
         }
         else
         {
             // Caso não faça, visita todos os nós da árvore verificandos
-            bool encontrado = false;
-            ArvB_DFS(pontArqArvB, pontArqDados, byteOffsetRaiz, busca, headerDados, &encontrado);
-
-            if (!encontrado)
-                mensagem_regInexistente();
+            ArvB_DFS(pontArqArvB, pontArqDados, byteOffsetRaiz, busca, headerDados, );
         }
 
         printf("**********\n");
@@ -785,8 +784,6 @@ void funcionalidade11()
 
     BUSCA *busca = NULL;
     BUSCA *camposAtulizados = NULL;
-    DADO *dado = NULL;
-    DADO *dadoAtulizado = NULL;
     HEADER *headerDados = NULL;
     HEADER_ARVB *headerArvB = NULL;
     long int byteOffsetEncontrado = -1;
@@ -826,6 +823,38 @@ void funcionalidade11()
         // Lendo os campos a serem atualizados
         camposAtulizados = busca_ler(camposAtulizados);
 
-        // fazer a busca
+        long buscaIdAttack = busca_get_quaisCampos(busca, 1);
+        if (buscaIdAttack == 0)
+        {
+            long idAttack = busca_get_int(busca, 0);
+            NO *noEncontrado = NULL;
+            noEncontrado = ArvB_busca(pontArqArvB, TAM_HEADER_ARVB + ArvB_header_get_int(headerArvB, 1) * TAM_REGISTRO_ARVB, idAttack);
+            if (noEncontrado == NULL)
+            {
+                mensagem_regInexistente();
+                continue; // Registro não encontrado
+            }
+
+            ArvB_compara_dado(pontArqDados, noEncontrado, busca,
+                              camposAtulizados, headerDados);
+        }
+        else
+        {
+            ArvB_DFS(pontArqArvB, pontArqDados, TAM_HEADER_ARVB + ArvB_header_get_int(headerArvB, 1) * TAM_REGISTRO_ARVB,
+                     busca, headerDados, NULL, camposAtulizados);
+        }
+
+        busca_apagar(&busca);
+        busca_apagar(&camposAtulizados);
     }
+
+    headerDados = header_set(headerDados, 1, -2, -2, -2, -2,
+                             NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+    fseek(pontArqDados, 0, SEEK_SET);
+    header_escrever(pontArqDados, headerDados, false);
+    header_apagar(&headerDados);
+    fclose(pontArqDados);
+
+    ArvB_header_apagar(&headerArvB);
+    fclose(pontArqArvB);
 }
