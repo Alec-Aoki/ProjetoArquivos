@@ -14,7 +14,7 @@
 struct header_arvB_
 {
     char status; // 0 = inconsistente, 1 = consistente
-    int noRaiz;  // byteOffset
+    int noRaiz;  // RRN do nó raiz
     int proxRRN;
     int nroNos;
 };
@@ -322,7 +322,6 @@ void ArvB_no_escrever(FILE *pontArq, NO *no)
     fwrite(&(no->chaves[1]), sizeof(int), 1, pontArq);
     fwrite(&(no->byteOffsetDados[1]), sizeof(long int), 1, pontArq);
     fwrite(&(no->byteOffsetDescendentes[2]), sizeof(int), 1, pontArq);
-    fflush(pontArq);
 
     return;
 }
@@ -462,10 +461,10 @@ void ArvB_inserir(FILE *pontArq, HEADER_ARVB *header, int chave, long int byteOf
     if (pontArq == NULL || header == NULL)
         return; // Erro
 
-    int byteOffsetNoRaiz = header->noRaiz;
+    int byteOffsetNoRaiz = TAM_HEADER_ARVB + header->noRaiz * TAM_REGISTRO_ARVB;
 
     // Caso 1: árvore vázia
-    if (byteOffsetNoRaiz == -1)
+    if (header->noRaiz == -1)
     {
         NO *noRaiz = NULL;
         noRaiz = ArvB_no_set(noRaiz, TAM_HEADER_ARVB + (header->proxRRN) * TAM_REGISTRO_ARVB, NULL, NULL, NULL, -1, 1);
@@ -487,7 +486,7 @@ void ArvB_inserir(FILE *pontArq, HEADER_ARVB *header, int chave, long int byteOf
         }
 
         // Definindo campos do header
-        header->noRaiz = noRaiz->byteOffset;
+        header->noRaiz = 0;
         header->proxRRN = 1;
         header->nroNos = 1;
 
@@ -558,7 +557,7 @@ void ArvB_inserir(FILE *pontArq, HEADER_ARVB *header, int chave, long int byteOf
             ArvB_no_escrever(pontArq, raizNova); // Escrevendo raíz nova
 
             // Atualizando header
-            header->noRaiz = raizNova->byteOffset;
+            header->noRaiz = header->proxRRN;
             header->proxRRN++;
             header->nroNos++;
 
@@ -818,14 +817,14 @@ int inserir_ordenado(int *chaves, long int *byteOffsetDados, int *byteOffsetDesc
 Realiza uma busca em profundidade na árvore B e imprime os dados que satisfazem a busca
 Parâmetros: ponteiro para o arquivo, byteOffset atual, ponteiro para a busca e header
 */
-void ArvB_DFS(FILE *pontArq, int byteOffsetAtual, BUSCA *busca, HEADER *header)
+void ArvB_DFS(FILE *pontArqArv, FILE *pontArqDados, int byteOffsetAtual, BUSCA *busca, HEADER *header)
 {
     // Condição de parada
     if (byteOffsetAtual < 0)
         return;
 
     NO *noAtual = NULL;
-    noAtual = ArvB_no_ler(pontArq, byteOffsetAtual);
+    noAtual = ArvB_no_ler(pontArqArv, byteOffsetAtual);
 
     if (noAtual == NULL)
     {
@@ -838,11 +837,11 @@ void ArvB_DFS(FILE *pontArq, int byteOffsetAtual, BUSCA *busca, HEADER *header)
     {
         for (int i = 0; i < noAtual->quantChavesAtual; i++)
         {
-            ArvB_DFS(pontArq, noAtual->byteOffsetDescendentes[i], busca, header);
+            ArvB_DFS(pontArqArv, pontArqDados, noAtual->byteOffsetDescendentes[i], busca, header);
             long int byteOffset = noAtual->byteOffsetDados[i];
 
             DADO *dado = NULL;
-            dado = dado_ler(pontArq, dado, byteOffset);
+            dado = dado_ler(pontArqDados, dado, byteOffset);
             if (dado == NULL)
             {
                 mensagem_erro();
@@ -860,7 +859,7 @@ void ArvB_DFS(FILE *pontArq, int byteOffsetAtual, BUSCA *busca, HEADER *header)
             dado_apagar(&dado);
         }
 
-        ArvB_DFS(pontArq, noAtual->byteOffsetDescendentes[noAtual->quantChavesAtual], busca, header);
+        ArvB_DFS(pontArqArv, pontArqDados, noAtual->byteOffsetDescendentes[noAtual->quantChavesAtual], busca, header);
     }
     // Se o nó é folha, processa o nó
     else
@@ -870,7 +869,7 @@ void ArvB_DFS(FILE *pontArq, int byteOffsetAtual, BUSCA *busca, HEADER *header)
             long int byteOffset = noAtual->byteOffsetDados[i];
 
             DADO *dado = NULL;
-            dado = dado_ler(pontArq, dado, byteOffset);
+            dado = dado_ler(pontArqDados, dado, byteOffset);
             if (dado == NULL)
             {
                 mensagem_erro();
@@ -957,10 +956,77 @@ void print_header(HEADER_ARVB *header)
     if (header == NULL)
         return;
 
-    printf("Byteoffset noRaiz: %d\n", header->noRaiz);
+    printf("RRN noRaiz: %d\n", header->noRaiz);
     printf("Quant nos: %d\n", header->nroNos);
     printf("ProxRRN: %d\n", header->proxRRN);
     printf("Status: %c\n", header->status);
 
     return;
 }
+
+void print_arvore(FILE *pontArqArv, FILE *pontArqDados, int byteOffsetAtual, HEADER *header)
+{
+    // Condição de parada
+    if (byteOffsetAtual < 0)
+        return;
+
+    NO *noAtual = NULL;
+    noAtual = ArvB_no_ler(pontArqArv, byteOffsetAtual);
+    if (noAtual == NULL)
+    {
+        mensagem_erro();
+        return;
+    }
+
+    // Se o nó não é folha, intercala a trajetoria
+    if (noAtual->tipoNo != -1)
+    {
+        for (int i = 0; i < noAtual->quantChavesAtual; i++)
+        {
+            print_arvore(pontArqArv, pontArqDados, noAtual->byteOffsetDescendentes[i], header);
+            long int byteOffset = noAtual->byteOffsetDados[i];
+
+            DADO *dado = NULL;
+            dado = dado_ler(pontArqDados, dado, byteOffset);
+            if (dado == NULL)
+            {
+                mensagem_erro();
+                return;
+            }
+
+            if (dado_get_removido(dado) == '0') // Verifica se o dado não foi removido
+            {
+                dado_imprimir(header, dado); // Imprime o dado se a busca for bem-sucedida
+                printf("\n");
+            }
+            dado_apagar(&dado);
+        }
+
+        print_arvore(pontArqArv, pontArqDados, noAtual->byteOffsetDescendentes[noAtual->quantChavesAtual], header);
+    }
+    // Se o nó é folha, processa o nó
+    else
+    {
+        for (int i = 0; i < noAtual->quantChavesAtual; i++)
+        {
+            long int byteOffset = noAtual->byteOffsetDados[i];
+
+            DADO *dado = NULL;
+            dado = dado_ler(pontArqDados, dado, byteOffset);
+            if (dado == NULL)
+            {
+                mensagem_erro();
+                return;
+            }
+
+            if (dado_get_removido(dado) == '0') // Verifica se o dado não foi removido
+            {
+                dado_imprimir(header, dado); // Imprime o dado se a busca for bem-sucedida
+                printf("\n");
+            }
+            dado_apagar(&dado);
+        }
+    }
+}
+
+// 7 teste.bin arv.bin

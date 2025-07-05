@@ -529,7 +529,7 @@ void funcionalidade7()
     headerArv = ArvB_header_set(headerArv, 1, -2, -2, -2); // Definindo status do arq. da arv. como consistente
     ArvB_header_escrever(pontArqArv, headerArv);           // Escrevendo header
 
-    print_header(headerArv);
+    // print_arvore(pontArqArv, pontArqDados, TAM_HEADER_ARVB + ArvB_header_get_int(headerArv, 1) * TAM_REGISTRO_ARVB, headerDados);
 
     dado_apagar(&dadoTemp);
     header_apagar(&headerDados);
@@ -621,7 +621,7 @@ void funcionalidade8()
         else
         {
             // Caso não faça, visita todos os nós da árvore verificandos
-            ArvB_DFS(pontArqArvB, byteOffsetRaiz, busca, headerDados);
+            ArvB_DFS(pontArqArvB, pontArqDados, byteOffsetRaiz, busca, headerDados);
         }
 
         printf("**********\n");
