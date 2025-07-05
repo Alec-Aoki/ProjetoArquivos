@@ -572,6 +572,7 @@ void funcionalidade8()
     int quantBuscas;
     scanf("%d", &quantBuscas);
 
+    long int byteOffsetRaiz;
     BUSCA *busca = NULL;
     HEADER *headerDados = NULL;
     HEADER_ARVB *headerArvB = NULL;
@@ -593,12 +594,15 @@ void funcionalidade8()
         return;
     }
 
-    // Guarda o byteOffset da raiz
-    int byteOffsetRaiz = TAM_HEADER_ARVB + ArvB_header_get_int(headerArvB, 1) * TAM_REGISTRO_ARVB;
-
     // Lendo cada busca do usuário e efetuando-a
     for (int i = 0; i < quantBuscas; i++)
     {
+        fseek(pontArqArvB, 0, SEEK_SET);
+        fseek(pontArqDados, 0, SEEK_SET);
+
+        busca = NULL;
+        byteOffsetRaiz = TAM_HEADER_ARVB + ArvB_header_get_int(headerArvB, 1) * TAM_REGISTRO_ARVB;
+
         busca = busca_ler(busca);
         // Verifica se o idAttack faz parte do filtro de busca
         int buscaIdAttack = busca_get_quaisCampos(busca, 1);
@@ -614,12 +618,12 @@ void funcionalidade8()
                 continue; // Registro não encontrado
             }
 
-            ArvB_compara_dado(pontArqArvB, noEncontrado, busca, );
+            ArvB_compara_dado(pontArqArvB, noEncontrado, busca, NULL, NULL);
         }
         else
         {
             // Caso não faça, visita todos os nós da árvore verificandos
-            ArvB_DFS(pontArqArvB, pontArqDados, byteOffsetRaiz, busca, headerDados, );
+            ArvB_DFS(pontArqArvB, pontArqDados, byteOffsetRaiz, busca, headerDados, NULL, NULL);
         }
 
         printf("**********\n");
@@ -633,6 +637,8 @@ void funcionalidade8()
 
     fclose(pontArqDados);
     fclose(pontArqArvB);
+
+    return;
 }
 
 /* funcionalidade9()

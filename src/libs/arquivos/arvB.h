@@ -74,7 +74,7 @@ Lê um nó do arquivo de índice árvore-B
 Parâmetros: ponteiro para o arquivo, byteOffset do nó a ser lido
 Retorna: ponteiro para a struct do tipo NO lida (NULL se falhar)
 */
-NO *ArvB_no_ler(FILE *pontArq, int byteOffset);
+NO *ArvB_no_ler(FILE *pontArq, long int byteOffset);
 
 /* ArvB_no_set():
 Define os campos de uma struct do tipo NO.

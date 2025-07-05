@@ -104,12 +104,7 @@ BUSCA *busca_ler(BUSCA *busca)
     // Lendo string contendo os campos a serem buscados e seus valores
     fgets(buffer, sizeof(buffer), stdin);
     // Localiza no buffer o primeiro caractere de nova linha(\n) ou retorno de carro(\r)
-    int fdl1 = strcspn(buffer, "\n");
-    int fdl2 = strcspn(buffer, "\r");
-    if (fdl1 < fdl2)
-        buffer[fdl1] = '\0'; // Remove newline character
-    else
-        buffer[fdl2] = '\0'; // Remove carriage return character
+    buffer[strcspn(buffer, "\n\r")] = '\0';
 
     ptr = buffer;
 
@@ -160,7 +155,9 @@ BUSCA *busca_ler(BUSCA *busca)
             {
                 tamStr = strlen(tok) - 2;
                 strncpy(busca->country, tok + 1, tamStr);
+                busca->country[tamStr] = '\0';
                 strcpy(busca->country, formata_string_registro(busca->country, "1"));
+                limpa_barra_final(busca->country);
             }
             break;
         case 4:
@@ -170,7 +167,9 @@ BUSCA *busca_ler(BUSCA *busca)
             {
                 tamStr = strlen(tok) - 2;
                 strncpy(busca->attackType, tok + 1, tamStr);
+                busca->attackType[tamStr] = '\0';
                 strcpy(busca->attackType, formata_string_registro(busca->attackType, "2"));
+                limpa_barra_final(busca->attackType);
             }
             break;
         case 5:
@@ -180,7 +179,9 @@ BUSCA *busca_ler(BUSCA *busca)
             {
                 tamStr = strlen(tok) - 2;
                 strncpy(busca->targetIndustry, tok + 1, tamStr);
+                busca->targetIndustry[tamStr] = '\0';
                 strcpy(busca->targetIndustry, formata_string_registro(busca->targetIndustry, "3"));
+                limpa_barra_final(busca->targetIndustry);
             }
             break;
         case 6:
@@ -190,7 +191,9 @@ BUSCA *busca_ler(BUSCA *busca)
             {
                 tamStr = strlen(tok) - 2;
                 strncpy(busca->defenseMechanism, tok + 1, tamStr);
+                busca->defenseMechanism[tamStr] = '\0';
                 strcpy(busca->defenseMechanism, formata_string_registro(busca->defenseMechanism, "4"));
+                limpa_barra_final(busca->defenseMechanism);
             }
             break;
         }
@@ -233,21 +236,53 @@ bool busca_comparar(BUSCA *busca, DADO *dado)
                 dadoValido = false;
             break;
         case 3: // country
-            if (strcmp(dado_get_string(dado, 1), busca->country) != 0)
+        {
+            char *dadoCountry = dado_get_string(dado, 1);
+            char tempDado[256], tempBusca[256];
+            strcpy(tempDado, dadoCountry);
+            strcpy(tempBusca, busca->country);
+            limpa_barra_final(tempDado);
+            limpa_barra_final(tempBusca);
+            if (strcmp(tempDado, tempBusca) != 0)
                 dadoValido = false;
-            break;
+        }
+        break;
         case 4: // attackType
-            if (strcmp(dado_get_string(dado, 2), busca->attackType) != 0)
+        {
+            char *dadoAttackType = dado_get_string(dado, 2);
+            char tempDado[256], tempBusca[256];
+            strcpy(tempDado, dadoAttackType);
+            strcpy(tempBusca, busca->attackType);
+            limpa_barra_final(tempDado);
+            limpa_barra_final(tempBusca);
+            if (strcmp(tempDado, tempBusca) != 0)
                 dadoValido = false;
-            break;
+        }
+        break;
         case 5: // targetIndustry
-            if (strcmp(dado_get_string(dado, 3), busca->targetIndustry) != 0)
+        {
+            char *dadoTargetIndustry = dado_get_string(dado, 3);
+            char tempDado[256], tempBusca[256];
+            strcpy(tempDado, dadoTargetIndustry);
+            strcpy(tempBusca, busca->targetIndustry);
+            limpa_barra_final(tempDado);
+            limpa_barra_final(tempBusca);
+            if (strcmp(tempDado, tempBusca) != 0)
                 dadoValido = false;
-            break;
+        }
+        break;
         case 6: // defenseMechanism
-            if (strcmp(dado_get_string(dado, 4), busca->defenseMechanism) != 0)
+        {
+            char *dadoDefenseMechanism = dado_get_string(dado, 4);
+            char tempDado[256], tempBusca[256];
+            strcpy(tempDado, dadoDefenseMechanism);
+            strcpy(tempBusca, busca->defenseMechanism);
+            limpa_barra_final(tempDado);
+            limpa_barra_final(tempBusca);
+            if (strcmp(tempDado, tempBusca) != 0)
                 dadoValido = false;
-            break;
+        }
+        break;
         default:
             break;
         }
