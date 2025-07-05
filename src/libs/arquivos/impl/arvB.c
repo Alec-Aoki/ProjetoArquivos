@@ -234,13 +234,16 @@ Lê um nó do arquivo de índice árvore-B
 Parâmetros: ponteiro para o arquivo, byteOffset do nó a ser lido
 Retorna: ponteiro para a struct do tipo NO lida (NULL se falhar)
 */
-NO *ArvB_no_ler(FILE *pontArq, int byteOffset)
+NO *ArvB_no_ler(FILE *pontArq, long int byteOffset)
 {
-    if (pontArq == NULL || byteOffset < 0)
+    if (pontArq == NULL || byteOffset < TAM_HEADER_ARVB)
     {
         mensagem_erro();
         return NULL;
     }
+
+    // Posicionando ponteiro no byteOffset do nó
+    fseek(pontArq, byteOffset, SEEK_SET);
 
     NO *no = ArvB_no_criar();
     if (no == NULL)
@@ -248,8 +251,6 @@ NO *ArvB_no_ler(FILE *pontArq, int byteOffset)
         mensagem_erro();
         return NULL;
     }
-    // Posicionando ponteiro no byteOffset do nó
-    fseek(pontArq, byteOffset, SEEK_SET);
     no->byteOffset = byteOffset;
     // Lendo os campos do nó
     fread(&(no->tipoNo), sizeof(int), 1, pontArq);
@@ -821,6 +822,7 @@ void ArvB_DFS(FILE *pontArqArv, FILE *pontArqDados, long int byteOffsetAtual, BU
     if (byteOffsetAtual < 0)
         return;
 
+    fseek(pontArqArv, byteOffsetAtual, SEEK_SET);
     NO *noAtual = NULL;
     noAtual = ArvB_no_ler(pontArqArv, byteOffsetAtual);
     if (noAtual == NULL)
@@ -842,6 +844,7 @@ void ArvB_DFS(FILE *pontArqArv, FILE *pontArqDados, long int byteOffsetAtual, BU
             if (dado == NULL)
             {
                 mensagem_erro();
+                ArvB_no_apagar(&noAtual);
                 return;
             }
 
@@ -871,6 +874,7 @@ void ArvB_DFS(FILE *pontArqArv, FILE *pontArqDados, long int byteOffsetAtual, BU
             if (dado == NULL)
             {
                 mensagem_erro();
+                ArvB_no_apagar(&noAtual);
                 return;
             }
 
@@ -887,6 +891,8 @@ void ArvB_DFS(FILE *pontArqArv, FILE *pontArqDados, long int byteOffsetAtual, BU
         }
     }
 
+    ArvB_no_apagar(&noAtual);
+
     return;
 }
 
@@ -899,7 +905,8 @@ void ArvB_compara_dado(FILE *pontArq, NO *no, BUSCA *busca)
     if (no == NULL || busca == NULL)
         return; // Erro
 
-    HEADER *header = header_ler(pontArq, header);
+    HEADER *header = NULL;
+    header = header_ler(pontArq, header);
 
     // Percorre as chaves do nó
     for (int i = 0; i < no->quantChavesAtual; i++)
@@ -1029,5 +1036,3 @@ void print_arvore(FILE *pontArqArv, FILE *pontArqDados, long int byteOffsetAtual
         }
     }
 }
-
-// 7 teste.bin arv.bin

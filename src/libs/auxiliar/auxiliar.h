@@ -78,6 +78,8 @@ Retorna: nenhum
 */
 void apaga_entrada(char ***entrada);
 
+void limpa_barra_final(char *str);
+
 /*FUNÇÃO FORNECIDA PARA LEITURA DE STRINGS*/
 void scan_quote_string(char *str);
 

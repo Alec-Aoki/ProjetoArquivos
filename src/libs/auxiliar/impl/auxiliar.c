@@ -255,6 +255,18 @@ void apaga_entrada(char ***entrada)
     *entrada = NULL;
 }
 
+// Função auxiliar para limpar barras extras no final das strings
+void limpa_barra_final(char *str)
+{
+    if (str == NULL)
+        return;
+    int len = strlen(str);
+    if (len > 0 && str[len - 1] == '|')
+    {
+        str[len - 1] = '\0';
+    }
+}
+
 /*FUNÇÃO FORNECIDA DE LEITURA DE STRING COM ASPAS*/
 void scan_quote_string(char *str)
 {
