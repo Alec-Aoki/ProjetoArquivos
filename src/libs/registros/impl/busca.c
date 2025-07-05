@@ -299,3 +299,51 @@ int busca_get_int(BUSCA *busca, int campo)
         return -2; // Campo inválido
     }
 }
+
+BUSCA *busca_set(BUSCA *busca, int idAttack, int year, float finLoss,
+                 char *country, char *attackType, char *targetIndustry, char *defenseMechanism)
+{
+    if (busca == NULL)
+        busca = busca_criar();
+    if (busca == NULL)
+        return NULL;
+
+    int i = 0;
+    if (idAttack > 0)
+    {
+        busca->idAttack = idAttack;
+        busca->quaisCampos[i++] = 0; // idAttack
+    }
+    if (year > 0)
+    {
+        busca->year = year;
+        busca->quaisCampos[i++] = 1; // year
+    }
+    if (finLoss > 0)
+    {
+        busca->finLoss = finLoss;
+        busca->quaisCampos[i++] = 2; // financialLoss
+    }
+    if (country != NULL && strcmp(country, "NULO") != 0)
+    {
+        strcpy(busca->country, country);
+        busca->quaisCampos[i++] = 3; // country
+    }
+    if (attackType != NULL && strcmp(attackType, "NULO") != 0)
+    {
+        strcpy(busca->attackType, attackType);
+        busca->quaisCampos[i++] = 4; // attackType
+    }
+    if (targetIndustry != NULL && strcmp(targetIndustry, "NULO") != 0)
+    {
+        strcpy(busca->targetIndustry, targetIndustry);
+        busca->quaisCampos[i++] = 5; // targetIndustry
+    }
+    if (defenseMechanism != NULL && strcmp(defenseMechanism, "NULO") != 0)
+    {
+        strcpy(busca->defenseMechanism, defenseMechanism);
+        busca->quaisCampos[i++] = 6; // defenseMechanism
+    }
+
+    return busca;
+}

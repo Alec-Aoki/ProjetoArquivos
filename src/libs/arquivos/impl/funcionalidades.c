@@ -577,6 +577,116 @@ NAO DEVE SER IMPLEMENTADA
 /* funcionalidade10():
 Insere um registro num arquivo de dados dado
 */
+void funcionalidade10()
+{
+    char nomeArqDados[TAM_MAX_STR];
+    char nomeArqArvB[TAM_MAX_STR];
+
+    ler_nome_arquivo(nomeArqDados);
+    ler_nome_arquivo(nomeArqArvB);
+
+    // Abre o arquivo de dados para leitura e escrita
+    FILE *pontArqDados = fopen(nomeArqDados, "rb+");
+    if (pontArqDados == NULL)
+    {
+        mensagem_erro();
+        return;
+    }
+
+    // Abre o arquivo de índices árvore-B para leitura e escrita
+    FILE *pontArqArvB = fopen(nomeArqArvB, "rb+");
+    if (pontArqArvB == NULL)
+    {
+        mensagem_erro();
+        fclose(pontArqDados);
+        return;
+    }
+
+    // Quantidade de dados a serem inseridos
+    int quantDados;
+    scanf(" %d", &quantDados);
+
+    HEADER *headerDados = NULL;
+    headerDados = header_ler(pontArqDados, headerDados);
+    if (headerDados == NULL)
+    {
+        mensagem_erro();
+        fclose(pontArqDados);
+        fclose(pontArqArvB);
+        return;
+    }
+
+    HEADER_ARVB *headerArvB = NULL;
+    headerArvB = ArvB_header_ler(pontArqArvB, headerArvB);
+    if (headerArvB == NULL)
+    {
+        mensagem_erro();
+        fclose(pontArqDados);
+        fclose(pontArqArvB);
+        return;
+    }
+
+    // Definindo status como inconsistente (0)
+    headerDados = header_set(headerDados, 0, -2, -2, -2, -2,
+                             NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+    // Escrevendo o header  no arquivo binário
+    fseek(pontArqDados, 0, SEEK_SET);
+    header_escrever(pontArqDados, headerDados, false);
+
+    for (int i = 0; i < quantDados; i++)
+    {
+        char **entrada = NULL;
+        DADO *dado = NULL;
+
+        // Lê a entrada do usuário para inserir um novo registro
+        entrada = ler_entrada_insert();
+        if (entrada == NULL)
+        {
+            mensagem_erro();
+            fclose(pontArqDados);
+            fclose(pontArqArvB);
+            return;
+        }
+
+        dado = dado_set(dado, 0, 0, -1, str_to_int(entrada[0]),
+                        str_to_int(entrada[1]), str_to_float(entrada[2]),
+                        entrada[3], entrada[4], entrada[5], entrada[6]);
+
+        if (!arqBIN_insert_dado(pontArqDados, headerDados, dado))
+        {
+            mensagem_erro();
+            apaga_entrada(&entrada);
+            fclose(pontArqDados);
+            fclose(pontArqArvB);
+            return;
+        }
+
+        BUSCA *busca = NULL;
+        busca = busca_set(busca, str_to_int(entrada[0]), -2, -2,
+                          NULL, NULL, NULL, NULL);
+        long byteOffset = arqBIN_buscar_byteOffset(pontArqDados, busca,
+                                                   headerDados, -1);
+
+        if (byteOffset > 0)
+            ArvB_inserir(pontArqArvB, headerArvB, dado_get_int(dado, 1), byteOffset);
+
+        dado_apagar(&dado);
+        apaga_entrada(&entrada);
+    }
+
+    // Atualizando o header do arquivo binário
+    // Definindo status como consistente (1)
+    headerDados = header_set(headerDados, 1, -2, -2, -2, -2,
+                             NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+    // Escrevendo o header  no arquivo binário
+    fseek(pontArqDados, 0, SEEK_SET);
+    header_escrever(pontArqDados, headerDados, false);
+
+    header_apagar(&headerDados);
+    ArvB_header_apagar(&headerArvB);
+    fclose(pontArqDados);
+    fclose(pontArqArvB);
+}
 
 /* funcionalidade11():
 Atualiza um registro no arquivo de dados, exceto o campo idAttack

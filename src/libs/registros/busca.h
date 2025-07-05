@@ -56,4 +56,7 @@ Retorna: valor do campo ou -2 se inválido
 */
 int busca_get_int(BUSCA *busca, int campo);
 
+BUSCA *busca_set(BUSCA *busca, int idAttack, int year, float finLoss,
+                 char *country, char *attackType, char *targetIndustry, char *defenseMechanism);
+
 #endif
