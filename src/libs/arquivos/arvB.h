@@ -83,8 +83,8 @@ Caso -2 ou NULL seja fornecido, não altera o campo da struct.
 Parâmetros: valores para os campos do nó
 Retorna: ponteiro para a struct do tipo NO
 */
-NO *ArvB_no_set(NO *no, int byteOffset, int *chaves,
-                long int *byteOffsetDados, int *byteOffsetDescendentes,
+NO *ArvB_no_set(NO *no, long int byteOffset, int *chaves,
+                long int *byteOffsetDados, int *rrnDescendentes,
                 int tipoNo, int quantChavesAtual);
 
 /* ArvB_no_escrever():
@@ -96,14 +96,13 @@ void ArvB_no_escrever(FILE *pontArq, NO *no);
 /* ArvB_no_get_int():
 Retorna o valor de um campo inteiro de uma struct do tipo no.
 Parâmetros: ponteiro para a struct e o campo desejado
-    1: byteOffset
-    2: tipoNO
-    3: quantChavesAtual
-    4: chave 1
-    5: chave 2
-    6: byteOffsetFilho 1
-    7: byteOffsetFilho 2
-    8: byteOffsetFilho 3
+    1: tipoNO
+    2: quantChavesAtual
+    3: chave 1
+    4: chave 2
+    5: rrnFilho 1
+    6: rrnFilho 2
+    7: rrnFIlho 3
 Retorna: valor do campo (-1 se não encontrado ou no nulo)
 */
 int ArvB_no_get_int(NO *no, int campo);
@@ -111,8 +110,9 @@ int ArvB_no_get_int(NO *no, int campo);
 /* ArvB_no_get_longint():
 Retorna o valor de um campo long int de uma struct do tipo no.
 Parâmetros: ponteiro para a struct e o campo desejado
-    1: byteOffsetDado chave 1
-    2: byteOffsetDado chave2
+    1: byteOffset do nó
+    2: byteOffsetDado chave 1
+    3: byteOffsetDado chave2
 Retorna: valor do campo (-1 se não encontrado ou no nulo)
 */
 long int ArvB_no_get_longint(NO *no, int campo);
@@ -122,7 +122,7 @@ Busca uma chave na árvore-B
 Parâmetros: ponteiro para o arquivo, byteOffset do nó atual, chave a ser buscada
 Retorna: ponteiro para o nó que contém a chave (NULL se não encontrado)
 */
-NO *ArvB_busca(FILE *pontArq, int byteOffsetAtual, int chave);
+NO *ArvB_busca(FILE *pontArq, long int byteOffsetAtual, int chave);
 
 /* ArvB_inserir():
 Função "macro" para mexer no header e lidar com a primeira inserção
@@ -140,7 +140,7 @@ void ArvB_compara_dado(FILE *pontArq, NO *no, BUSCA *busca);
 Realiza uma busca em profundidade na árvore B e imprime os dados que satisfazem a busca
 Parâmetros: ponteiro para o arquivo, byteOffset atual, ponteiro para a busca e header
 */
-void ArvB_DFS(FILE *pontArqArv, FILE *pontArqDados, int byteOffsetAtual, BUSCA *busca, HEADER *header);
+void ArvB_DFS(FILE *pontArqArv, FILE *pontArqDados, long int byteOffsetAtual, BUSCA *busca, HEADER *header);
 
 // Função para debuggar
 void print_no(NO *no);
@@ -148,6 +148,6 @@ void print_no(NO *no);
 // Função apra debuggar
 void print_header(HEADER_ARVB *header);
 
-void print_arvore(FILE *pontArqArv, FILE *pontarqDados, int byteOffsetAtual, HEADER *header);
+void print_arvore(FILE *pontArqArv, FILE *pontarqDados, long int byteOffsetAtual, HEADER *header);
 
 #endif

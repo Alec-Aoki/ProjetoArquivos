@@ -529,8 +529,6 @@ void funcionalidade7()
     headerArv = ArvB_header_set(headerArv, 1, -2, -2, -2); // Definindo status do arq. da arv. como consistente
     ArvB_header_escrever(pontArqArv, headerArv);           // Escrevendo header
 
-    // print_arvore(pontArqArv, pontArqDados, TAM_HEADER_ARVB + ArvB_header_get_int(headerArv, 1) * TAM_REGISTRO_ARVB, headerDados);
-
     dado_apagar(&dadoTemp);
     header_apagar(&headerDados);
     ArvB_header_apagar(&headerArv);
