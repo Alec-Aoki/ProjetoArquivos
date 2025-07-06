@@ -889,8 +889,9 @@ void ArvB_DFS(FILE *pontArqArv, FILE *pontArqDados, long int byteOffsetAtual, BU
                                   dado_get_string(dadoAtualizado, 2), dado_get_string(dadoAtualizado, 3),
                                   dado_get_string(dadoAtualizado, 4));
 
-                        long byteOffsetNovo = arqBIN_buscar_byteOffset(pontArqDados, buscaNovo, header, -1);
+                        long int byteOffsetNovo = arqBIN_buscar_byteOffset(pontArqDados, buscaNovo, header, -1);
                         noAtual->byteOffsetDados[i] = byteOffsetNovo;
+                        busca_apagar(&buscaNovo);
                     }
                     else
                     {
@@ -992,6 +993,7 @@ void ArvB_DFS(FILE *pontArqArv, FILE *pontArqDados, long int byteOffsetAtual, BU
         }
     }
 
+    ArvB_no_escrever(pontArqArv, noAtual); // Escreve o nó atualizado
     ArvB_no_apagar(&noAtual);
 
     return;
@@ -1062,10 +1064,13 @@ void ArvB_compara_dado(FILE *pontArq, NO *no, BUSCA *busca, BUSCA *camposAtualiz
                               dado_get_string(dadoAtualizado, 2), dado_get_string(dadoAtualizado, 3),
                               dado_get_string(dadoAtualizado, 4));
 
-                    long byteOffsetNovo = arqBIN_buscar_byteOffset(pontArq, buscaNovo, header, -1);
-                    no->byteOffsetDados[i] = byteOffsetNovo;
+                    // Buscando o novo byteOffset do dado atualizado
+                    long int byteOffsetNovo = arqBIN_buscar_byteOffset(pontArq, buscaNovo, headerDados, -1);
+                    if (byteOffsetNovo > 0)
+                        no->byteOffsetDados[i] = byteOffsetNovo;
 
                     dado_apagar(&dadoAtualizado);
+                    busca_apagar(&buscaNovo);
                 }
                 else
                 {

@@ -842,34 +842,38 @@ void funcionalidade11()
     fseek(pontArqDados, 0, SEEK_SET);
     header_escrever(pontArqDados, headerDados, false);
 
+    int buscaIdAttack;
     // Lendo e realizando cada atualização
     for (int i = 0; i < quantAtualiz; i++)
     {
         byteOffsetEncontrado = -1;
         // Lendo a busca a ser lida
+        busca = NULL;
         busca = busca_ler(busca);
         // Lendo os campos a serem atualizados
+        camposAtulizados = NULL;
         camposAtulizados = busca_ler(camposAtulizados);
 
-        long buscaIdAttack = -1;
+        buscaIdAttack = -1;
         buscaIdAttack = busca_get_int(busca, 0);
 
         /*CORRIGIR ATUALIZAÇÃO POR BUSCA DE ID*/
         if (buscaIdAttack > 0)
         {
-            // printf("PRINT DE DEBUG: %ld\n", buscaIdAttack);
             //  Caso o idAttack faça parte do filtro de busca, busca na árvore-B
-            long idAttack = busca_get_int(busca, 0);
             NO *noEncontrado = NULL;
-            noEncontrado = ArvB_busca(pontArqArvB, TAM_HEADER_ARVB + ArvB_header_get_int(headerArvB, 1) * TAM_REGISTRO_ARVB, idAttack);
+            noEncontrado = ArvB_busca(pontArqArvB, TAM_HEADER_ARVB + ArvB_header_get_int(headerArvB, 1) * TAM_REGISTRO_ARVB, buscaIdAttack);
             if (noEncontrado == NULL)
             {
-                mensagem_regInexistente();
+                // mensagem_regInexistente();
                 continue; // Registro não encontrado
             }
 
             ArvB_compara_dado(pontArqDados, noEncontrado, busca,
                               camposAtulizados, headerDados);
+
+            ArvB_no_escrever(pontArqArvB, noEncontrado);
+            ArvB_no_apagar(&noEncontrado);
         }
         else
         {
