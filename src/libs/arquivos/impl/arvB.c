@@ -802,10 +802,15 @@ int inserir_ordenado(int *chaves, long int *byteOffsetDados, int *rrnDescendente
 
     if (rrnFilho != -2 && rrnDescendentes != NULL)
     {
-        // Deslocando pra direita
-        for (int i = quantMaxFilhos - 1; i > pos + 1; i--)
+        // CORREÇÃO: O loop deve começar do último filho atual e deslocar
+        // todos os elementos a partir da posição de inserção do novo filho.
+        // Note que *quantChavesAtual já foi incrementado.
+        for (int i = *quantChavesAtual; i > pos + 1; i--)
+        {
             rrnDescendentes[i] = rrnDescendentes[i - 1];
+        }
 
+        // Agora insere o novo filho na posição correta (à direita da nova chave).
         rrnDescendentes[pos + 1] = rrnFilho;
     }
 

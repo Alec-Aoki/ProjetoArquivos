@@ -704,7 +704,7 @@ void funcionalidade10()
     // Definindo status como inconsistente (0)
     headerDados = header_set(headerDados, 0, -2, -2, -2, -2,
                              NULL, NULL, NULL, NULL, NULL, NULL, NULL);
-    // Escrevendo o header  no arquivo binário
+    // Escrevendo o header no arquivo binário
     fseek(pontArqDados, 0, SEEK_SET);
     header_escrever(pontArqDados, headerDados, false);
 
