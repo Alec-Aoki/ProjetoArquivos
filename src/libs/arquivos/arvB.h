@@ -134,13 +134,14 @@ void ArvB_inserir(FILE *pontArq, HEADER_ARVB *header, int chave, long int byteOf
 Compara os dados de um nó com uma busca e imprime os dados que satisfazem a busca
 Parâmetros: ponteiro para o arquivo, ponteiro para o nó a ser comparado, ponteiro para a busca
 */
-void ArvB_compara_dado(FILE *pontArq, NO *no, BUSCA *busca);
+void ArvB_compara_dado(FILE *pontArq, NO *no, BUSCA *busca, BUSCA *camposAtualizados, HEADER *headerDados);
 
 /* ArvB_DFS():
 Realiza uma busca em profundidade na árvore B e imprime os dados que satisfazem a busca
 Parâmetros: ponteiro para o arquivo, byteOffset atual, ponteiro para a busca e header
 */
-void ArvB_DFS(FILE *pontArqArv, FILE *pontArqDados, long int byteOffsetAtual, BUSCA *busca, HEADER *header, bool *encontrado);
+void ArvB_DFS(FILE *pontArqArv, FILE *pontArqDados, long int byteOffsetAtual, BUSCA *busca,
+              HEADER *header, bool *encontrado, BUSCA *camposAtualizados);
 
 // Função para debuggar
 void print_no(NO *no);
