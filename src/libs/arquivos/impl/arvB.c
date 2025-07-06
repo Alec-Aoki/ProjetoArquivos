@@ -237,10 +237,7 @@ Retorna: ponteiro para a struct do tipo NO lida (NULL se falhar)
 NO *ArvB_no_ler(FILE *pontArq, long int byteOffset)
 {
     if (pontArq == NULL || byteOffset < TAM_HEADER_ARVB)
-    {
-        mensagem_erro();
         return NULL;
-    }
 
     // Posicionando ponteiro no byteOffset do nó
     fseek(pontArq, byteOffset, SEEK_SET);

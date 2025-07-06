@@ -87,12 +87,14 @@ long int arqBIN_buscar_byteOffset(FILE *pontArqBIN, BUSCA *busca,
 {
     if (pontArqBIN == NULL || busca == NULL)
     {
+        printf("G");
         mensagem_erro();
         return -1;
     }
 
     if (headerArq == NULL)
     {
+        printf("H");
         mensagem_erro();
         return -1;
     }
