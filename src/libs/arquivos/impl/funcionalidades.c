@@ -623,7 +623,11 @@ void funcionalidade8()
         else
         {
             // Caso não faça, visita todos os nós da árvore verificandos
-            ArvB_DFS(pontArqArvB, pontArqDados, byteOffsetRaiz, busca, headerDados, NULL, NULL);
+            bool encontrado = false;
+            ArvB_DFS(pontArqArvB, pontArqDados, byteOffsetRaiz, busca, headerDados, &encontrado, NULL);
+
+            if (!encontrado)
+                mensagem_regInexistente();
         }
 
         printf("**********\n");
