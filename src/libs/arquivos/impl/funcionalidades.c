@@ -529,6 +529,7 @@ void funcionalidade7()
     headerArv = ArvB_header_set(headerArv, 1, -2, -2, -2); // Definindo status do arq. da arv. como consistente
     ArvB_header_escrever(pontArqArv, headerArv);           // Escrevendo header
 
+    // Apagando estruturas
     dado_apagar(&dadoTemp);
     header_apagar(&headerDados);
     ArvB_header_apagar(&headerArv);
@@ -548,6 +549,7 @@ void funcionalidade8()
     char nomeArqDados[TAM_MAX_STR];
     char nomeArqArvB[TAM_MAX_STR];
 
+    // Lê o nome do arquivo de dados e do arquivo de índices árvore-B
     ler_nome_arquivo(nomeArqDados);
     ler_nome_arquivo(nomeArqArvB);
 
@@ -619,6 +621,7 @@ void funcionalidade8()
             }
 
             ArvB_compara_dado(pontArqArvB, noEncontrado, busca, NULL, NULL);
+            ArvB_no_apagar(&noEncontrado);
         }
         else
         {
@@ -650,13 +653,14 @@ NAO DEVE SER IMPLEMENTADA
 */
 
 /* funcionalidade10():
-Insere um registro num arquivo de dados dado
+Insere um novo registro no arquivo de dados e no arquivo de índices árvore-B
 */
 void funcionalidade10()
 {
     char nomeArqDados[TAM_MAX_STR];
     char nomeArqArvB[TAM_MAX_STR];
 
+    // Lendo os nomes dos arquivos de dados e índices árvore-B
     ler_nome_arquivo(nomeArqDados);
     ler_nome_arquivo(nomeArqArvB);
 
@@ -681,6 +685,7 @@ void funcionalidade10()
     int quantDados;
     scanf(" %d", &quantDados);
 
+    // Lendo os headers dos arquivos
     HEADER *headerDados = NULL;
     headerDados = header_ler(pontArqDados, headerDados);
     if (headerDados == NULL)
@@ -727,10 +732,12 @@ void funcionalidade10()
             return;
         }
 
+        // Cria um novo dado com os dados lidos
         dado = dado_set(dado, 0, 0, -1, str_to_int(entrada[0]),
                         str_to_int(entrada[1]), str_to_float(entrada[2]),
                         entrada[3], entrada[4], entrada[5], entrada[6]);
 
+        // Insere o dado no arquivo binário
         if (!arqBIN_insert_dado(pontArqDados, headerDados, dado))
         {
             mensagem_erro();
@@ -740,15 +747,18 @@ void funcionalidade10()
             return;
         }
 
+        // Cria uma busca para encontrar o byteOffset do dado inserido
         BUSCA *busca = NULL;
         busca = busca_set(busca, str_to_int(entrada[0]), -2, -2,
                           NULL, NULL, NULL, NULL);
         long int byteOffset = arqBIN_buscar_byteOffset(pontArqDados, busca,
                                                        headerDados, -1);
 
+        // // Se o byteOffset for válido, insere na árvore-B
         if (byteOffset > 0)
             ArvB_inserir(pontArqArvB, headerArvB, dado_get_int(dado, 1), byteOffset);
 
+        // Libera a memória alocada para a busca e entrada
         dado_apagar(&dado);
         apaga_entrada(&entrada);
     }
@@ -761,10 +771,13 @@ void funcionalidade10()
     fseek(pontArqDados, 0, SEEK_SET);
     header_escrever(pontArqDados, headerDados, false);
 
+    // Atualizando o header do arquivo de índices árvore-B
+    // Definindo status como consistente (1)
     headerArvB = ArvB_header_set(headerArvB, 1, -2, -2, -2);
     fseek(pontArqArvB, 0, SEEK_SET);
     ArvB_header_escrever(pontArqArvB, headerArvB);
 
+    // Apagando estruturas e fechando os arquivos
     header_apagar(&headerDados);
     ArvB_header_apagar(&headerArvB);
     fclose(pontArqDados);
@@ -782,6 +795,7 @@ void funcionalidade11()
     char nomeArqDados[TAM_MAX_STR];
     char nomeArqArvB[TAM_MAX_STR];
 
+    // Lendo os nomes dos arquivos de dados e índices árvore-B
     ler_nome_arquivo(nomeArqDados);
     ler_nome_arquivo(nomeArqArvB);
 
@@ -842,6 +856,11 @@ void funcionalidade11()
     fseek(pontArqDados, 0, SEEK_SET);
     header_escrever(pontArqDados, headerDados, false);
 
+    // Definindo status como inconsistente (0) na árvore-B
+    headerArvB = ArvB_header_set(headerArvB, 0, -2, -2, -2);
+    fseek(pontArqArvB, 0, SEEK_SET);
+    ArvB_header_escrever(pontArqArvB, headerArvB);
+
     int buscaIdAttack;
     // Lendo e realizando cada atualização
     for (int i = 0; i < quantAtualiz; i++)
@@ -853,33 +872,38 @@ void funcionalidade11()
         // Lendo os campos a serem atualizados
         camposAtulizados = NULL;
         camposAtulizados = busca_ler(camposAtulizados);
+        int atualizaIdAttack = busca_get_int(camposAtulizados, 0);
 
+        // Verifica se o idAttack faz parte do filtro de busca
         buscaIdAttack = -1;
         buscaIdAttack = busca_get_int(busca, 0);
 
-        /*CORRIGIR ATUALIZAÇÃO POR BUSCA DE ID*/
-        if (buscaIdAttack > 0)
+        if (atualizaIdAttack < 0)
         {
-            //  Caso o idAttack faça parte do filtro de busca, busca na árvore-B
-            NO *noEncontrado = NULL;
-            noEncontrado = ArvB_busca(pontArqArvB, TAM_HEADER_ARVB + ArvB_header_get_int(headerArvB, 1) * TAM_REGISTRO_ARVB, buscaIdAttack);
-            if (noEncontrado == NULL)
+            if (buscaIdAttack > 0)
             {
-                // mensagem_regInexistente();
-                continue; // Registro não encontrado
+                //  Caso o idAttack faça parte do filtro de busca, busca na árvore-B
+                NO *noEncontrado = NULL;
+                noEncontrado = ArvB_busca(pontArqArvB, TAM_HEADER_ARVB + ArvB_header_get_int(headerArvB, 1) * TAM_REGISTRO_ARVB, buscaIdAttack);
+                if (noEncontrado == NULL)
+                {
+                    continue; // Registro não encontrado
+                }
+
+                // Verifica se o registro encontrado é válido
+                ArvB_compara_dado(pontArqDados, noEncontrado, busca,
+                                  camposAtulizados, headerDados);
+
+                // Se o registro encontrado for válido, atualiza o byteOffset no nó
+                ArvB_no_escrever(pontArqArvB, noEncontrado);
+                ArvB_no_apagar(&noEncontrado);
             }
-
-            ArvB_compara_dado(pontArqDados, noEncontrado, busca,
-                              camposAtulizados, headerDados);
-
-            ArvB_no_escrever(pontArqArvB, noEncontrado);
-            ArvB_no_apagar(&noEncontrado);
-        }
-        else
-        {
-            // Caso o idAttack não faça parte do filtro de busca, realiza busca DFS
-            ArvB_DFS(pontArqArvB, pontArqDados, TAM_HEADER_ARVB + ArvB_header_get_int(headerArvB, 1) * TAM_REGISTRO_ARVB,
-                     busca, headerDados, NULL, camposAtulizados);
+            else
+            {
+                // Caso o idAttack não faça parte do filtro de busca, realiza busca DFS
+                ArvB_DFS(pontArqArvB, pontArqDados, TAM_HEADER_ARVB + ArvB_header_get_int(headerArvB, 1) * TAM_REGISTRO_ARVB,
+                         busca, headerDados, NULL, camposAtulizados);
+            }
         }
 
         // Reseta as structs busca e camposAtulizados
@@ -893,6 +917,12 @@ void funcionalidade11()
                              NULL, NULL, NULL, NULL, NULL, NULL, NULL);
     fseek(pontArqDados, 0, SEEK_SET);
     header_escrever(pontArqDados, headerDados, false);
+
+    // Atualizando o header do arquivo de índices árvore-B
+    // Definindo status como consistente (1)
+    headerArvB = ArvB_header_set(headerArvB, 1, -2, -2, -2);
+    fseek(pontArqArvB, 0, SEEK_SET);
+    ArvB_header_escrever(pontArqArvB, headerArvB);
 
     // Apagando structs e fechando os arquivos
     header_apagar(&headerDados);
