@@ -389,3 +389,41 @@ BUSCA *busca_set(BUSCA *busca, int idAttack, int year, float finLoss,
 
     return busca;
 }
+
+void busca_imprimir(BUSCA *busca)
+{
+    if (busca == NULL)
+        return;
+
+    printf("Busca com %d campos:\n", busca->quantCampos);
+    for (int i = 0; i < busca->quantCampos; i++)
+    {
+        switch (busca->quaisCampos[i])
+        {
+        case 0:
+            printf("idAttack: %d\n", busca->idAttack);
+            break;
+        case 1:
+            printf("year: %d\n", busca->year);
+            break;
+        case 2:
+            printf("financialLoss: %.2f\n", busca->finLoss);
+            break;
+        case 3:
+            printf("country: %s\n", busca->country);
+            break;
+        case 4:
+            printf("attackType: %s\n", busca->attackType);
+            break;
+        case 5:
+            printf("targetIndustry: %s\n", busca->targetIndustry);
+            break;
+        case 6:
+            printf("defenseMechanism: %s\n", busca->defenseMechanism);
+            break;
+        default:
+            break;
+        }
+    }
+    printf("\n");
+}

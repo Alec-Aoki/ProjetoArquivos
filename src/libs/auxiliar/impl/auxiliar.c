@@ -111,7 +111,7 @@ char *desformata_string_registro(char *string)
         strcpy(strTemp, "NADA CONSTA");
     else // Removendo delimitadores e id
     {
-        strncpy(strTemp, string + 1, strlen(string) - 2);
+        strncpy(strTemp, string + 1, strlen(string) - 1);
         strTemp[strlen(string) - 1] = '\0';
     }
 

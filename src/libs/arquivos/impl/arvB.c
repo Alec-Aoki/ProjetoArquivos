@@ -871,26 +871,41 @@ void ArvB_DFS(FILE *pontArqArv, FILE *pontArqDados, long int byteOffsetAtual, BU
                     mensagem_erro();
                     return;
                 }
-                dadoAtualizado = busca_atualizar_dado(camposAtualizados, dadoAtualizado);
 
-                if (dado_get_int(dadoAtualizado, 3) > dado_get_int(dado, 3))
+                if (busca_comparar(busca, dado))
                 {
-                    dado_remover(pontArqDados, header, byteOffset);
+                    dadoAtualizado = busca_atualizar_dado(camposAtualizados, dadoAtualizado);
 
-                    arqBIN_insert_dado(pontArqDados, header, dadoAtualizado);
+                    if (dado_get_int(dadoAtualizado, 3) > dado_get_int(dado, 3))
+                    {
+                        dado_remover(pontArqDados, header, byteOffset);
+
+                        arqBIN_insert_dado(pontArqDados, header, dadoAtualizado);
+
+                        // Atualizando byteOffset do dado no nó
+                        BUSCA *buscaNovo = busca_criar();
+                        busca_set(buscaNovo, dado_get_int(dadoAtualizado, 1), dado_get_int(dadoAtualizado, 2),
+                                  dado_get_finLoss(dadoAtualizado), dado_get_string(dadoAtualizado, 1),
+                                  dado_get_string(dadoAtualizado, 2), dado_get_string(dadoAtualizado, 3),
+                                  dado_get_string(dadoAtualizado, 4));
+
+                        long byteOffsetNovo = arqBIN_buscar_byteOffset(pontArqDados, buscaNovo, header, -1);
+                        noAtual->byteOffsetDados[i] = byteOffsetNovo;
+                    }
+                    else
+                    {
+                        // Calculando quantidade de lixo
+                        int quantLixo = dado_get_int(dado, 3) - dado_get_int(dadoAtualizado, 3);
+                        // Definindo tamanho do dado atualizado para o tam. do dado orig.
+                        dadoAtualizado = dado_set(dadoAtualizado, -2, dado_get_int(dado, 3),
+                                                  -2, -2, -2, -2, NULL, NULL, NULL, NULL);
+                        // Posicionando ponteiro no início do dado
+                        fseek(pontArqDados, byteOffset, SEEK_SET);
+                        // Sobrescrevendo dado
+                        dado_escrever(pontArqDados, dadoAtualizado, quantLixo);
+                    }
                 }
-                else
-                {
-                    // Calculando quantidade de lixo
-                    int quantLixo = dado_get_int(dado, 3) - dado_get_int(dadoAtualizado, 3);
-                    // Definindo tamanho do dado atualizado para o tam. do dado orig.
-                    dadoAtualizado = dado_set(dadoAtualizado, -2, dado_get_int(dado, 3),
-                                              -2, -2, -2, -2, NULL, NULL, NULL, NULL);
-                    // Posicionando ponteiro no início do dado
-                    fseek(pontArqDados, byteOffset, SEEK_SET);
-                    // Sobrescrevendo dado
-                    dado_escrever(pontArqDados, dadoAtualizado, quantLixo);
-                }
+
                 dado_apagar(&dadoAtualizado);
                 dado_apagar(&dado);
             }
@@ -936,26 +951,41 @@ void ArvB_DFS(FILE *pontArqArv, FILE *pontArqDados, long int byteOffsetAtual, BU
                     mensagem_erro();
                     return;
                 }
-                dadoAtualizado = busca_atualizar_dado(camposAtualizados, dadoAtualizado);
 
-                if (dado_get_int(dadoAtualizado, 3) > dado_get_int(dado, 3))
+                if (busca_comparar(busca, dado))
                 {
-                    dado_remover(pontArqDados, header, byteOffset);
+                    dadoAtualizado = busca_atualizar_dado(camposAtualizados, dadoAtualizado);
 
-                    arqBIN_insert_dado(pontArqDados, header, dadoAtualizado);
+                    if (dado_get_int(dadoAtualizado, 3) > dado_get_int(dado, 3))
+                    {
+                        dado_remover(pontArqDados, header, byteOffset);
+
+                        arqBIN_insert_dado(pontArqDados, header, dadoAtualizado);
+
+                        // Atualizando byteOffset do dado no nó
+                        BUSCA *buscaNovo = busca_criar();
+                        busca_set(buscaNovo, dado_get_int(dadoAtualizado, 1), dado_get_int(dadoAtualizado, 2),
+                                  dado_get_finLoss(dadoAtualizado), dado_get_string(dadoAtualizado, 1),
+                                  dado_get_string(dadoAtualizado, 2), dado_get_string(dadoAtualizado, 3),
+                                  dado_get_string(dadoAtualizado, 4));
+
+                        long byteOffsetNovo = arqBIN_buscar_byteOffset(pontArqDados, buscaNovo, header, -1);
+                        noAtual->byteOffsetDados[i] = byteOffsetNovo;
+                    }
+                    else
+                    {
+                        // Calculando quantidade de lixo
+                        int quantLixo = dado_get_int(dado, 3) - dado_get_int(dadoAtualizado, 3);
+                        // Definindo tamanho do dado atualizado para o tam. do dado orig.
+                        dadoAtualizado = dado_set(dadoAtualizado, -2, dado_get_int(dado, 3),
+                                                  -2, -2, -2, -2, NULL, NULL, NULL, NULL);
+                        // Posicionando ponteiro no início do dado
+                        fseek(pontArqDados, byteOffset, SEEK_SET);
+                        // Sobrescrevendo dado
+                        dado_escrever(pontArqDados, dadoAtualizado, quantLixo);
+                    }
                 }
-                else
-                {
-                    // Calculando quantidade de lixo
-                    int quantLixo = dado_get_int(dado, 3) - dado_get_int(dadoAtualizado, 3);
-                    // Definindo tamanho do dado atualizado para o tam. do dado orig.
-                    dadoAtualizado = dado_set(dadoAtualizado, -2, dado_get_int(dado, 3),
-                                              -2, -2, -2, -2, NULL, NULL, NULL, NULL);
-                    // Posicionando ponteiro no início do dado
-                    fseek(pontArqDados, byteOffset, SEEK_SET);
-                    // Sobrescrevendo dado
-                    dado_escrever(pontArqDados, dadoAtualizado, quantLixo);
-                }
+
                 dado_apagar(&dadoAtualizado);
                 dado_apagar(&dado);
             }
@@ -1014,28 +1044,42 @@ void ArvB_compara_dado(FILE *pontArq, NO *no, BUSCA *busca, BUSCA *camposAtualiz
                 return;
             }
 
-            dadoAtualizado = busca_atualizar_dado(camposAtualizados, dadoAtualizado);
-
-            // Dado atualizado maior que dado original
-            if (dado_get_int(dadoAtualizado, 3) > dado_get_int(dado, 3))
+            if (busca_comparar(busca, dado))
             {
-                dado_remover(pontArq, headerDados, no->byteOffsetDados[i]);
+                dadoAtualizado = busca_atualizar_dado(camposAtualizados, dadoAtualizado);
 
-                arqBIN_insert_dado(pontArq, headerDados, dadoAtualizado);
-                dado_apagar(&dadoAtualizado);
-            }
-            else
-            {
-                // Calculando quantidade de lixo
-                int quantLixo = dado_get_int(dado, 3) - dado_get_int(dadoAtualizado, 3);
-                // Definindo tamanho do dado atualizado para o tam. do dado orig.
-                dadoAtualizado = dado_set(dadoAtualizado, -2, dado_get_int(dado, 3),
-                                          -2, -2, -2, -2, NULL, NULL, NULL, NULL);
-                // Posicionando ponteiro no início do dado
-                fseek(pontArq, no->byteOffsetDados[i], SEEK_SET);
-                // Sobrescrevendo dado
-                dado_escrever(pontArq, dadoAtualizado, quantLixo);
-                dado_apagar(&dadoAtualizado);
+                // Dado atualizado maior que dado original
+                if (dado_get_int(dadoAtualizado, 3) > dado_get_int(dado, 3))
+                {
+                    dado_remover(pontArq, headerDados, no->byteOffsetDados[i]);
+
+                    arqBIN_insert_dado(pontArq, headerDados, dadoAtualizado);
+
+                    // Atualizando byteOffset do dado no nó
+                    BUSCA *buscaNovo = busca_criar();
+                    busca_set(buscaNovo, dado_get_int(dadoAtualizado, 1), dado_get_int(dadoAtualizado, 2),
+                              dado_get_finLoss(dadoAtualizado), dado_get_string(dadoAtualizado, 1),
+                              dado_get_string(dadoAtualizado, 2), dado_get_string(dadoAtualizado, 3),
+                              dado_get_string(dadoAtualizado, 4));
+
+                    long byteOffsetNovo = arqBIN_buscar_byteOffset(pontArq, buscaNovo, header, -1);
+                    no->byteOffsetDados[i] = byteOffsetNovo;
+
+                    dado_apagar(&dadoAtualizado);
+                }
+                else
+                {
+                    // Calculando quantidade de lixo
+                    int quantLixo = dado_get_int(dado, 3) - dado_get_int(dadoAtualizado, 3);
+                    // Definindo tamanho do dado atualizado para o tam. do dado orig.
+                    dadoAtualizado = dado_set(dadoAtualizado, -2, dado_get_int(dado, 3),
+                                              -2, -2, -2, -2, NULL, NULL, NULL, NULL);
+                    // Posicionando ponteiro no início do dado
+                    fseek(pontArq, no->byteOffsetDados[i], SEEK_SET);
+                    // Sobrescrevendo dado
+                    dado_escrever(pontArq, dadoAtualizado, quantLixo);
+                    dado_apagar(&dadoAtualizado);
+                }
             }
 
             dado_apagar(&dado);

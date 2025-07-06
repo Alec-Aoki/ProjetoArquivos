@@ -59,4 +59,6 @@ int busca_get_int(BUSCA *busca, int campo);
 BUSCA *busca_set(BUSCA *busca, int idAttack, int year, float finLoss,
                  char *country, char *attackType, char *targetIndustry, char *defenseMechanism);
 
+void busca_imprimir(BUSCA *busca);
+
 #endif

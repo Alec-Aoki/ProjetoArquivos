@@ -42,6 +42,9 @@ int main(void)
     case 10: // Funcionalidade 10
         funcionalidade10();
         break;
+    case 11: // Funcionalidade 11
+        funcionalidade11();
+        break;
     }
 
     return 0;

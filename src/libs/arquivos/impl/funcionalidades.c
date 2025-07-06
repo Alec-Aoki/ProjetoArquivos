@@ -851,10 +851,14 @@ void funcionalidade11()
         // Lendo os campos a serem atualizados
         camposAtulizados = busca_ler(camposAtulizados);
 
-        long buscaIdAttack = busca_get_quaisCampos(busca, 1);
-        if (buscaIdAttack == 0)
+        long buscaIdAttack = -1;
+        buscaIdAttack = busca_get_int(busca, 0);
+
+        /*CORRIGIR ATUALIZAÇÃO POR BUSCA DE ID*/
+        if (buscaIdAttack > 0)
         {
-            // Caso o idAttack faça parte do filtro de busca, busca na árvore-B
+            // printf("PRINT DE DEBUG: %ld\n", buscaIdAttack);
+            //  Caso o idAttack faça parte do filtro de busca, busca na árvore-B
             long idAttack = busca_get_int(busca, 0);
             NO *noEncontrado = NULL;
             noEncontrado = ArvB_busca(pontArqArvB, TAM_HEADER_ARVB + ArvB_header_get_int(headerArvB, 1) * TAM_REGISTRO_ARVB, idAttack);
@@ -891,4 +895,7 @@ void funcionalidade11()
     fclose(pontArqDados);
     ArvB_header_apagar(&headerArvB);
     fclose(pontArqArvB);
+
+    binarioNaTela(nomeArqDados);
+    binarioNaTela(nomeArqArvB);
 }
