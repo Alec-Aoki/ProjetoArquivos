@@ -8,7 +8,7 @@
 #include "../../auxiliar/auxiliar.h"
 #include "../../registros/busca.h"
 #include "../../auxiliar/auxiliar.h"
-
+#include "../arqBIN.h"
 #include "../arvB.h"
 
 struct header_arvB_
@@ -841,20 +841,9 @@ void ArvB_DFS(FILE *pontArqArv, FILE *pontArqDados, long int byteOffsetAtual, BU
             long int byteOffset = noAtual->byteOffsetDados[i];
             if (camposAtualizados == NULL)
             {
-<<<<<<< HEAD
                 DADO *dado = NULL;
                 dado = dado_ler(pontArqDados, dado, byteOffset);
                 if (dado == NULL)
-=======
-                mensagem_erro();
-                ArvB_no_apagar(&noAtual);
-                return;
-            }
-
-            if (dado_get_removido(dado) == '0') // Verifica se o dado não foi removido
-            {
-                if (busca_comparar(busca, dado))
->>>>>>> 68ccdea312831f6ad9549d975f11f9630eb0a72e
                 {
                     mensagem_erro();
                     return;
@@ -917,20 +906,9 @@ void ArvB_DFS(FILE *pontArqArv, FILE *pontArqDados, long int byteOffsetAtual, BU
             long int byteOffset = noAtual->byteOffsetDados[i];
             if (camposAtualizados == NULL)
             {
-<<<<<<< HEAD
                 DADO *dado = NULL;
                 dado = dado_ler(pontArqDados, dado, byteOffset);
                 if (dado == NULL)
-=======
-                mensagem_erro();
-                ArvB_no_apagar(&noAtual);
-                return;
-            }
-
-            if (dado_get_removido(dado) == '0') // Verifica se o dado não foi removido
-            {
-                if (busca_comparar(busca, dado))
->>>>>>> 68ccdea312831f6ad9549d975f11f9630eb0a72e
                 {
                     mensagem_erro();
                     return;
