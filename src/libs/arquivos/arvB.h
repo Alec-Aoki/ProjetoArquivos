@@ -142,13 +142,4 @@ Parâmetros: ponteiro para o arquivo, byteOffset atual, ponteiro para a busca e 
 */
 void ArvB_DFS(FILE *pontArqArv, FILE *pontArqDados, long int byteOffsetAtual, BUSCA *busca,
               HEADER *header, bool *encontrado, BUSCA *camposAtualizados);
-
-// Função para debuggar
-void print_no(NO *no);
-
-// Função apra debuggar
-void print_header(HEADER_ARVB *header);
-
-void print_arvore(FILE *pontArqArv, FILE *pontarqDados, long int byteOffsetAtual, HEADER *header);
-
 #endif

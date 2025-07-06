@@ -445,6 +445,289 @@ NO *ArvB_busca(FILE *pontArq, long int byteOffsetAtual, int chave)
     return NULL;
 }
 
+/* ArvB_DFS():
+Realiza uma busca em profundidade na árvore B e imprime os dados que satisfazem a busca
+Parâmetros: ponteiro para o arquivo, byteOffset atual, ponteiro para a busca e header
+*/
+void ArvB_DFS(FILE *pontArqArv, FILE *pontArqDados, long int byteOffsetAtual, BUSCA *busca,
+              HEADER *header, bool *encontrado, BUSCA *camposAtualizados)
+{
+    // Condição de parada
+    if (byteOffsetAtual < 0)
+        return;
+
+    fseek(pontArqArv, byteOffsetAtual, SEEK_SET);
+    NO *noAtual = NULL;
+    noAtual = ArvB_no_ler(pontArqArv, byteOffsetAtual);
+    if (noAtual == NULL)
+    {
+        mensagem_erro();
+        return;
+    }
+
+    // Se o nó não é folha, intercala a trajetoria
+    if (noAtual->tipoNo != -1)
+    {
+        for (int i = 0; i < noAtual->quantChavesAtual; i++)
+        {
+            ArvB_DFS(pontArqArv, pontArqDados, TAM_HEADER_ARVB + noAtual->rrnDescendentes[i] * TAM_REGISTRO_ARVB, busca, header, encontrado, camposAtualizados);
+            long int byteOffset = noAtual->byteOffsetDados[i];
+            if (camposAtualizados == NULL)
+            {
+                DADO *dado = NULL;
+                dado = dado_ler(pontArqDados, dado, byteOffset);
+                if (dado == NULL)
+                {
+                    mensagem_erro();
+                    return;
+                }
+
+                if (dado_get_removido(dado) == '0') // Verifica se o dado não foi removido
+                {
+                    if (busca_comparar(busca, dado))
+                    {
+                        dado_imprimir(header, dado); // Imprime o dado se a busca for bem-sucedida
+                        printf("\n");
+                        *encontrado = true;
+                    }
+                }
+                dado_apagar(&dado);
+            }
+            else
+            {
+                DADO *dado = NULL;
+                DADO *dadoAtualizado = NULL;
+                dado = dado_ler(pontArqDados, dado, byteOffset);
+                dadoAtualizado = dado_ler(pontArqDados, dadoAtualizado, byteOffset);
+                if (dado == NULL || dadoAtualizado == NULL)
+                {
+                    mensagem_erro();
+                    return;
+                }
+
+                if (busca_comparar(busca, dado))
+                {
+                    dadoAtualizado = busca_atualizar_dado(camposAtualizados, dadoAtualizado);
+
+                    if (dado_get_int(dadoAtualizado, 3) > dado_get_int(dado, 3))
+                    {
+                        dado_remover(pontArqDados, header, byteOffset);
+
+                        arqBIN_insert_dado(pontArqDados, header, dadoAtualizado);
+
+                        // Atualizando byteOffset do dado no nó
+                        BUSCA *buscaNovo = busca_criar();
+                        busca_set(buscaNovo, dado_get_int(dadoAtualizado, 1), dado_get_int(dadoAtualizado, 2),
+                                  dado_get_finLoss(dadoAtualizado), dado_get_string(dadoAtualizado, 1),
+                                  dado_get_string(dadoAtualizado, 2), dado_get_string(dadoAtualizado, 3),
+                                  dado_get_string(dadoAtualizado, 4));
+
+                        long int byteOffsetNovo = arqBIN_buscar_byteOffset(pontArqDados, buscaNovo, header, -1);
+                        noAtual->byteOffsetDados[i] = byteOffsetNovo;
+                        busca_apagar(&buscaNovo);
+                    }
+                    else
+                    {
+                        // Calculando quantidade de lixo
+                        int quantLixo = dado_get_int(dado, 3) - dado_get_int(dadoAtualizado, 3);
+                        // Definindo tamanho do dado atualizado para o tam. do dado orig.
+                        dadoAtualizado = dado_set(dadoAtualizado, -2, dado_get_int(dado, 3),
+                                                  -2, -2, -2, -2, NULL, NULL, NULL, NULL);
+                        // Posicionando ponteiro no início do dado
+                        fseek(pontArqDados, byteOffset, SEEK_SET);
+                        // Sobrescrevendo dado
+                        dado_escrever(pontArqDados, dadoAtualizado, quantLixo);
+                    }
+                }
+
+                dado_apagar(&dadoAtualizado);
+                dado_apagar(&dado);
+            }
+        }
+
+        ArvB_DFS(pontArqArv, pontArqDados, TAM_HEADER_ARVB + noAtual->rrnDescendentes[noAtual->quantChavesAtual] * TAM_REGISTRO_ARVB, busca, header, encontrado, camposAtualizados);
+    }
+    // Se o nó é folha, processa o nó
+    else
+    {
+        for (int i = 0; i < noAtual->quantChavesAtual; i++)
+        {
+            long int byteOffset = noAtual->byteOffsetDados[i];
+            if (camposAtualizados == NULL)
+            {
+                DADO *dado = NULL;
+                dado = dado_ler(pontArqDados, dado, byteOffset);
+                if (dado == NULL)
+                {
+                    mensagem_erro();
+                    return;
+                }
+
+                if (dado_get_removido(dado) == '0') // Verifica se o dado não foi removido
+                {
+                    if (busca_comparar(busca, dado))
+                    {
+                        dado_imprimir(header, dado); // Imprime o dado se a busca for bem-sucedida
+                        printf("\n");
+                        *encontrado = true;
+                    }
+                }
+                dado_apagar(&dado);
+            }
+            else
+            {
+                DADO *dado = NULL;
+                DADO *dadoAtualizado = NULL;
+                dado = dado_ler(pontArqDados, dado, byteOffset);
+                dadoAtualizado = dado_ler(pontArqDados, dadoAtualizado, byteOffset);
+                if (dado == NULL || dadoAtualizado == NULL)
+                {
+                    mensagem_erro();
+                    return;
+                }
+
+                if (busca_comparar(busca, dado))
+                {
+                    dadoAtualizado = busca_atualizar_dado(camposAtualizados, dadoAtualizado);
+
+                    if (dado_get_int(dadoAtualizado, 3) > dado_get_int(dado, 3))
+                    {
+                        dado_remover(pontArqDados, header, byteOffset);
+
+                        arqBIN_insert_dado(pontArqDados, header, dadoAtualizado);
+
+                        // Atualizando byteOffset do dado no nó
+                        BUSCA *buscaNovo = busca_criar();
+                        busca_set(buscaNovo, dado_get_int(dadoAtualizado, 1), dado_get_int(dadoAtualizado, 2),
+                                  dado_get_finLoss(dadoAtualizado), dado_get_string(dadoAtualizado, 1),
+                                  dado_get_string(dadoAtualizado, 2), dado_get_string(dadoAtualizado, 3),
+                                  dado_get_string(dadoAtualizado, 4));
+
+                        long byteOffsetNovo = arqBIN_buscar_byteOffset(pontArqDados, buscaNovo, header, -1);
+                        noAtual->byteOffsetDados[i] = byteOffsetNovo;
+                    }
+                    else
+                    {
+                        // Calculando quantidade de lixo
+                        int quantLixo = dado_get_int(dado, 3) - dado_get_int(dadoAtualizado, 3);
+                        // Definindo tamanho do dado atualizado para o tam. do dado orig.
+                        dadoAtualizado = dado_set(dadoAtualizado, -2, dado_get_int(dado, 3),
+                                                  -2, -2, -2, -2, NULL, NULL, NULL, NULL);
+                        // Posicionando ponteiro no início do dado
+                        fseek(pontArqDados, byteOffset, SEEK_SET);
+                        // Sobrescrevendo dado
+                        dado_escrever(pontArqDados, dadoAtualizado, quantLixo);
+                    }
+                }
+
+                dado_apagar(&dadoAtualizado);
+                dado_apagar(&dado);
+            }
+        }
+    }
+
+    ArvB_no_escrever(pontArqArv, noAtual); // Escreve o nó atualizado
+    ArvB_no_apagar(&noAtual);
+
+    return;
+}
+
+/* ArvB_compara_dado():
+Compara os dados de um nó com uma busca e imprime os dados que satisfazem a busca
+Parâmetros: ponteiro para o arquivo, ponteiro para o nó a ser comparado, ponteiro para a busca
+*/
+void ArvB_compara_dado(FILE *pontArq, NO *no, BUSCA *busca, BUSCA *camposAtualizados, HEADER *headerDados)
+{
+    if (no == NULL || busca == NULL)
+        return; // Erro
+
+    HEADER *header = NULL;
+    header = header_ler(pontArq, header);
+
+    // Percorre as chaves do nó
+    for (int i = 0; i < no->quantChavesAtual; i++)
+    {
+        if (camposAtualizados == NULL)
+        {
+            DADO *dado = NULL;
+            dado = dado_ler(pontArq, dado, no->byteOffsetDados[i]);
+            if (dado == NULL)
+            {
+                mensagem_erro();
+                return;
+            }
+
+            if (dado_get_removido(dado) == '0') // Verifica se o dado não foi removido
+            {
+                if (busca_comparar(busca, dado))
+                {
+                    dado_imprimir(header, dado); // Imprime o dado se a busca for bem-sucedida
+                    printf("\n");
+                }
+            }
+            dado_apagar(&dado);
+        }
+        else
+        {
+            DADO *dado = NULL;
+            DADO *dadoAtualizado = NULL;
+            dado = dado_ler(pontArq, dado, no->byteOffsetDados[i]);
+            dadoAtualizado = dado_ler(pontArq, dadoAtualizado, no->byteOffsetDados[i]);
+            if (dado == NULL || dadoAtualizado == NULL)
+            {
+                mensagem_erro();
+                return;
+            }
+
+            if (busca_comparar(busca, dado))
+            {
+                dadoAtualizado = busca_atualizar_dado(camposAtualizados, dadoAtualizado);
+
+                // Dado atualizado maior que dado original
+                if (dado_get_int(dadoAtualizado, 3) > dado_get_int(dado, 3))
+                {
+                    dado_remover(pontArq, headerDados, no->byteOffsetDados[i]);
+
+                    arqBIN_insert_dado(pontArq, headerDados, dadoAtualizado);
+
+                    // Atualizando byteOffset do dado no nó
+                    BUSCA *buscaNovo = busca_criar();
+                    busca_set(buscaNovo, dado_get_int(dadoAtualizado, 1), dado_get_int(dadoAtualizado, 2),
+                              dado_get_finLoss(dadoAtualizado), dado_get_string(dadoAtualizado, 1),
+                              dado_get_string(dadoAtualizado, 2), dado_get_string(dadoAtualizado, 3),
+                              dado_get_string(dadoAtualizado, 4));
+
+                    // Buscando o novo byteOffset do dado atualizado
+                    long int byteOffsetNovo = arqBIN_buscar_byteOffset(pontArq, buscaNovo, headerDados, -1);
+                    if (byteOffsetNovo > 0)
+                        no->byteOffsetDados[i] = byteOffsetNovo;
+
+                    dado_apagar(&dadoAtualizado);
+                    busca_apagar(&buscaNovo);
+                }
+                else
+                {
+                    // Calculando quantidade de lixo
+                    int quantLixo = dado_get_int(dado, 3) - dado_get_int(dadoAtualizado, 3);
+                    // Definindo tamanho do dado atualizado para o tam. do dado orig.
+                    dadoAtualizado = dado_set(dadoAtualizado, -2, dado_get_int(dado, 3),
+                                              -2, -2, -2, -2, NULL, NULL, NULL, NULL);
+                    // Posicionando ponteiro no início do dado
+                    fseek(pontArq, no->byteOffsetDados[i], SEEK_SET);
+                    // Sobrescrevendo dado
+                    dado_escrever(pontArq, dadoAtualizado, quantLixo);
+                    dado_apagar(&dadoAtualizado);
+                }
+            }
+
+            dado_apagar(&dado);
+        }
+    }
+
+    header_apagar(&header);
+    return;
+}
+
 // Funções internas auxiliares da inserção:
 int inserir_ordenado(int *chaves, long int *byteOffsetDados, int *rrnDescendentes,
                      int *quantChavesAtual, int chave, long int byteOffsetDado, int rrnFilho);
@@ -815,390 +1098,4 @@ int inserir_ordenado(int *chaves, long int *byteOffsetDados, int *rrnDescendente
     }
 
     return pos;
-}
-
-/* ArvB_DFS():
-Realiza uma busca em profundidade na árvore B e imprime os dados que satisfazem a busca
-Parâmetros: ponteiro para o arquivo, byteOffset atual, ponteiro para a busca e header
-*/
-void ArvB_DFS(FILE *pontArqArv, FILE *pontArqDados, long int byteOffsetAtual, BUSCA *busca,
-              HEADER *header, bool *encontrado, BUSCA *camposAtualizados)
-{
-    // Condição de parada
-    if (byteOffsetAtual < 0)
-        return;
-
-    fseek(pontArqArv, byteOffsetAtual, SEEK_SET);
-    NO *noAtual = NULL;
-    noAtual = ArvB_no_ler(pontArqArv, byteOffsetAtual);
-    if (noAtual == NULL)
-    {
-        mensagem_erro();
-        return;
-    }
-
-    // Se o nó não é folha, intercala a trajetoria
-    if (noAtual->tipoNo != -1)
-    {
-        for (int i = 0; i < noAtual->quantChavesAtual; i++)
-        {
-            ArvB_DFS(pontArqArv, pontArqDados, TAM_HEADER_ARVB + noAtual->rrnDescendentes[i] * TAM_REGISTRO_ARVB, busca, header, encontrado, camposAtualizados);
-            long int byteOffset = noAtual->byteOffsetDados[i];
-            if (camposAtualizados == NULL)
-            {
-                DADO *dado = NULL;
-                dado = dado_ler(pontArqDados, dado, byteOffset);
-                if (dado == NULL)
-                {
-                    mensagem_erro();
-                    return;
-                }
-
-                if (dado_get_removido(dado) == '0') // Verifica se o dado não foi removido
-                {
-                    if (busca_comparar(busca, dado))
-                    {
-                        dado_imprimir(header, dado); // Imprime o dado se a busca for bem-sucedida
-                        printf("\n");
-                        *encontrado = true;
-                    }
-                }
-                dado_apagar(&dado);
-            }
-            else
-            {
-                DADO *dado = NULL;
-                DADO *dadoAtualizado = NULL;
-                dado = dado_ler(pontArqDados, dado, byteOffset);
-                dadoAtualizado = dado_ler(pontArqDados, dadoAtualizado, byteOffset);
-                if (dado == NULL || dadoAtualizado == NULL)
-                {
-                    mensagem_erro();
-                    return;
-                }
-
-                if (busca_comparar(busca, dado))
-                {
-                    dadoAtualizado = busca_atualizar_dado(camposAtualizados, dadoAtualizado);
-
-                    if (dado_get_int(dadoAtualizado, 3) > dado_get_int(dado, 3))
-                    {
-                        dado_remover(pontArqDados, header, byteOffset);
-
-                        arqBIN_insert_dado(pontArqDados, header, dadoAtualizado);
-
-                        // Atualizando byteOffset do dado no nó
-                        BUSCA *buscaNovo = busca_criar();
-                        busca_set(buscaNovo, dado_get_int(dadoAtualizado, 1), dado_get_int(dadoAtualizado, 2),
-                                  dado_get_finLoss(dadoAtualizado), dado_get_string(dadoAtualizado, 1),
-                                  dado_get_string(dadoAtualizado, 2), dado_get_string(dadoAtualizado, 3),
-                                  dado_get_string(dadoAtualizado, 4));
-
-                        long int byteOffsetNovo = arqBIN_buscar_byteOffset(pontArqDados, buscaNovo, header, -1);
-                        noAtual->byteOffsetDados[i] = byteOffsetNovo;
-                        busca_apagar(&buscaNovo);
-                    }
-                    else
-                    {
-                        // Calculando quantidade de lixo
-                        int quantLixo = dado_get_int(dado, 3) - dado_get_int(dadoAtualizado, 3);
-                        // Definindo tamanho do dado atualizado para o tam. do dado orig.
-                        dadoAtualizado = dado_set(dadoAtualizado, -2, dado_get_int(dado, 3),
-                                                  -2, -2, -2, -2, NULL, NULL, NULL, NULL);
-                        // Posicionando ponteiro no início do dado
-                        fseek(pontArqDados, byteOffset, SEEK_SET);
-                        // Sobrescrevendo dado
-                        dado_escrever(pontArqDados, dadoAtualizado, quantLixo);
-                    }
-                }
-
-                dado_apagar(&dadoAtualizado);
-                dado_apagar(&dado);
-            }
-        }
-
-        ArvB_DFS(pontArqArv, pontArqDados, TAM_HEADER_ARVB + noAtual->rrnDescendentes[noAtual->quantChavesAtual] * TAM_REGISTRO_ARVB, busca, header, encontrado, camposAtualizados);
-    }
-    // Se o nó é folha, processa o nó
-    else
-    {
-        for (int i = 0; i < noAtual->quantChavesAtual; i++)
-        {
-            long int byteOffset = noAtual->byteOffsetDados[i];
-            if (camposAtualizados == NULL)
-            {
-                DADO *dado = NULL;
-                dado = dado_ler(pontArqDados, dado, byteOffset);
-                if (dado == NULL)
-                {
-                    mensagem_erro();
-                    return;
-                }
-
-                if (dado_get_removido(dado) == '0') // Verifica se o dado não foi removido
-                {
-                    if (busca_comparar(busca, dado))
-                    {
-                        dado_imprimir(header, dado); // Imprime o dado se a busca for bem-sucedida
-                        printf("\n");
-                        *encontrado = true;
-                    }
-                }
-                dado_apagar(&dado);
-            }
-            else
-            {
-                DADO *dado = NULL;
-                DADO *dadoAtualizado = NULL;
-                dado = dado_ler(pontArqDados, dado, byteOffset);
-                dadoAtualizado = dado_ler(pontArqDados, dadoAtualizado, byteOffset);
-                if (dado == NULL || dadoAtualizado == NULL)
-                {
-                    mensagem_erro();
-                    return;
-                }
-
-                if (busca_comparar(busca, dado))
-                {
-                    dadoAtualizado = busca_atualizar_dado(camposAtualizados, dadoAtualizado);
-
-                    if (dado_get_int(dadoAtualizado, 3) > dado_get_int(dado, 3))
-                    {
-                        dado_remover(pontArqDados, header, byteOffset);
-
-                        arqBIN_insert_dado(pontArqDados, header, dadoAtualizado);
-
-                        // Atualizando byteOffset do dado no nó
-                        BUSCA *buscaNovo = busca_criar();
-                        busca_set(buscaNovo, dado_get_int(dadoAtualizado, 1), dado_get_int(dadoAtualizado, 2),
-                                  dado_get_finLoss(dadoAtualizado), dado_get_string(dadoAtualizado, 1),
-                                  dado_get_string(dadoAtualizado, 2), dado_get_string(dadoAtualizado, 3),
-                                  dado_get_string(dadoAtualizado, 4));
-
-                        long byteOffsetNovo = arqBIN_buscar_byteOffset(pontArqDados, buscaNovo, header, -1);
-                        noAtual->byteOffsetDados[i] = byteOffsetNovo;
-                    }
-                    else
-                    {
-                        // Calculando quantidade de lixo
-                        int quantLixo = dado_get_int(dado, 3) - dado_get_int(dadoAtualizado, 3);
-                        // Definindo tamanho do dado atualizado para o tam. do dado orig.
-                        dadoAtualizado = dado_set(dadoAtualizado, -2, dado_get_int(dado, 3),
-                                                  -2, -2, -2, -2, NULL, NULL, NULL, NULL);
-                        // Posicionando ponteiro no início do dado
-                        fseek(pontArqDados, byteOffset, SEEK_SET);
-                        // Sobrescrevendo dado
-                        dado_escrever(pontArqDados, dadoAtualizado, quantLixo);
-                    }
-                }
-
-                dado_apagar(&dadoAtualizado);
-                dado_apagar(&dado);
-            }
-        }
-    }
-
-    ArvB_no_escrever(pontArqArv, noAtual); // Escreve o nó atualizado
-    ArvB_no_apagar(&noAtual);
-
-    return;
-}
-
-/* ArvB_compara_dado():
-Compara os dados de um nó com uma busca e imprime os dados que satisfazem a busca
-Parâmetros: ponteiro para o arquivo, ponteiro para o nó a ser comparado, ponteiro para a busca
-*/
-void ArvB_compara_dado(FILE *pontArq, NO *no, BUSCA *busca, BUSCA *camposAtualizados, HEADER *headerDados)
-{
-    if (no == NULL || busca == NULL)
-        return; // Erro
-
-    HEADER *header = NULL;
-    header = header_ler(pontArq, header);
-
-    // Percorre as chaves do nó
-    for (int i = 0; i < no->quantChavesAtual; i++)
-    {
-        if (camposAtualizados == NULL)
-        {
-            DADO *dado = NULL;
-            dado = dado_ler(pontArq, dado, no->byteOffsetDados[i]);
-            if (dado == NULL)
-            {
-                mensagem_erro();
-                return;
-            }
-
-            if (dado_get_removido(dado) == '0') // Verifica se o dado não foi removido
-            {
-                if (busca_comparar(busca, dado))
-                {
-                    dado_imprimir(header, dado); // Imprime o dado se a busca for bem-sucedida
-                    printf("\n");
-                }
-            }
-            dado_apagar(&dado);
-        }
-        else
-        {
-            DADO *dado = NULL;
-            DADO *dadoAtualizado = NULL;
-            dado = dado_ler(pontArq, dado, no->byteOffsetDados[i]);
-            dadoAtualizado = dado_ler(pontArq, dadoAtualizado, no->byteOffsetDados[i]);
-            if (dado == NULL || dadoAtualizado == NULL)
-            {
-                mensagem_erro();
-                return;
-            }
-
-            if (busca_comparar(busca, dado))
-            {
-                dadoAtualizado = busca_atualizar_dado(camposAtualizados, dadoAtualizado);
-
-                // Dado atualizado maior que dado original
-                if (dado_get_int(dadoAtualizado, 3) > dado_get_int(dado, 3))
-                {
-                    dado_remover(pontArq, headerDados, no->byteOffsetDados[i]);
-
-                    arqBIN_insert_dado(pontArq, headerDados, dadoAtualizado);
-
-                    // Atualizando byteOffset do dado no nó
-                    BUSCA *buscaNovo = busca_criar();
-                    busca_set(buscaNovo, dado_get_int(dadoAtualizado, 1), dado_get_int(dadoAtualizado, 2),
-                              dado_get_finLoss(dadoAtualizado), dado_get_string(dadoAtualizado, 1),
-                              dado_get_string(dadoAtualizado, 2), dado_get_string(dadoAtualizado, 3),
-                              dado_get_string(dadoAtualizado, 4));
-
-                    // Buscando o novo byteOffset do dado atualizado
-                    long int byteOffsetNovo = arqBIN_buscar_byteOffset(pontArq, buscaNovo, headerDados, -1);
-                    if (byteOffsetNovo > 0)
-                        no->byteOffsetDados[i] = byteOffsetNovo;
-
-                    dado_apagar(&dadoAtualizado);
-                    busca_apagar(&buscaNovo);
-                }
-                else
-                {
-                    // Calculando quantidade de lixo
-                    int quantLixo = dado_get_int(dado, 3) - dado_get_int(dadoAtualizado, 3);
-                    // Definindo tamanho do dado atualizado para o tam. do dado orig.
-                    dadoAtualizado = dado_set(dadoAtualizado, -2, dado_get_int(dado, 3),
-                                              -2, -2, -2, -2, NULL, NULL, NULL, NULL);
-                    // Posicionando ponteiro no início do dado
-                    fseek(pontArq, no->byteOffsetDados[i], SEEK_SET);
-                    // Sobrescrevendo dado
-                    dado_escrever(pontArq, dadoAtualizado, quantLixo);
-                    dado_apagar(&dadoAtualizado);
-                }
-            }
-
-            dado_apagar(&dado);
-        }
-    }
-
-    header_apagar(&header);
-    return;
-}
-
-// Função para debuggar
-void print_no(NO *no)
-{
-    if (no == NULL)
-        return;
-
-    printf("**********************\n");
-    printf("Byteoffset: %ld\n", no->byteOffset);
-    printf("Tipo no: %d\n\n", no->tipoNo);
-
-    printf("Chave 1: %d\n", no->chaves[0]);
-    printf("Chave 2: %d\n\n", no->chaves[1]);
-
-    printf("Byteoffset Chave 1: %ld\n", no->byteOffsetDados[0]);
-    printf("Byteoffset Chave 2: %ld\n\n", no->byteOffsetDados[1]);
-
-    printf("RRN Filho 1: %d\n", no->rrnDescendentes[0]);
-    printf("RRN Filho 2: %d\n", no->rrnDescendentes[1]);
-    printf("RRN Filho 3: %d\n", no->rrnDescendentes[2]);
-    printf("**********************\n\n");
-
-    return;
-}
-
-// Função para debuggar
-void print_header(HEADER_ARVB *header)
-{
-    if (header == NULL)
-        return;
-
-    printf("RRN noRaiz: %d\n", header->noRaiz);
-    printf("Quant nos: %d\n", header->nroNos);
-    printf("ProxRRN: %d\n", header->proxRRN);
-    printf("Status: %c\n", header->status);
-
-    return;
-}
-
-void print_arvore(FILE *pontArqArv, FILE *pontArqDados, long int byteOffsetAtual, HEADER *header)
-{
-    // Condição de parada
-    if (byteOffsetAtual < 0)
-        return;
-
-    NO *noAtual = NULL;
-    noAtual = ArvB_no_ler(pontArqArv, byteOffsetAtual);
-    if (noAtual == NULL)
-    {
-        mensagem_erro();
-        return;
-    }
-
-    // Se o nó não é folha, intercala a trajetoria
-    if (noAtual->tipoNo != -1)
-    {
-        for (int i = 0; i < noAtual->quantChavesAtual; i++)
-        {
-            print_arvore(pontArqArv, pontArqDados, TAM_HEADER_ARVB + noAtual->rrnDescendentes[i] * TAM_REGISTRO_ARVB, header);
-            long int byteOffset = noAtual->byteOffsetDados[i];
-
-            DADO *dado = NULL;
-            dado = dado_ler(pontArqDados, dado, byteOffset);
-            if (dado == NULL)
-            {
-                mensagem_erro();
-                return;
-            }
-
-            if (dado_get_removido(dado) == '0') // Verifica se o dado não foi removido
-            {
-                dado_imprimir(header, dado); // Imprime o dado se a busca for bem-sucedida
-                printf("\n");
-            }
-            dado_apagar(&dado);
-        }
-
-        print_arvore(pontArqArv, pontArqDados, TAM_HEADER_ARVB + noAtual->rrnDescendentes[noAtual->quantChavesAtual] * TAM_REGISTRO_ARVB, header);
-    }
-    // Se o nó é folha, processa o nó
-    else
-    {
-        for (int i = 0; i < noAtual->quantChavesAtual; i++)
-        {
-            long int byteOffset = noAtual->byteOffsetDados[i];
-
-            DADO *dado = NULL;
-            dado = dado_ler(pontArqDados, dado, byteOffset);
-            if (dado == NULL)
-            {
-                mensagem_erro();
-                return;
-            }
-
-            if (dado_get_removido(dado) == '0') // Verifica se o dado não foi removido
-            {
-                dado_imprimir(header, dado); // Imprime o dado se a busca for bem-sucedida
-                printf("\n");
-            }
-            dado_apagar(&dado);
-        }
-    }
 }
