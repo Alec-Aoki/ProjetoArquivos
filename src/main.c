@@ -9,35 +9,38 @@ JÕAO RICARDO DE ALMEIDA LUSTOSA - 15463697
 
 int main(void)
 {
-    char op;
+    int op;
 
-    scanf("%c", &op);
+    scanf("%d", &op);
 
     switch (op)
     {
-    case '1': // Funcionalidade 1
+    case 1: // Funcionalidade 1
         funcionalidade1();
         break;
-    case '2': // Funcionalidade 2
+    case 2: // Funcionalidade 2
         funcionalidade2();
         break;
-    case '3': // Funcionalidade 3
+    case 3: // Funcionalidade 3
         funcionalidade3();
         break;
-    case '4': // Funcionalidade 4
+    case 4: // Funcionalidade 4
         funcionalidade4();
         break;
-    case '5': // Funcionalidade 5
+    case 5: // Funcionalidade 5
         funcionalidade5();
         break;
-    case '6': // Funcionalidade 6
+    case 6: // Funcionalidade 6
         funcionalidade6();
         break;
-    case '7': // Funcionalidade 7
+    case 7: // Funcionalidade 7
         funcionalidade7();
         break;
-    case '8': // Funcionalidade 8
+    case 8: // Funcionalidade 8
         funcionalidade8();
+        break;
+    case 10: // Funcionalidade 10
+        funcionalidade10();
         break;
     }
 

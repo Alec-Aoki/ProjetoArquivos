@@ -705,6 +705,10 @@ void funcionalidade10()
     fseek(pontArqDados, 0, SEEK_SET);
     header_escrever(pontArqDados, headerDados, false);
 
+    headerArvB = ArvB_header_set(headerArvB, 0, -2, -2, -2);
+    fseek(pontArqArvB, 0, SEEK_SET);
+    ArvB_header_escrever(pontArqArvB, headerArvB);
+
     for (int i = 0; i < quantDados; i++)
     {
         char **entrada = NULL;
@@ -736,8 +740,8 @@ void funcionalidade10()
         BUSCA *busca = NULL;
         busca = busca_set(busca, str_to_int(entrada[0]), -2, -2,
                           NULL, NULL, NULL, NULL);
-        long byteOffset = arqBIN_buscar_byteOffset(pontArqDados, busca,
-                                                   headerDados, -1);
+        long int byteOffset = arqBIN_buscar_byteOffset(pontArqDados, busca,
+                                                       headerDados, -1);
 
         if (byteOffset > 0)
             ArvB_inserir(pontArqArvB, headerArvB, dado_get_int(dado, 1), byteOffset);
@@ -750,14 +754,21 @@ void funcionalidade10()
     // Definindo status como consistente (1)
     headerDados = header_set(headerDados, 1, -2, -2, -2, -2,
                              NULL, NULL, NULL, NULL, NULL, NULL, NULL);
-    // Escrevendo o header  no arquivo binário
+    // Escrevendo o header no arquivo binário
     fseek(pontArqDados, 0, SEEK_SET);
     header_escrever(pontArqDados, headerDados, false);
+
+    headerArvB = ArvB_header_set(headerArvB, 1, -2, -2, -2);
+    fseek(pontArqArvB, 0, SEEK_SET);
+    ArvB_header_escrever(pontArqArvB, headerArvB);
 
     header_apagar(&headerDados);
     ArvB_header_apagar(&headerArvB);
     fclose(pontArqDados);
     fclose(pontArqArvB);
+
+    binarioNaTela(nomeArqDados);
+    binarioNaTela(nomeArqArvB);
 }
 
 /* funcionalidade11():

@@ -346,36 +346,43 @@ BUSCA *busca_set(BUSCA *busca, int idAttack, int year, float finLoss,
     int i = 0;
     if (idAttack > 0)
     {
+        busca->quantCampos++;
         busca->idAttack = idAttack;
         busca->quaisCampos[i++] = 0; // idAttack
     }
     if (year > 0)
     {
+        busca->quantCampos++;
         busca->year = year;
         busca->quaisCampos[i++] = 1; // year
     }
     if (finLoss > 0)
     {
+        busca->quantCampos++;
         busca->finLoss = finLoss;
         busca->quaisCampos[i++] = 2; // financialLoss
     }
     if (country != NULL && strcmp(country, "NULO") != 0)
     {
+        busca->quantCampos++;
         strcpy(busca->country, country);
         busca->quaisCampos[i++] = 3; // country
     }
     if (attackType != NULL && strcmp(attackType, "NULO") != 0)
     {
+        busca->quantCampos++;
         strcpy(busca->attackType, attackType);
         busca->quaisCampos[i++] = 4; // attackType
     }
     if (targetIndustry != NULL && strcmp(targetIndustry, "NULO") != 0)
     {
+        busca->quantCampos++;
         strcpy(busca->targetIndustry, targetIndustry);
         busca->quaisCampos[i++] = 5; // targetIndustry
     }
     if (defenseMechanism != NULL && strcmp(defenseMechanism, "NULO") != 0)
     {
+        busca->quantCampos++;
         strcpy(busca->defenseMechanism, defenseMechanism);
         busca->quaisCampos[i++] = 6; // defenseMechanism
     }
