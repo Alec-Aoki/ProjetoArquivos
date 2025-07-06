@@ -488,10 +488,12 @@ void funcionalidade7()
     if (pontArqArv == NULL)
     {
         mensagem_erro();
+        fclose(pontArqDados);
         return;
     }
 
-    // 2. inserir um-a-um os índices sendo eles indexados pelo idAttack (Registros logicamente removidos não devem ser inseridos)
+    // 2. inserir um-a-um os índices sendo eles indexados pelo idAttack
+    // (Registros logicamente removidos não devem ser inseridos)
     HEADER_ARVB *headerArv = ArvB_header_criar();          // Header da árvore
     headerArv = ArvB_header_set(headerArv, 0, -2, -2, -2); // Definindo status do arq. da arv. como inconsistente
     ArvB_header_escrever(pontArqArv, headerArv);           // Escrevendo header
@@ -512,13 +514,18 @@ void funcionalidade7()
         if (dadoTemp == NULL)
         {
             mensagem_erro();
+            ArvB_header_apagar(&headerArv);
+            header_apagar(&headerDados);
+            fclose(pontArqArv);
+            fclose(pontArqDados);
             return; // Erro ao ler o dado
         }
 
         // Inserindo o dado somente se ele não estiver removido
         if (dado_get_removido(dadoTemp) != '1')
         {
-            ArvB_inserir(pontArqArv, headerArv, dado_get_int(dadoTemp, 1), byteOffsetDado); // Atualiza o header automaticamente
+            ArvB_inserir(pontArqArv, headerArv,
+                         dado_get_int(dadoTemp, 1), byteOffsetDado); // Atualiza o header automaticamente
             quantReg--;
         }
 
@@ -583,6 +590,7 @@ void funcionalidade8()
     if (headerDados == NULL)
     {
         mensagem_erro();
+        fclose(pontArqArvB);
         fclose(pontArqDados);
         return;
     }
@@ -593,6 +601,7 @@ void funcionalidade8()
     {
         mensagem_erro();
         fclose(pontArqArvB);
+        fclose(pontArqDados);
         return;
     }
 
@@ -603,7 +612,7 @@ void funcionalidade8()
         fseek(pontArqDados, 0, SEEK_SET);
 
         busca = NULL;
-        byteOffsetRaiz = TAM_HEADER_ARVB + ArvB_header_get_int(headerArvB, 1) * TAM_REGISTRO_ARVB;
+        byteOffsetRaiz = ArvB_calcBO(ArvB_header_get_int(headerArvB, 1));
 
         busca = busca_ler(busca);
         // Verifica se o idAttack faz parte do filtro de busca
@@ -627,7 +636,8 @@ void funcionalidade8()
         {
             // Caso não faça, visita todos os nós da árvore verificandos
             bool encontrado = false;
-            ArvB_DFS(pontArqArvB, pontArqDados, byteOffsetRaiz, busca, headerDados, &encontrado, NULL);
+            ArvB_DFS(pontArqArvB, pontArqDados, byteOffsetRaiz,
+                     busca, headerDados, &encontrado, NULL);
 
             if (!encontrado)
                 mensagem_regInexistente();
@@ -701,6 +711,7 @@ void funcionalidade10()
     if (headerArvB == NULL)
     {
         mensagem_erro();
+        header_apagar(&headerDados);
         fclose(pontArqDados);
         fclose(pontArqArvB);
         return;
@@ -727,6 +738,8 @@ void funcionalidade10()
         if (entrada == NULL)
         {
             mensagem_erro();
+            header_apagar(&headerDados);
+            ArvB_header_apagar(&headerArvB);
             fclose(pontArqDados);
             fclose(pontArqArvB);
             return;
@@ -742,6 +755,8 @@ void funcionalidade10()
         {
             mensagem_erro();
             apaga_entrada(&entrada);
+            header_apagar(&headerDados);
+            ArvB_header_apagar(&headerArvB);
             fclose(pontArqDados);
             fclose(pontArqArvB);
             return;
@@ -844,6 +859,7 @@ void funcionalidade11()
     if (headerArvB == NULL)
     {
         mensagem_erro();
+        header_apagar(&headerDados);
         fclose(pontArqArvB);
         fclose(pontArqDados);
         return;
@@ -884,11 +900,11 @@ void funcionalidade11()
             {
                 //  Caso o idAttack faça parte do filtro de busca, busca na árvore-B
                 NO *noEncontrado = NULL;
-                noEncontrado = ArvB_busca(pontArqArvB, TAM_HEADER_ARVB + ArvB_header_get_int(headerArvB, 1) * TAM_REGISTRO_ARVB, buscaIdAttack);
+                noEncontrado = ArvB_busca(pontArqArvB,
+                                          ArvB_calcBO(ArvB_header_get_int(headerArvB, 1)),
+                                          buscaIdAttack);
                 if (noEncontrado == NULL)
-                {
                     continue; // Registro não encontrado
-                }
 
                 // Verifica se o registro encontrado é válido
                 ArvB_compara_dado(pontArqDados, noEncontrado, busca,
@@ -899,11 +915,10 @@ void funcionalidade11()
                 ArvB_no_apagar(&noEncontrado);
             }
             else
-            {
                 // Caso o idAttack não faça parte do filtro de busca, realiza busca DFS
-                ArvB_DFS(pontArqArvB, pontArqDados, TAM_HEADER_ARVB + ArvB_header_get_int(headerArvB, 1) * TAM_REGISTRO_ARVB,
+                ArvB_DFS(pontArqArvB, pontArqDados,
+                         ArvB_calcBO(ArvB_header_get_int(headerArvB, 1)),
                          busca, headerDados, NULL, camposAtulizados);
-            }
         }
 
         // Reseta as structs busca e camposAtulizados
