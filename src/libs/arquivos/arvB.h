@@ -10,6 +10,20 @@ typedef struct header_arvB_ HEADER_ARVB;
 
 typedef struct no_ NO;
 
+/* ArvB_calcBO():
+Dado um RRN, calcula o byteOffset no arquivo
+Parâmetro: int (RRN)
+Retorna: long int (byteOffset)
+*/
+long int ArvB_calcBO(int RRN);
+
+/* ArvB_calcRRN():
+Dado um byteOffset, calcula o RRN no arquivo
+Parâmetro: long int (byteOffset)
+Retorna: int (RRN)
+*/
+int ArvB_calcRRN(long int byteOffset);
+
 /* ArvB_header_criar():
 Aloca memória para uma struct do tipo HEADER_ARVB e a inicializa
 Retorna: ponteiro para a struct do tipo HEADER_ARVB
@@ -142,4 +156,5 @@ Parâmetros: ponteiro para o arquivo, byteOffset atual, ponteiro para a busca e 
 */
 void ArvB_DFS(FILE *pontArqArv, FILE *pontArqDados, long int byteOffsetAtual, BUSCA *busca,
               HEADER *header, bool *encontrado, BUSCA *camposAtualizados);
+
 #endif

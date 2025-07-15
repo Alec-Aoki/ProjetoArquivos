@@ -38,6 +38,32 @@ typedef struct promocao_
     bool houveSplit;
 } PROMOCAO;
 
+/* ArvB_calcBO():
+Dado um RRN, calcula o byteOffset no arquivo
+Parâmetro: int (RRN)
+Retorna: long int (byteOffset)
+*/
+long int ArvB_calcBO(int RRN)
+{
+    if (RRN < 0)
+        return -1; // Erro
+
+    return TAM_HEADER_ARVB + RRN * TAM_REGISTRO_ARVB;
+}
+
+/* ArvB_calcRRN():
+Dado um byteOffset, calcula o RRN no arquivo
+Parâmetro: long int (byteOffset)
+Retorna: int (RRN)
+*/
+int ArvB_calcRRN(long int byteOffset)
+{
+    if (byteOffset < 0)
+        return -1; // Erro
+
+    return (byteOffset - TAM_HEADER_ARVB) / TAM_REGISTRO_ARVB;
+}
+
 /* ArvB_header_criar():
 Aloca memória para uma struct do tipo HEADER_ARVB e a inicializa
 Retorna: ponteiro para a struct do tipo HEADER_ARVB
@@ -435,7 +461,7 @@ NO *ArvB_busca(FILE *pontArq, long int byteOffsetAtual, int chave)
     }
     else
     {
-        int byteOffsetFilho = TAM_HEADER_ARVB + noAtual->rrnDescendentes[i] * TAM_REGISTRO_ARVB;
+        int byteOffsetFilho = ArvB_calcBO(noAtual->rrnDescendentes[i]);
         ArvB_no_apagar(&noAtual); // Libera memória do nó atual
 
         // Se a chave não foi encontrada, segue para o filho correspondente
@@ -470,7 +496,9 @@ void ArvB_DFS(FILE *pontArqArv, FILE *pontArqDados, long int byteOffsetAtual, BU
     {
         for (int i = 0; i < noAtual->quantChavesAtual; i++)
         {
-            ArvB_DFS(pontArqArv, pontArqDados, TAM_HEADER_ARVB + noAtual->rrnDescendentes[i] * TAM_REGISTRO_ARVB, busca, header, encontrado, camposAtualizados);
+            ArvB_DFS(pontArqArv, pontArqDados,
+                     ArvB_calcBO(noAtual->rrnDescendentes[i]),
+                     busca, header, encontrado, camposAtualizados);
             long int byteOffset = noAtual->byteOffsetDados[i];
             if (camposAtualizados == NULL)
             {
@@ -501,6 +529,7 @@ void ArvB_DFS(FILE *pontArqArv, FILE *pontArqDados, long int byteOffsetAtual, BU
                 dadoAtualizado = dado_ler(pontArqDados, dadoAtualizado, byteOffset);
                 if (dado == NULL || dadoAtualizado == NULL)
                 {
+                    ArvB_no_apagar(&noAtual);
                     mensagem_erro();
                     return;
                 }
@@ -545,7 +574,9 @@ void ArvB_DFS(FILE *pontArqArv, FILE *pontArqDados, long int byteOffsetAtual, BU
             }
         }
 
-        ArvB_DFS(pontArqArv, pontArqDados, TAM_HEADER_ARVB + noAtual->rrnDescendentes[noAtual->quantChavesAtual] * TAM_REGISTRO_ARVB, busca, header, encontrado, camposAtualizados);
+        ArvB_DFS(pontArqArv, pontArqDados,
+                 ArvB_calcBO(noAtual->rrnDescendentes[noAtual->quantChavesAtual]),
+                 busca, header, encontrado, camposAtualizados);
     }
     // Se o nó é folha, processa o nó
     else
@@ -559,6 +590,7 @@ void ArvB_DFS(FILE *pontArqArv, FILE *pontArqDados, long int byteOffsetAtual, BU
                 dado = dado_ler(pontArqDados, dado, byteOffset);
                 if (dado == NULL)
                 {
+                    ArvB_no_apagar(&noAtual);
                     mensagem_erro();
                     return;
                 }
@@ -582,6 +614,7 @@ void ArvB_DFS(FILE *pontArqArv, FILE *pontArqDados, long int byteOffsetAtual, BU
                 dadoAtualizado = dado_ler(pontArqDados, dadoAtualizado, byteOffset);
                 if (dado == NULL || dadoAtualizado == NULL)
                 {
+                    ArvB_no_apagar(&noAtual);
                     mensagem_erro();
                     return;
                 }
@@ -636,7 +669,8 @@ void ArvB_DFS(FILE *pontArqArv, FILE *pontArqDados, long int byteOffsetAtual, BU
 Compara os dados de um nó com uma busca e imprime os dados que satisfazem a busca
 Parâmetros: ponteiro para o arquivo, ponteiro para o nó a ser comparado, ponteiro para a busca
 */
-void ArvB_compara_dado(FILE *pontArq, NO *no, BUSCA *busca, BUSCA *camposAtualizados, HEADER *headerDados)
+void ArvB_compara_dado(FILE *pontArq, NO *no, BUSCA *busca,
+                       BUSCA *camposAtualizados, HEADER *headerDados)
 {
     if (no == NULL || busca == NULL)
         return; // Erro
@@ -653,6 +687,7 @@ void ArvB_compara_dado(FILE *pontArq, NO *no, BUSCA *busca, BUSCA *camposAtualiz
             dado = dado_ler(pontArq, dado, no->byteOffsetDados[i]);
             if (dado == NULL)
             {
+                header_apagar(&header);
                 mensagem_erro();
                 return;
             }
@@ -675,6 +710,7 @@ void ArvB_compara_dado(FILE *pontArq, NO *no, BUSCA *busca, BUSCA *camposAtualiz
             dadoAtualizado = dado_ler(pontArq, dadoAtualizado, no->byteOffsetDados[i]);
             if (dado == NULL || dadoAtualizado == NULL)
             {
+                header_apagar(&header);
                 mensagem_erro();
                 return;
             }
@@ -731,7 +767,8 @@ void ArvB_compara_dado(FILE *pontArq, NO *no, BUSCA *busca, BUSCA *camposAtualiz
 // Funções internas auxiliares da inserção:
 int inserir_ordenado(int *chaves, long int *byteOffsetDados, int *rrnDescendentes,
                      int *quantChavesAtual, int chave, long int byteOffsetDado, int rrnFilho);
-PROMOCAO ArvB_inserir_recursivo(FILE *pontArq, HEADER_ARVB *header, int chave, long int byteOffsetDado, long int byteOffsetNoAtual);
+PROMOCAO ArvB_inserir_recursivo(FILE *pontArq, HEADER_ARVB *header, int chave,
+                                long int byteOffsetDado, long int byteOffsetNoAtual);
 PROMOCAO ArvB_split(NO *no, HEADER_ARVB *header, int chave, long int byteOffsetDado, int rrnFilho);
 
 /* ArvB_inserir():
@@ -743,13 +780,13 @@ void ArvB_inserir(FILE *pontArq, HEADER_ARVB *header, int chave, long int byteOf
     if (pontArq == NULL || header == NULL)
         return; // Erro
 
-    int byteOffsetNoRaiz = TAM_HEADER_ARVB + header->noRaiz * TAM_REGISTRO_ARVB;
+    int byteOffsetNoRaiz = ArvB_calcBO(header->noRaiz);
 
     // Caso 1: árvore vázia
     if (header->noRaiz == -1)
     {
         NO *noRaiz = NULL;
-        noRaiz = ArvB_no_set(noRaiz, TAM_HEADER_ARVB + (header->proxRRN) * TAM_REGISTRO_ARVB, NULL, NULL, NULL, -1, 1);
+        noRaiz = ArvB_no_set(noRaiz, ArvB_calcBO(header->proxRRN), NULL, NULL, NULL, -1, 1);
         if (noRaiz == NULL)
             return;
 
@@ -781,7 +818,8 @@ void ArvB_inserir(FILE *pontArq, HEADER_ARVB *header, int chave, long int byteOf
     else
     {
         // Caso 2: árvore não-vazia
-        PROMOCAO promocao = ArvB_inserir_recursivo(pontArq, header, chave, byteOffsetDado, byteOffsetNoRaiz);
+        PROMOCAO promocao = ArvB_inserir_recursivo(pontArq, header,
+                                                   chave, byteOffsetDado, byteOffsetNoRaiz);
 
         if (promocao.houveSplit)
         {
@@ -789,13 +827,13 @@ void ArvB_inserir(FILE *pontArq, HEADER_ARVB *header, int chave, long int byteOf
             if (raizNova == NULL)
                 return;
 
-            raizNova->byteOffset = TAM_HEADER_ARVB + header->proxRRN * TAM_REGISTRO_ARVB;
+            raizNova->byteOffset = ArvB_calcBO(header->proxRRN);
             raizNova->tipoNo = 0; // Raíz
             raizNova->quantChavesAtual = 1;
             raizNova->chaves[0] = promocao.chavePromov;
             raizNova->byteOffsetDados[0] = promocao.byteOffsetDadoPromov;
-            raizNova->rrnDescendentes[0] = (byteOffsetNoRaiz - TAM_HEADER_ARVB) / TAM_REGISTRO_ARVB;
-            raizNova->rrnDescendentes[1] = (promocao.noNovo->byteOffset - TAM_HEADER_ARVB) / TAM_REGISTRO_ARVB;
+            raizNova->rrnDescendentes[0] = ArvB_calcRRN(byteOffsetNoRaiz);
+            raizNova->rrnDescendentes[1] = ArvB_calcRRN(promocao.noNovo->byteOffset);
 
             // Inicializando os campos restantes
             for (int i = 1; i < quantMaxChaves; i++)
@@ -855,7 +893,8 @@ Caso "geral" da inserção, que busca pela nó em que a chave será inserida usa
 Parâmetros: ponteiro para arquivo, ponteiro para header de arvB, chave a ser inserido e seus campos
 Retorna: struct da chave que foi promovida (se houve split)
 */
-PROMOCAO ArvB_inserir_recursivo(FILE *pontArq, HEADER_ARVB *header, int chave, long int byteOffsetDado, long int byteOffsetNoAtual)
+PROMOCAO ArvB_inserir_recursivo(FILE *pontArq, HEADER_ARVB *header,
+                                int chave, long int byteOffsetDado, long int byteOffsetNoAtual)
 {
     PROMOCAO promocao;
     promocao.noNovo = NULL;
@@ -878,7 +917,8 @@ PROMOCAO ArvB_inserir_recursivo(FILE *pontArq, HEADER_ARVB *header, int chave, l
         // Caso 1: tem espaço no nó folha
         if (noAtual->quantChavesAtual < quantMaxChaves)
         {
-            inserir_ordenado(noAtual->chaves, noAtual->byteOffsetDados, NULL, &(noAtual->quantChavesAtual), chave, byteOffsetDado, -2);
+            inserir_ordenado(noAtual->chaves, noAtual->byteOffsetDados,
+                             NULL, &(noAtual->quantChavesAtual), chave, byteOffsetDado, -2);
             ArvB_no_escrever(pontArq, noAtual);
 
             promocao.houveSplit = false;
@@ -910,7 +950,9 @@ PROMOCAO ArvB_inserir_recursivo(FILE *pontArq, HEADER_ARVB *header, int chave, l
         }
 
         // Faz a busca a partir do nó filho (recursão)
-        PROMOCAO promocaoFilho = ArvB_inserir_recursivo(pontArq, header, chave, byteOffsetDado, TAM_HEADER_ARVB + noAtual->rrnDescendentes[pos] * TAM_REGISTRO_ARVB);
+        PROMOCAO promocaoFilho = ArvB_inserir_recursivo(pontArq, header,
+                                                        chave, byteOffsetDado,
+                                                        ArvB_calcBO(noAtual->rrnDescendentes[pos]));
 
         // Caso 1: houve split e promoção
         if (promocaoFilho.houveSplit)
@@ -918,8 +960,10 @@ PROMOCAO ArvB_inserir_recursivo(FILE *pontArq, HEADER_ARVB *header, int chave, l
             // Caso 1: o nó atual tem espaço pra chave que foi promovida
             if (noAtual->quantChavesAtual < quantMaxChaves)
             {
-                inserir_ordenado(noAtual->chaves, noAtual->byteOffsetDados, noAtual->rrnDescendentes, &(noAtual->quantChavesAtual),
-                                 promocaoFilho.chavePromov, promocaoFilho.byteOffsetDadoPromov, (promocaoFilho.noNovo->byteOffset - TAM_HEADER_ARVB) / TAM_REGISTRO_ARVB);
+                inserir_ordenado(noAtual->chaves, noAtual->byteOffsetDados, noAtual->rrnDescendentes,
+                                 &(noAtual->quantChavesAtual), promocaoFilho.chavePromov,
+                                 promocaoFilho.byteOffsetDadoPromov,
+                                 ArvB_calcRRN(promocaoFilho.noNovo->byteOffset));
 
                 ArvB_no_escrever(pontArq, noAtual);
 
@@ -929,8 +973,9 @@ PROMOCAO ArvB_inserir_recursivo(FILE *pontArq, HEADER_ARVB *header, int chave, l
             }
             else // Caso 2: não tem espaço, split
             {
-                promocao = ArvB_split(noAtual, header, promocaoFilho.chavePromov, promocaoFilho.byteOffsetDadoPromov,
-                                      (promocaoFilho.noNovo->byteOffset - TAM_HEADER_ARVB) / TAM_REGISTRO_ARVB);
+                promocao = ArvB_split(noAtual, header, promocaoFilho.chavePromov,
+                                      promocaoFilho.byteOffsetDadoPromov,
+                                      ArvB_calcRRN(promocaoFilho.noNovo->byteOffset));
 
                 ArvB_no_escrever(pontArq, noAtual);         // Atualizando nó original
                 ArvB_no_escrever(pontArq, promocao.noNovo); // Nó resultando do split
@@ -954,7 +999,8 @@ Insere uma chave em um nó, realizando o split e indicando a chave a ser promovi
 Parâmetros: ponteiro para no, chave e campos a serem inseridos
 Retorna: struct que indica as informacoes da chave a ser promovida
 */
-PROMOCAO ArvB_split(NO *no, HEADER_ARVB *header, int chave, long int byteOffsetDado, int rrnFilho)
+PROMOCAO ArvB_split(NO *no, HEADER_ARVB *header, int chave,
+                    long int byteOffsetDado, int rrnFilho)
 {
     PROMOCAO promocao;
     promocao.noNovo = NULL;
@@ -990,7 +1036,8 @@ PROMOCAO ArvB_split(NO *no, HEADER_ARVB *header, int chave, long int byteOffsetD
         rrnFilhosTemp[i] = no->rrnDescendentes[i];
 
     // Inserindo a chave nos vetores temporários
-    inserir_ordenado(chavesTemp, byteOffsetDadosTemp, rrnFilhosTemp, &quantChavesTemp, chave, byteOffsetDado, rrnFilho);
+    inserir_ordenado(chavesTemp, byteOffsetDadosTemp, rrnFilhosTemp,
+                     &quantChavesTemp, chave, byteOffsetDado, rrnFilho);
 
     // Criando nó novo
     NO *noNovo = ArvB_no_criar();
@@ -1043,7 +1090,7 @@ PROMOCAO ArvB_split(NO *no, HEADER_ARVB *header, int chave, long int byteOffsetD
         j++;
     }
 
-    noNovo->byteOffset = TAM_HEADER_ARVB + header->proxRRN * TAM_REGISTRO_ARVB;
+    noNovo->byteOffset = ArvB_calcBO(header->proxRRN);
     noNovo->tipoNo = no->tipoNo;
 
     promocao.noNovo = noNovo;
